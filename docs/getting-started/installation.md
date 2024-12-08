@@ -1,107 +1,125 @@
 # Installation Guide
 
+This guide will help you set up your development environment for our Phoenix application.
+
 ## Prerequisites
 
-### System Requirements
-- Erlang/OTP 24 or later
-- Elixir 1.14 or later
-- PostgreSQL 14 or later
-- Node.js 16 or later (for asset compilation)
+### Required Software
+- Elixir (~> 1.14)
+- Erlang
+- PostgreSQL
+- Node.js (for asset management)
 - Git
 
-### Development Tools
-- Code editor with Elixir support (Windsurf recommended)
-- PostgreSQL client
-- Terminal application
+### Optional Tools
+- Docker (for containerized development)
+- Visual Studio Code with ElixirLS extension
 
-## Installation Steps
+## Step-by-Step Installation
 
-### 1. Install Erlang and Elixir
-#### macOS (using Homebrew)
+### 1. Install Elixir and Erlang
 ```bash
-brew install erlang
+# Using asdf (recommended)
+asdf install erlang latest
+asdf install elixir latest
+
+# Or using Homebrew on macOS
 brew install elixir
 ```
 
-#### Other platforms
-Visit the [official Elixir installation guide](https://elixir-lang.org/install.html)
-
-### 2. Install Phoenix
+### 2. Install PostgreSQL
 ```bash
-mix local.hex
-mix archive.install hex phx.new
-```
-
-### 3. Database Setup
-#### Install PostgreSQL
-```bash
+# Using Homebrew on macOS
 brew install postgresql@14
 brew services start postgresql@14
 ```
 
-### 4. Project Setup
-1. Clone the repository:
+### 3. Install Node.js
 ```bash
-git clone [repository-url]
-cd [project-directory]
+# Using nvm (recommended)
+nvm install node
+nvm use node
+
+# Or using Homebrew
+brew install node
 ```
 
-2. Install dependencies:
+### 4. Clone the Repository
 ```bash
+git clone <repository-url>
+cd myapp
+```
+
+### 5. Install Dependencies
+```bash
+# Install Elixir dependencies
 mix deps.get
-mix deps.compile
+
+# Install and setup assets
+mix setup
 ```
 
-3. Setup database:
+### 6. Database Setup
 ```bash
+# Create and migrate database
 mix ecto.setup
 ```
 
-4. Install Node.js dependencies:
+### 7. Install Frontend Tools
+The project uses Tailwind CSS and esbuild, which will be installed automatically when running:
 ```bash
-cd assets && npm install
-cd ..
+mix assets.setup
 ```
 
-### 5. Configuration
-1. Copy the example environment file:
-```bash
-cp config/dev.exs.example config/dev.exs
-```
+## Development Environment
 
-2. Update the database configuration in `config/dev.exs`
-
-### 6. Start the Application
+### Start the Server
 ```bash
+# Start Phoenix server
 mix phx.server
+
+# Or in interactive mode
+iex -S mix phx.server
 ```
 
-Visit [`localhost:4000`](http://localhost:4000) in your browser.
+### Running Tests
+```bash
+mix test
+```
 
-## Verification
-- Phoenix server running at `localhost:4000`
-- Database connections successful
-- Asset compilation working
-- All tests passing (`mix test`)
+### Building Assets
+```bash
+# Development build
+mix assets.build
+
+# Production build
+mix assets.deploy
+```
+
+## IDE Setup
+
+### VS Code Configuration
+1. Install ElixirLS extension
+2. Add recommended settings:
+```json
+{
+  "elixir.enableTestLenses": true,
+  "elixir.suggestSpecs": true
+}
+```
 
 ## Troubleshooting
 
 ### Common Issues
-1. **Database Connection Issues**
-   - Check PostgreSQL is running
-   - Verify database credentials in `config/dev.exs`
+1. PostgreSQL connection issues
+   - Check PostgreSQL service is running
+   - Verify database credentials in config/dev.exs
 
-2. **Dependency Issues**
+2. Asset compilation issues
+   - Run `mix assets.setup` to reinstall tools
+   - Clear node_modules and reinstall
+
+3. Dependency conflicts
+   - Delete _build and deps directories
    - Run `mix deps.clean --all`
-   - Delete `_build` directory
-   - Run `mix deps.get` again
-
-3. **Asset Compilation Issues**
-   - Verify Node.js installation
-   - Clear `assets/node_modules`
-   - Run `npm install` in assets directory
-
-## Next Steps
-- Review the [Configuration Guide](configuration.md)
-- Check out the [Quick Start Guide](quick-start.md)
-- Read about [Development Workflow](../development/workflow.md)
+   - Run `mix deps.get`

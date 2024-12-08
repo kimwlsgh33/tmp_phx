@@ -1,59 +1,66 @@
-# Contributing to AVR-TChan Documentation
+# Contributing to tmp_phx Documentation
 
-This guide outlines how to contribute to the AVR-TChan documentation.
+This guide outlines how to contribute to the tmp_phx documentation.
 
 ## Documentation Structure
 
-The complete documentation structure can be found in [README.md](README.md#documentation-structure). Here are the key directories relevant for contributors:
+The documentation is organized into the following key directories:
 
-### Development Documentation (`development/`)
 ```
-development/
-├── processes/       # Development processes
-│   └── review/      # Code review guidelines
-├── implementation/  # Implementation details
-├── rules/          # Development rules
-│   ├── coding/     # Coding standards
-│   └── naming/     # Naming conventions
-└── guidelines/     # Development guidelines
-    └── documentation/ # Documentation guidelines
+docs/
+├── api/           # API documentation and specifications
+├── architecture/  # System architecture and design documents
+├── deployment/    # Deployment and infrastructure guides
+├── development/   # Development processes and guidelines
+│   ├── processes/    # Development workflows
+│   ├── implementation/ # Implementation details
+│   ├── rules/        # Development rules
+│   └── guidelines/   # Development guidelines
+├── frontend/      # Frontend development documentation
+├── getting-started/ # Installation and setup guides
+├── testing/      # Testing guidelines and procedures
+├── CONTRIBUTING.md # This file
+├── README.md     # Main documentation entry point
+└── STYLE-GUIDE.md # Coding and documentation style guide
 ```
-
-This is where most contribution-related resources are located. Pay special attention to:
-- `development/guidelines/documentation/` for documentation standards
-- `development/rules/coding/` for code style and error handling
-- `development/processes/review/` for the review process
 
 ## Contributing Guidelines
 
 ### 1. Documentation Standards
 - Use Markdown for all documentation
-- Follow the development documentation guidelines in `development/guidelines/documentation/README.md`
+- Follow the style guidelines in `STYLE-GUIDE.md`
+- Follow the documentation guidelines in `development/guidelines/documentation/README.md`
 - Include practical examples
 - Keep documentation up to date with code
-- Follow naming conventions in `development/rules/naming/README.md`
+- Use clear and consistent formatting
 
 ### 2. File Organization
-- Place new documentation in the appropriate section (see [README.md](README.md#documentation-structure))
-- Follow the established directory hierarchy
+- Place new documentation in the appropriate section:
+  - API-related docs go in `api/`
+  - Architecture and design docs go in `architecture/`
+  - Development processes and guidelines go in `development/`
+  - Deployment instructions go in `deployment/`
+  - Frontend-specific docs go in `frontend/`
+  - Setup and installation guides go in `getting-started/`
+  - Testing-related docs go in `testing/`
 - Create/update README.md files for new directories
-- Keep related documentation together (e.g., all motor-related docs in hardware/motors/)
-- Use consistent file naming based on `development/rules/naming/README.md`
+- Keep related documentation together
+- Use consistent file naming conventions
 
 ### 3. Content Guidelines
 - Write clear, concise content
 - Include code examples where relevant
-- Document error conditions and error handling (see `development/rules/coding/error_handling.md`)
+- Document error conditions and error handling
 - Provide troubleshooting guides
 - Cross-reference related documentation
-- Follow coding style guidelines in `development/rules/coding/style.md`
+- Follow coding style guidelines
 
 ### 4. Making Changes
 1. Create a new branch for documentation changes
-2. Follow the documentation guidelines in `development/guidelines/documentation/README.md`
+2. Follow the documentation guidelines
 3. Update relevant README files
 4. Maintain cross-references
-5. Follow the review workflow in `development/processes/review/workflow.md`
+5. Follow the review workflow
 6. Submit a pull request
 
 ### 5. Documentation Review
@@ -62,15 +69,12 @@ This is where most contribution-related resources are located. Pay special atten
 - Verify cross-references
 - Test code examples
 - Review formatting according to documentation guidelines
-- Follow the review process outlined in `development/processes/review/workflow.md`
+- Follow the review process
 
 ## Documentation Resources
 For detailed guidelines, please refer to:
-- [Documentation Guidelines](development/guidelines/documentation/README.md)
-- [Coding Style Guide](development/rules/coding/style.md)
-- [Naming Conventions](development/rules/naming/README.md)
-- [Error Handling Guidelines](development/rules/coding/error_handling.md)
-- [Review Process](development/processes/review/workflow.md)
+- [STYLE-GUIDE.md](STYLE-GUIDE.md)
+- [README.md](README.md)
 
 ## Contributing Guide for Phoenix Application
 
