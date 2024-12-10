@@ -1,18 +1,15 @@
-# TmpPhx
+# LiveView 
 
-To start your Phoenix server:
+### 초기연결
+- 첫 접속시 일반적 HTTP 요청-응답으로 페이지 로드
+- WebSocket 연결이 자동으로 설정됨.
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+### 실시간 업데이트
+- WebSocket을 통해 서버와 클라이언트가 지속적으로 연결 유지
+- 양방향 통신이 가능하여 데이터 변경시 즉시 반영
+- 전체 페이지 새로고침을 하지 않아도 필요한 부분만 업데이트 가능
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+---
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+Myapp_web/ live/ counter_live 확인할것
+이름_live를 쓰는것이 약속임
