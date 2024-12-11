@@ -11,7 +11,6 @@ deployment/
 ├── performance.md    # Performance monitoring and optimization
 └── reliability.md    # Reliability and fault tolerance
 ```
-
 ## Deployment Methods
 
 ### Elixir Releases + Gigalixir
@@ -37,7 +36,41 @@ brew install gigalixir
 
 ## Deployment
 
+### Initial Setup
+
+- Gigalixir setup
 ```bash
 gigalixir login
 gigalixir create -n $APP_NAME
+
 ```
+
+- Versioning for Gigalixir
+```bash
+echo 'elixir_version=1.14.3' > elixir_buildpack.config
+echo 'erlang_version=24.3.4' >> elixir_buildpack.config
+echo 'node_version=12.16.3' > phoenix_static_buildpack.config
+```
+
+- commit
+```bash
+git add .
+git commit -m "Set Elixir, Erlang, and Node version"
+```
+
+### Deployment
+
+```bash
+# You must merge into main first
+git push gigalixir
+```
+
+### Guidelines
+
+https://hexdocs.pm/phoenix/gigalixir.html#provisioning-a-database
+
+
+### Release
+
+You can see the resule of the deployment in the following URL:
+https://tmpphx.gigalixirapp.com/
