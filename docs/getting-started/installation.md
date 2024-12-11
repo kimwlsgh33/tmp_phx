@@ -20,8 +20,8 @@ This guide will help you set up your development environment for our Phoenix app
 ### 1. Install Elixir and Erlang
 ```bash
 # Using asdf (recommended)
-asdf install erlang latest
-asdf install elixir latest
+asdf plugin-add erlang
+asdf plugin-add elixir
 
 # Or using Homebrew on macOS
 brew install elixir
@@ -47,7 +47,7 @@ brew install node
 ### 4. Clone the Repository
 ```bash
 git clone <repository-url>
-cd myapp
+cd tmp_phx
 ```
 
 ### 5. Install Dependencies
@@ -56,6 +56,7 @@ cd myapp
 mix deps.get
 
 # Install and setup assets
+# You need to configure database (see docs/architecture/postgresql.md) first
 mix setup
 ```
 

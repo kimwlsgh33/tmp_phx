@@ -21,6 +21,7 @@ Our documentation is organized into several major sections, each serving a speci
 ### 3. Architecture (`architecture/`)
 - System design and components
 - Database schema
+- PostgreSQL setup and configuration
 - Context organization
 - Component interactions
 
@@ -76,6 +77,7 @@ docs/
 ├── architecture/     # System architecture documentation
 │   ├── contexts.md   # Phoenix contexts design
 │   ├── schema.md     # Database schema
+│   ├── postgresql.md # PostgreSQL setup and configuration
 │   └── components.md # Major components overview
 ├── api/             # API documentation
 │   ├── rest.md      # REST API endpoints
