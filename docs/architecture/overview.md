@@ -21,6 +21,11 @@ Our Phoenix application follows a standard Phoenix 1.7 architecture with some cu
    - Ecto: Database interactions
    - Repo: Database wrapper
    - Migrations: Database structure versions
+   - PostgreSQL: Primary database system
+     - Configuration and setup details in [`postgresql.md`](postgresql.md)
+     - Optimized connection pooling
+     - Automated backup strategies
+     - Performance monitoring
 
 ### Directory Structure
 

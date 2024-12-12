@@ -19,12 +19,16 @@ defmodule MyappWeb.Router do
 
     get "/", PageController, :home
     live "/counter", CounterLive
+    live "/files", FileLive
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", MyappWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", MyappWeb do
+    pipe_through :api
+
+    post "/files/upload", FileController, :upload
+    get "/files/:filename", FileController, :download
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:myapp, :dev_routes) do

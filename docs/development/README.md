@@ -1,68 +1,39 @@
 # Development Documentation
 
-This directory contains comprehensive documentation for developers working on the AVR-TChan project.
+This directory contains comprehensive documentation about development processes, implementation details, rules, and guidelines for the project.
 
 ## Directory Structure
 
 ```
 development/
-├── guidelines/           # Development guidelines and standards
-│   ├── code/            # Code style and practices
-│   ├── documentation/   # Documentation standards
-│   └── testing/         # Testing practices
-├── implementation/      # Implementation plans
-│   ├── active/         # Current implementation plans
-│   └── completed/      # Archived implementation plans
-├── processes/          # Development processes
-│   ├── review/        # Code review process
-│   ├── release/       # Release management
-│   └── testing/       # Testing procedures
-└── rules/             # Project rules and conventions
-    ├── coding/        # Coding standards
-    └── naming/        # Naming conventions
+├── processes/           # Development workflow and processes
+│   ├── git-workflow.md  # Git branching and commit guidelines
+│   ├── review/         # Code review process
+│   │   └── README.md   # Code review guidelines
+│   └── release.md      # Release process
+├── implementation/     # Implementation details and architecture decisions
+│   ├── README.md      # Overview of implementation docs
+│   └── decisions/     # Architecture Decision Records (ADRs)
+├── rules/             # Development rules and standards
+│   ├── coding/        # Coding standards
+│   │   ├── elixir.md  # Elixir coding standards
+│   │   └── js.md      # JavaScript coding standards
+│   └── naming/        # Naming conventions
+└── guidelines/        # Development guidelines
+    ├── documentation/ # Documentation guidelines
+    ├── testing/       # Testing guidelines
+    └── security/      # Security guidelines
 ```
 
 ## Quick Links
 
-### Guidelines
-- [Code Style Guidelines](guidelines/code/style.md)
+- [Git Workflow](processes/git-workflow.md)
+- [Code Review Guidelines](processes/review/README.md)
+- [Release Process](processes/release.md)
+- [Implementation Overview](implementation/README.md)
+- [Coding Standards](rules/coding/)
 - [Documentation Guidelines](guidelines/documentation/README.md)
-- [Testing Guidelines](guidelines/testing/README.md)
-
-### Implementation
-- [Active Plans](implementation/active/README.md)
-- [Completed Plans](implementation/completed/README.md)
-
-### Processes
-- [Code Review Process](processes/review/README.md)
-- [Release Management](processes/release/README.md)
-- [Testing Procedures](processes/testing/README.md)
-
-### Rules
-- [Coding Standards](rules/coding/README.md)
-- [Naming Conventions](rules/naming/README.md)
-
-## Key Development Practices
-
-### Naming Conventions
-Consistent naming is crucial for maintainability. We follow strict naming conventions for:
-- State machine variables (`st_` prefix)
-- Timer IDs (`tid_` prefix)
-- Event variables (`evt_` prefix)
-- Position/value variables (descriptive names)
-
-See [Naming Conventions](rules/naming/README.md) for detailed guidelines.
-
-## For New Developers
-
-1. Start with the [Code Style Guidelines](guidelines/code/style.md)
-2. Review the [Documentation Guidelines](guidelines/documentation/README.md)
-3. Understand our [Code Review Process](processes/review/README.md)
 
 ## Contributing
 
-Before contributing:
-1. Review relevant guidelines in the `guidelines/` directory
-2. Check implementation plans in `implementation/active/`
-3. Follow processes outlined in `processes/`
-4. Adhere to rules in `rules/`
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for information on how to contribute to this documentation.

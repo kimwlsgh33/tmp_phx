@@ -1,6 +1,6 @@
 # Implementation Plans
 
-This directory contains detailed implementation plans for features and components of the AVR-TChan project.
+This directory contains detailed implementation plans for features and components of the tmp-phx project.
 
 ## Directory Structure
 

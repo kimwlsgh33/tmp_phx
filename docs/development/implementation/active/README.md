@@ -4,14 +4,10 @@ This directory contains implementation plans that are currently in progress or s
 
 ## Current Plans
 
-- [Event Manager](event-manager.md) - Implementation plan for the event management system
-  - Status: `In Progress`
+- [File Server](file-server.md) - Implementation plan for the file server
+  - Status: `Draft`
   - Priority: High
   
-- [State Manager](state-manager.md) - Implementation plan for state handling
-  - Status: `In Review`
-  - Priority: High
-
 ## Adding New Plans
 
 1. Create a new markdown file following the [template](../README.md#plan-template)
