@@ -11,8 +11,9 @@ defmodule MyappWeb.UserSocket do
 
   ## Channels
   channel "chat:*", MyappWeb.ChatChannel
+  channel "room:*", MyappWeb.RoomChannel
 
-  @doc """
+  """
   Socket params are passed from the client and can
   be used to verify and authenticate a user. After
   verification, you can put default assigns into
@@ -23,12 +24,13 @@ defmodule MyappWeb.UserSocket do
       {:ok, assign(socket, :user_id, verified_user_id)}
 
   To deny connection, return `:error` or `{:error, term}`. To control the
-  response the client receives in that case, 
+  response the client receives in that case,
   [define an error handler in the websocket configuration](https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#socket/3-websocket-configuration).
 
   See `Phoenix.Token` documentation for examples in
   performing token verification on connect.
   """
+
   @impl true
   def connect(_params, socket, _connect_info) do
     {:ok, socket}
@@ -50,7 +52,7 @@ defmodule MyappWeb.UserSocket do
       :ok
 
   ## Return values
-      
+
     * A string in the format `"user_socket:user_id"` - identifies the socket for a specific user.
     * `nil` - makes this socket anonymous.
   """
