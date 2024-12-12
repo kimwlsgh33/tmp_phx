@@ -103,6 +103,41 @@ These handle data structure and database interactions.
 
 ### 5. Set up the front-end to connect to these channels
 
+- Created chat.js with:
+   - Socket connection setup
+   - Room channel joining
+   - Message sending and receiving
+   - Message display functionality
+   - Username management
+
+- Created chat.css with styles for:
+   - Chat container layout
+   - Message bubbles
+   - Input form
+   - Responsive design
+   
+- Created show.html.heex template for the chat room interface
+
+- Updated app.js to:
+   - Import the chat functionality
+   - Initialize chat when the page loads
+
+- Updated app.css to import the chat styles
+
+#### Usage Example
+
+1. Create a room using the Chat context:
+```elixir
+Myapp.Chat.create_room(%{name: "General", description: "My First Room"})
+```
+2. Navigate to the room's page (you'll need to set up the route and controller, would you like me to help with that?)
+
+3. The chat interface will automatically:
+   - Prompt for username on first visit
+   - Connect to the room channel
+   - Display existing messages
+   - Allow sending new messages
+
 ## Integration Plan
 How this feature will be integrated into the existing system.
 
