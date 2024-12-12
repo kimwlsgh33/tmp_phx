@@ -5,9 +5,13 @@ This directory contains implementation plans that are currently in progress or s
 ## Current Plans
 
 - [File Server](file-server.md) - Implementation plan for the file server
-  - Status: `Draft`
+  - Status: `In Progress`
   - Priority: High
   
+- [Chat Rooms](chat-rooms.md) - Implementation plan for the chat rooms
+  - Status: `Draft`
+  - Priority: Low
+
 ## Adding New Plans
 
 1. Create a new markdown file following the [template](../README.md#plan-template)
