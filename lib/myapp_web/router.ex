@@ -18,6 +18,7 @@ defmodule MyappWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/chat", ChatController, :index
     live "/counter", CounterLive
     live "/files", FileLive
   end
