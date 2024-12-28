@@ -2,10 +2,10 @@
 
 ## Procedure
 
-1. Add user authentication using Phoenix's built-in authentication system.
+1. Add user authentication using Phoenix's built-in authentication system. (argon2 hashing)
 
 ```bash
-mix phx.gen.auth Accounts User users
+mix phx.gen.auth Accounts User users --hashing-lib argon2
 ```
 
 2. Refetch dependencies

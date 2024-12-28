@@ -26,6 +26,9 @@ def valid_user?(user) do
 end
 ```
 
+- `fetch_*` for functions that return blank tuples if the data is not found
+- `get_*` for functions that return nil if the data is not found
+
 ### Variables
 - snake_case for variables
 - Descriptive names over abbreviations
