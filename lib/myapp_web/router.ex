@@ -34,6 +34,12 @@ defmodule MyappWeb.Router do
     get "/files/:filename", FileController, :download
   end
 
+  scope "/admin", MyappWeb do
+    pipe_through :browser
+
+    get "/", AdminController, :index
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:myapp, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put

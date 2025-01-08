@@ -5,6 +5,10 @@ This directory contains implementation plans that are currently in progress or s
 ## Current Plans
 
 - [File Server](file-server.md) - Implementation plan for the file server
+  - Status: `In Progress`
+  - Priority: Medium
+
+- [Privacy Policy](privacy-policy.md) - Implementation plan for privacy policy
   - Status: `Draft`
   - Priority: High
   

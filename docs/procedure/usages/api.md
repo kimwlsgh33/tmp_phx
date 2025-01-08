@@ -4,7 +4,19 @@
 
 ### Step 1: Create a GCP Project
 
-### Step 2: Enable the YouTube Data API v3
+### Step 2: Create a Organization
+
+- **Requirements**
+  - Organization name
+  - Organization domain that supports the email
+
+IAM & Admin
+  |> Organizations 
+  |> Create Organization 
+  |> Name 
+  |> Create
+
+### Step 3: Enable the YouTube Data API v3
 
 API & Services 
   |> Dashboard 
@@ -12,7 +24,7 @@ API & Services
   |> YouTube Data API v3
   |> Enable
 
-### Step 3: Create OAuth Credentials
+### Step 4: Create OAuth Credentials
 
 API & Services 
   |> Credentials 
