@@ -1,0 +1,98 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: lib/myapp_web/components/core_components.ex:482
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr ""
+
+#: lib/myapp_web/components/core_components.ex:160
+#, elixir-autogen, elixir-format
+msgid "Attempting to reconnect"
+msgstr ""
+
+#: lib/myapp_web/components/core_components.ex:151
+#, elixir-autogen, elixir-format
+msgid "Error!"
+msgstr ""
+
+#: lib/myapp_web/components/core_components.ex:172
+#, elixir-autogen, elixir-format
+msgid "Hang in there while we get back on track"
+msgstr ""
+
+#: lib/myapp_web/components/core_components.ex:167
+#, elixir-autogen, elixir-format
+msgid "Something went wrong!"
+msgstr ""
+
+#: lib/myapp_web/components/core_components.ex:150
+#, elixir-autogen, elixir-format
+msgid "Success!"
+msgstr ""
+
+#: lib/myapp_web/components/core_components.ex:155
+#, elixir-autogen, elixir-format
+msgid "We can't find the internet"
+msgstr ""
+
+#: lib/myapp_web/components/core_components.ex:76
+#: lib/myapp_web/components/core_components.ex:130
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr ""
+
+msgid "Privacy Policy"
+msgstr ""
+
+msgid "This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website."
+msgstr ""
+
+msgid "We may collect personal data such as your name, email address, and phone number."
+msgstr ""
+
+msgid "We may collect information about your interactions with our website, such as your IP address, browser type, and pages visited."
+msgstr ""
+
+msgid "We use the information we collect to provide, maintain, and improve our services."
+msgstr ""
+
+msgid "We may use your information to communicate with you about updates, promotions, and other information."
+msgstr ""
+
+msgid "We do not share your personal information with third parties except as described in this policy."
+msgstr ""
+
+msgid "We may disclose your information if required to do so by law or in response to valid requests by public authorities."
+msgstr ""
+
+msgid "We implement appropriate security measures to protect your information from unauthorized access, alteration, disclosure, or destruction."
+msgstr ""
+
+msgid "You have the right to access the personal information we hold about you."
+msgstr ""
+
+msgid "You have the right to request the correction of inaccurate personal information."
+msgstr ""
+
+msgid "You have the right to request the deletion of your personal information."
+msgstr ""
+
+msgid "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on our website."
+msgstr ""
+
+msgid "contact@example.com"
+msgstr ""
+
+msgid "+1-234-567-890"
+msgstr ""
