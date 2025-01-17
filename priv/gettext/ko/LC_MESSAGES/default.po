@@ -14,37 +14,37 @@ msgstr ""
 #: lib/myapp_web/components/core_components.ex:482
 #, elixir-autogen, elixir-format
 msgid "Actions"
-msgstr ""
+msgstr "액션"
 
 #: lib/myapp_web/components/core_components.ex:160
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
-msgstr ""
+msgstr "재연결"
 
 #: lib/myapp_web/components/core_components.ex:151
 #, elixir-autogen, elixir-format
 msgid "Error!"
-msgstr ""
+msgstr "오류!"
 
 #: lib/myapp_web/components/core_components.ex:172
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
-msgstr ""
+msgstr "잠시 기다려주세요."
 
 #: lib/myapp_web/components/core_components.ex:167
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
-msgstr ""
+msgstr "문제가 발생했습니다!"
 
 #: lib/myapp_web/components/core_components.ex:150
 #, elixir-autogen, elixir-format
 msgid "Success!"
-msgstr ""
+msgstr "성공!"
 
 #: lib/myapp_web/components/core_components.ex:155
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
-msgstr ""
+msgstr "인터넷을 찾을 수 없습니다."
 
 #: lib/myapp_web/components/core_components.ex:76
 #: lib/myapp_web/components/core_components.ex:130
@@ -53,46 +53,46 @@ msgid "close"
 msgstr ""
 
 msgid "Privacy Policy"
-msgstr ""
+msgstr "개인정보 보호 정책"
 
 msgid "This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website."
-msgstr ""
+msgstr "이 개인정보 보호 정책은 귀하가 당사 웹사이트를 방문할 때 귀하의 정보를 수집, 사용, 공개 및 보호하는 방법을 설명합니다."
 
 msgid "We may collect personal data such as your name, email address, and phone number."
-msgstr ""
+msgstr "당사는 귀하의 이름, 이메일 주소 및 전화번호와 같은 개인 데이터를 수집할 수 있습니다."
 
 msgid "We may collect information about your interactions with our website, such as your IP address, browser type, and pages visited."
-msgstr ""
+msgstr "당사는 귀하의 IP 주소, 브라우저 유형 및 방문한 페이지와 같은 당사 웹사이트와의 상호작용에 대한 정보를 수집할 수 있습니다."
 
 msgid "We use the information we collect to provide, maintain, and improve our services."
-msgstr ""
+msgstr "당사는 수집한 정보를 사용하여 당사의 서비스를 제공, 유지 및 개선합니다."
 
 msgid "We may use your information to communicate with you about updates, promotions, and other information."
-msgstr ""
+msgstr "당사는 귀하에게 업데이트, 프로모션 및 기타 정보에 대해 알리기 위해 귀하의 정보를 사용할 수 있습니다."
 
 msgid "We do not share your personal information with third parties except as described in this policy."
-msgstr ""
+msgstr "당사는 이 정책에 설명된 경우를 제외하고 귀하의 개인 정보를 제3자와 공유하지 않습니다."
 
 msgid "We may disclose your information if required to do so by law or in response to valid requests by public authorities."
-msgstr ""
+msgstr "당사는 법률에 의해 요구되거나 공공 기관의 유효한 요청에 응답하기 위해 귀하의 정보를 공개할 수 있습니다."
 
 msgid "We implement appropriate security measures to protect your information from unauthorized access, alteration, disclosure, or destruction."
-msgstr ""
+msgstr "당사는 귀하의 정보를 무단 액세스, 변경, 공개 또는 파괴로부터 보호하기 위해 적절한 보안 조치를 구현합니다."
 
 msgid "You have the right to access the personal information we hold about you."
-msgstr ""
+msgstr "귀하는 당사가 보유한 귀하의 개인 정보에 접근할 권리가 있습니다."
 
 msgid "You have the right to request the correction of inaccurate personal information."
-msgstr ""
+msgstr "귀하는 부정확한 개인 정보를 수정할 권리가 있습니다."
 
 msgid "You have the right to request the deletion of your personal information."
-msgstr ""
+msgstr "귀하는 귀하의 개인 정보를 삭제할 권리가 있습니다."
 
 msgid "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on our website."
-msgstr ""
+msgstr "당사는 때때로 이 개인정보 보호 정책을 업데이트할 수 있습니다. 당사는 당사 웹사이트에 새로운 개인정보 보호 정책을 게시하여 귀하에게 변경 사항을 알릴 것입니다."
 
 msgid "contact@example.com"
-msgstr ""
+msgstr "contact@example.com"
 
 msgid "+1-234-567-890"
-msgstr ""
+msgstr "010-9118-6277"

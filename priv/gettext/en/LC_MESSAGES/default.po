@@ -92,7 +92,7 @@ msgid "We may update this Privacy Policy from time to time. We will notify you o
 msgstr ""
 
 msgid "contact@example.com"
-msgstr ""
+msgstr "contact@example.com"
 
 msgid "+1-234-567-890"
-msgstr ""
+msgstr "+1-234-567-890"
