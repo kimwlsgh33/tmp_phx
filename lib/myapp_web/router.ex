@@ -24,6 +24,8 @@ defmodule MyappWeb.Router do
     get "/", PageController, :home
     live "/counter", CounterLive
     live "/files", FileLive
+
+    get "/privacy-policy", PrivacyPolicyController, :page
   end
 
   # Other scopes may use custom stacks.
@@ -32,6 +34,9 @@ defmodule MyappWeb.Router do
 
     post "/files/upload", FileController, :upload
     get "/files/:filename", FileController, :download
+
+    get "/privacy-policy", PrivacyPolicyController, :index
+    get "/privacy-policy/:section", PrivacyPolicyController, :show
   end
 
   scope "/admin", MyappWeb do

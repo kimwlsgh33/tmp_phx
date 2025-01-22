@@ -1,0 +1,39 @@
+<div class="mx-auto max-w-4xl px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8">Privacy Policy</h1>
+  
+  <div class="space-y-8">
+    <%= for section <- @policy["Terms"] do %>
+      <section class="privacy-section">
+        <h2 class="text-2xl font-semibold mb-4">
+          <%= section["Title"] %>
+        </h2>
+        
+        <%= for chapter <- section["Chapters"] do %>
+          <div class="mb-6">
+            <h3 class="text-xl font-medium mb-3">
+              <%= chapter["Title"] %>
+            </h3>
+            
+            <div class="prose prose-slate max-w-none">
+              <%= if is_list(chapter["Content"]) do %>
+                <ul class="list-disc pl-5 space-y-2">
+                  <%= for content <- chapter["Content"] do %>
+                    <li><%= content %></li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <p><%= chapter["Content"] %></p>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+
+  <div class="mt-8 text-sm text-gray-500">
+    <p>Version: <%= @policy["Version"] %></p>
+    <p>Last Updated: <%= @policy["ReleaseDate"] %></p>
+    <p>Effective Date: <%= @policy["EffectiveDate"] %></p>
+  </div>
+</div>
