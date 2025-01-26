@@ -1,18 +1,26 @@
 defmodule Myapp.PrivacyPolicy do
-  @privacy_policy_path "priv/privacy_policy/v1.json"
+  @moduledoc """
+  Handles privacy policy data management and retrieval.
+  """
+
+  @privacy_policy_path_v1 "priv/privacy_policy/v1.json"
+  @privacy_policy_path_v2 "priv/privacy_policy/v2.json"
+
+  alias MyappWeb.PrivacyPolicy, as: PolicyPresenter
 
   @doc """
-  Gets the privacy policy content.
+  Gets the privacy policy content with localization support.
   Returns {:ok, policy} on success, {:error, reason} on failure
-  """
-  def get_policy do
-    case File.read(Application.app_dir(:myapp, @privacy_policy_path)) do
-      {:ok, content} ->
-        case Jason.decode(content) do
-          {:ok, policy} -> {:ok, policy}
-          {:error, _} = error -> error
-        end
 
+  ## Parameters
+    * locale - Optional locale to get the policy in. Defaults to current locale.
+  """
+  def get_policy(locale \\ nil) do
+    with {:ok, content} <- File.read(Application.app_dir(:myapp, @privacy_policy_path_v2)),
+         {:ok, policy} <- Jason.decode(content) do
+      localized_policy = PolicyPresenter.get_all_sections(locale)
+      {:ok, Map.put(policy, "localized_content", localized_policy)}
+    else
       {:error, _} = error -> error
     end
   end
@@ -20,20 +28,26 @@ defmodule Myapp.PrivacyPolicy do
   @doc """
   Gets a specific section of the privacy policy by section number.
   Returns {:ok, section} if found, {:error, :not_found} if not found
+
+  ## Parameters
+    * section_id - The section ID to retrieve
+    * locale - Optional locale to get the section in. Defaults to current locale.
   """
-  def get_section(section_number) do
-    with {:ok, policy} <- get_policy(),
-         section when not is_nil(section) <- find_section(policy["Terms"], section_number) do
-      {:ok, section}
-    else
+  def get_section(section_id, locale \\ nil) do
+    case PolicyPresenter.get_section(section_id, locale) do
       nil -> {:error, :not_found}
-      error -> error
+      section -> {:ok, section}
     end
   end
 
-  defp find_section(terms, section_number) do
-    Enum.find(terms, fn section ->
-      section["SectionNumber"] == section_number
-    end)
+  @doc """
+  Gets the metadata for the privacy policy.
+  Returns {:ok, metadata} on success, {:error, reason} on failure
+
+  ## Parameters
+    * locale - Optional locale to get the metadata in. Defaults to current locale.
+  """
+  def get_metadata(locale \\ nil) do
+    {:ok, PolicyPresenter.get_metadata(locale)}
   end
 end

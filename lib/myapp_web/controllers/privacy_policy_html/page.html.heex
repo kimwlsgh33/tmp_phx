@@ -3,60 +3,71 @@
     <div class="space-y-8">
       <div class="text-center">
         <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-          Privacy Policy
+          <%= @metadata.accessibility.ariaLabel %>
         </h1>
         <p class="mt-4 text-base text-gray-600 dark:text-gray-400">
-          Last updated: <%= @policy["ReleaseDate"] %>
+          <%= gettext("Last updated") %>: <%= @metadata.releaseDate %>
         </p>
+        <div class="mt-4 flex justify-center space-x-4">
+          <.link
+            href={~p"/locale/ko"}
+            class={"#{if @metadata.language == "ko", do: "font-bold"} text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"}
+          >
+            한국어
+          </.link>
+          <.link
+            href={~p"/locale/en"}
+            class={"#{if @metadata.language == "en", do: "font-bold"} text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"}
+          >
+            English
+          </.link>
+        </div>
       </div>
 
       <div class="space-y-12">
-        <%= for section <- @policy["Terms"] do %>
+        <%= for section <- @policy.localized_content do %>
           <div class="space-y-6">
             <h2 class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-              <%= if section["Type"] == "Link" do %>
-                <.link href={section["Url"]} target="_blank" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600">
-                  <%= section["Title"] %>
-                </.link>
-              <% else %>
-                <%= section["Title"] %>
-              <% end %>
+              <%= section.title %>
             </h2>
             
-            <%= for chapter <- section["Chapters"] do %>
-              <div class="space-y-4">
-                <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-                  <%= chapter["Title"] %>
-                </h3>
-                
-                <div class="prose prose-gray dark:prose-invert max-w-none">
-                  <%= if is_list(chapter["Content"]) do %>
-                    <ul class="list-disc pl-6 space-y-2">
-                      <%= for content <- chapter["Content"] do %>
-                        <li class="text-gray-600 dark:text-gray-300"><%= content %></li>
-                      <% end %>
-                    </ul>
-                  <% else %>
-                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-                      <%= chapter["Content"] %>
-                    </p>
-                  <% end %>
+            <%= if section.summary do %>
+              <p class="text-gray-600 dark:text-gray-400 italic">
+                <%= section.summary %>
+              </p>
+            <% end %>
+            
+            <%= if section.chapters do %>
+              <%= for chapter <- section.chapters do %>
+                <div class="space-y-4">
+                  <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+                    <%= chapter.title %>
+                  </h3>
+                  
+                  <div class="prose prose-gray dark:prose-invert max-w-none">
+                    <%= if is_list(chapter.content) do %>
+                      <ul class="list-disc pl-6 space-y-2">
+                        <%= for item <- chapter.content do %>
+                          <li class="text-gray-600 dark:text-gray-300"><%= item %></li>
+                        <% end %>
+                      </ul>
+                    <% else %>
+                      <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        <%= chapter.content %>
+                      </p>
+                    <% end %>
+                  </div>
                 </div>
-              </div>
+              <% end %>
             <% end %>
           </div>
         <% end %>
       </div>
 
       <div class="border-t border-gray-200 dark:border-gray-800 pt-8">
-        <div class="text-center space-y-2">
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            Version: <%= @policy["Version"] %>
-          </p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            Effective Date: <%= @policy["EffectiveDate"] %>
-          </p>
-        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+          <%= gettext("Effective Date") %>: <%= @metadata.effectiveDate %>
+        </p>
       </div>
     </div>
   </div>

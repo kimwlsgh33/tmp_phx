@@ -1,0 +1,84 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+msgid "privacy_policy_aria_label"
+msgstr "서비스 이용약관"
+
+msgid "privacy_introduction_title"
+msgstr "환영합니다"
+
+msgid "privacy_introduction_content"
+msgstr "여러분('회원')을 환영합니다. 000(이하 '서비스')을 이용해 주셔서 감사합니다. 본 약관은 다양한 000 서비스의 이용과 관련하여 000서비스를 제공하는 000(이하 '000')와 이를 이용하는 000 서비스 회원(이하 '회원') 또는 비회원과의 관계를 설명하며, 아울러 여러분의 000 서비스 이용에 도움이 될 수 있는 유익한 정보를 포함하고 있습니다."
+
+msgid "privacy_section_1_title"
+msgstr "총칙"
+
+msgid "privacy_section_1_summary"
+msgstr "본 섹션에서는 약관의 기본 사항을 다룹니다"
+
+msgid "privacy_section_1_chapter_1_title"
+msgstr "목적"
+
+msgid "privacy_section_1_chapter_1_content"
+msgstr "이 약관은 회원이 000(이하 '회사'라 합니다)에서 제공하는 사용자가 소셜 플랫폼에 게시물을 예약하여 업로드하고, 콘텐츠 분석 및 디자인 도구를 제공하여 소셜 미디어 콘텐츠를 강화할 수 있도록 돕는 소셜 미디어 관리 도구(웹, 모바일 웹•앱 서비스를 포함합니다.)인 00서비스(이하 '서비스'라 합니다) 및 00 관련 제반 서비스를 이용함에 있어 회원과 회사간의 권리, 의무 및 책임사항, 서비스 이용조건 및 절차 등 기본적인 사항을 규정함을 목적으로 합니다."
+
+msgid "privacy_section_1_chapter_2_title"
+msgstr "약관의 효력 및 변경"
+
+msgid "privacy_section_1_chapter_2_content"
+msgstr "이 약관은 대한민국 내에서 서비스를 이용하고자 하는 모든 회원에 대하여 그 효력을 발생합니다."
+
+msgid "privacy_section_2_title"
+msgstr "서비스 이용 계약"
+
+msgid "privacy_section_2_summary"
+msgstr "서비스 이용 계약의 성립과 이용 조건을 설명합니다"
+
+msgid "privacy_section_2_chapter_5_title"
+msgstr "유료서비스 이용계약의 성립"
+
+msgid "privacy_section_2_chapter_5_content"
+msgstr "이용자는 '회사'가 제공하는 다음 또는 이와 유사한 절차에 의하여 이용신청을 합니다."
+
+msgid "privacy_section_2_chapter_6_title"
+msgstr "이용신청"
+
+msgid "privacy_section_2_chapter_6_content"
+msgstr "서비스의 대부분 기능에 접근하려면 계정을 등록해야합니다."
+
+msgid "privacy_section_3_title"
+msgstr "서비스 이용"
+
+msgid "privacy_section_3_summary"
+msgstr "서비스 이용에 관한 기본 규정을 설명합니다"
+
+msgid "privacy_section_3_chapter_12_title"
+msgstr "서비스의 이용 개시"
+
+msgid "privacy_section_3_chapter_12_content"
+msgstr "회사는 회원의 이용신청을 승낙한 때부터 서비스를 개시합니다. 단, 일부 서비스의 경우에는 지정된 일자부터 서비스를 개시합니다."
+
+msgid "privacy_section_3_chapter_13_title"
+msgstr "서비스의 이용시간"
+
+msgid "privacy_section_3_chapter_13_content"
+msgstr "서비스의 이용은 연중무휴 1일 24시간을 원칙으로 합니다. 다만, 정기점검 등 회사의 업무상 또는 기술상의 이유로 서비스가 일시 중지될 수 있습니다."
