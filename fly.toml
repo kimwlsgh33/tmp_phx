@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for ingrey-01282025 on 2025-01-28T23:23:47+09:00
+# fly.toml app configuration file generated for ingrey-01282025-lively-glade-5283 on 2025-01-28T23:41:51+09:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'ingrey-01282025'
+app = 'ingrey-01282025-lively-glade-5283'
 primary_region = 'nrt'
 kill_signal = 'SIGTERM'
 
@@ -13,7 +13,7 @@ kill_signal = 'SIGTERM'
   release_command = '/app/bin/migrate'
 
 [env]
-  PHX_HOST = 'ingrey-01282025.fly.dev'
+  PHX_HOST = 'ingrey-01282025-lively-glade-5283.fly.dev'
   PORT = '8080'
 
 [http_service]
