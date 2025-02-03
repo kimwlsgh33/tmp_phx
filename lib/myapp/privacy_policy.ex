@@ -3,10 +3,9 @@ defmodule Myapp.PrivacyPolicy do
   Handles privacy policy data management and retrieval.
   """
 
+  use Gettext, backend: Myapp.Gettext
+  
   @privacy_policy_path_v1 "priv/privacy_policy/v1.json"
-  @privacy_policy_path_v2 "priv/privacy_policy/v2.json"
-
-  alias MyappWeb.PrivacyPolicy, as: PolicyPresenter
 
   @doc """
   Gets the privacy policy content with localization support.
@@ -16,38 +15,68 @@ defmodule Myapp.PrivacyPolicy do
     * locale - Optional locale to get the policy in. Defaults to current locale.
   """
   def get_policy(locale \\ nil) do
-    with {:ok, content} <- File.read(Application.app_dir(:myapp, @privacy_policy_path_v2)),
+    with {:ok, content} <- File.read(Application.app_dir(:myapp, @privacy_policy_path_v1)),
          {:ok, policy} <- Jason.decode(content) do
-      localized_policy = PolicyPresenter.get_all_sections(locale)
-      {:ok, Map.put(policy, "localized_content", localized_policy)}
-    else
-      {:error, _} = error -> error
+      # Set the locale for gettext if provided
+      if locale, do: Gettext.put_locale(Myapp.Gettext, locale)
+      
+      localized_policy = localize_policy(policy)
+      {:ok, localized_policy}
     end
   end
 
-  @doc """
-  Gets a specific section of the privacy policy by section number.
-  Returns {:ok, section} if found, {:error, :not_found} if not found
+  # Localizes the policy content using Gettext
+  defp localize_policy(%{"document" => document} = policy) do
+    localized_document = 
+      document
+      |> localize_sections()
+      |> Map.put("index", localize_index(document["index"]))
 
-  ## Parameters
-    * section_id - The section ID to retrieve
-    * locale - Optional locale to get the section in. Defaults to current locale.
-  """
-  def get_section(section_id, locale \\ nil) do
-    case PolicyPresenter.get_section(section_id, locale) do
-      nil -> {:error, :not_found}
-      section -> {:ok, section}
-    end
+    Map.put(policy, "document", localized_document)
   end
 
-  @doc """
-  Gets the metadata for the privacy policy.
-  Returns {:ok, metadata} on success, {:error, reason} on failure
+  defp localize_sections(%{"sections" => sections} = document) do
+    localized_sections = Enum.map(sections, &localize_section/1)
+    Map.put(document, "sections", localized_sections)
+  end
 
-  ## Parameters
-    * locale - Optional locale to get the metadata in. Defaults to current locale.
-  """
-  def get_metadata(locale \\ nil) do
-    {:ok, PolicyPresenter.get_metadata(locale)}
+  defp localize_section(%{"chapters" => chapters} = section) do
+    localized_chapters = Enum.map(chapters, &localize_chapter/1)
+    section
+    |> Map.put("chapters", localized_chapters)
+    |> Map.update!("title", fn text -> 
+      Gettext.dgettext(Myapp.Gettext, "privacy_policy", text)
+    end)
+  end
+
+  defp localize_chapter(chapter) do
+    chapter
+    |> Map.update!("title", fn text -> 
+      Gettext.dgettext(Myapp.Gettext, "privacy_policy", text)
+    end)
+    |> Map.update("content", [], fn contents -> 
+      Enum.map(contents, fn content -> 
+        Map.update!(content, "text", fn text ->
+          Gettext.dgettext(Myapp.Gettext, "privacy_policy", text)
+        end)
+      end)
+    end)
+  end
+
+  defp localize_index(%{"items" => items} = index) do
+    localized_items = Enum.map(items, fn item ->
+      Map.update!(item, "title", fn text ->
+        Gettext.dgettext(Myapp.Gettext, "privacy_policy", text)
+      end)
+    end)
+    
+    index
+    |> Map.put("items", localized_items)
+    |> Map.update!("title", fn text ->
+      Gettext.dgettext(Myapp.Gettext, "privacy_policy", text)
+    end)
+    |> Map.update!("subtitle", fn text ->
+      Gettext.dgettext(Myapp.Gettext, "privacy_policy", text)
+    end)
   end
 end

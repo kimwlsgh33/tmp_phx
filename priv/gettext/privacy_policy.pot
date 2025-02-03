@@ -3,7 +3,10 @@
 ## "msgid"s here are often extracted from source code.
 ## Add new translations manually only if they're dynamic
 ## translations that can't be statically extracted.
-
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here has no
+## effect: edit them in PO (.po) files instead.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -14,88 +17,184 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: mix gettext.extract\n"
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_policy_aria_label"
+
+#: privacy_policy
+msgid "관할법원"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_introduction_title"
+
+#: privacy_policy
+msgid "면책사항"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_introduction_content"
+
+#: privacy_policy
+msgid "손해 배상"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_1_title"
+
+#: privacy_policy
+msgid "손해배상 등"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_1_summary"
+
+#: privacy_policy
+msgid "양도 금지"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_1_chapter_1_title"
+
+#: privacy_policy
+msgid "서비스 이용계약의 청약철회, 계약해제, 해지 및 이용제한"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_1_chapter_1_content"
+
+#: privacy_policy
+msgid "개인정보의 수집, 제공 및 취급 위탁"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_1_chapter_2_title"
+
+#: privacy_policy
+msgid "이용자의 개인정보보호"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_1_chapter_2_content"
+
+#: privacy_policy
+msgid "회원 아이디(ID)와 비밀번호(Password)관리에 대한 의무와 책임"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_2_title"
+
+#: privacy_policy
+msgid "계약당사자의 의무"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_2_summary"
+
+#: privacy_policy
+msgid "광고 게재 및 광고주와의 거래"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_2_chapter_5_title"
+
+#: privacy_policy
+msgid "개인정보보호"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_2_chapter_5_content"
+
+#: privacy_policy
+msgid "사용자 콘텐츠"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_2_chapter_6_title"
+
+#: privacy_policy
+msgid "서비스 이용 대금 지급방법"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_2_chapter_6_content"
+
+#: privacy_policy
+msgid "제19조(유료서비스 약관)"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_3_title"
+
+#: privacy_policy
+msgid "“이용자”의 의무"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_3_summary"
+
+#: privacy_policy
+msgid "“회사”의 의무"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_3_chapter_12_title"
+
+#: privacy_policy
+msgid "정보의 제공 및 광고의 게재"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_3_chapter_12_content"
+
+#: privacy_policy
+msgid "이메일에 대한 회원의 의무와 책임"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_3_chapter_13_title"
+
+#: privacy_policy
+msgid "서비스의 변경 및 중지"
 msgstr ""
 
-#: lib/myapp_web/privacy_policy.ex
-msgid "privacy_section_3_chapter_13_content"
+
+#: privacy_policy
+msgid "서비스의 이용시간"
+msgstr ""
+
+
+#: privacy_policy
+msgid "서비스의 이용 게시"
+msgstr ""
+
+
+#: privacy_policy
+msgid "서비스 이용"
+msgstr ""
+
+
+#: privacy_policy
+msgid "계약 사항의 변경"
+msgstr ""
+
+
+#: privacy_policy
+msgid "미성년자 회원가입에 대한 특치사항"
+msgstr ""
+
+
+#: privacy_policy
+msgid "서비스 이용 대금"
+msgstr ""
+
+
+#: privacy_policy
+msgid "이용신청에 대한 승낙의 제한"
+msgstr ""
+
+
+#: privacy_policy
+msgid "이용신청의 승낙"
+msgstr ""
+
+
+#: privacy_policy
+msgid "이용신청"
+msgstr ""
+
+
+#: privacy_policy
+msgid "유료서비스 이용계약의 성립"
+msgstr ""
+
+
+#: privacy_policy
+msgid "서비스 이용 계약"
+msgstr ""
+
+
+#: privacy_policy
+msgid "용어의 정의"
+msgstr ""
+
+
+#: privacy_policy
+msgid "약관 외 준칙"
+msgstr ""
+
+
+#: privacy_policy
+msgid "약관의 효력 및 변경"
+msgstr ""
+
+
+#: privacy_policy
+msgid "목적"
+msgstr ""
+
+
+#: privacy_policy
+msgid "총칙"
 msgstr ""
