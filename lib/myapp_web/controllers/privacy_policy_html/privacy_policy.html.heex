@@ -1,0 +1,71 @@
+<div class="text-gray-900 dark:text-gray-100">
+  <h1 class="py-2 text-2xl font-semibold">{@privacy_policy["index"]["title"]}</h1>
+  <nav class="py-1">
+    <%= if @privacy_policy["document"]["index"] do %>
+      <%= if @privacy_policy["document"]["index"]["title"] do %>
+        <ol class="list-decimal">
+          <%= for item <- @privacy_policy["document"]["index"]["items"] do %>
+            <li><a href="#{item['ref']}">{item["title"]}</a></li>
+          <% end %>
+        </ol>
+      <% end %>
+    <% else %>
+      <p>No index found.</p>
+    <% end %>
+  </nav>
+  <div>
+    <%= if @privacy_policy["document"]["introduction"] do %>
+      <section>
+        <%= for content_item <- @privacy_policy["document"]["introduction"]["content"] do %>
+          <%= if content_item["type"] == "text" do %>
+            <p>{content_item["value"]}</p>
+          <% end %>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+  <div>
+    <%= if @privacy_policy["document"]["third-party"] do %>
+      <%= for item <- @privacy_policy["document"]["third-party"] do %>
+        <section>
+          <h2 class="py-2 text-2xl font-semibold">{item["title"]}</h2>
+          <a href={item["link"]["href"]}>{item["link"]["text"]}</a>
+          {item["link"]["value"]}
+        </section>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div>
+    <%= if @privacy_policy["document"]["sections"] do %>
+      <%= for section <- @privacy_policy["document"]["sections"] do %>
+        <section>
+          <h2 class="py-2 text-2xl font-semibold">{section["number"]}. {section["title"]}</h2>
+          <%= for chapter <- section["chapters"] do %>
+            <div>
+              <h3 class="py-2 text-xl font-semibold">{chapter["number"]}. {chapter["title"]}</h3>
+              <%= if chapter["content"]["type"] == "text" do %>
+                <p>{chapter["content"]["value"]}</p>
+              <% else %>
+                <%= for content_item <- chapter["content"]["items"] do %>
+                  <%= if content_item["text"] do %>
+                    <p>{content_item["text"]}</p>
+                  <% end %>
+                  <%= if content_item["subItems"] do %>
+                    <%= for sub_item <- content_item["subItems"] do %>
+                      <%= if sub_item["text"] do %>
+                        <p>{sub_item["text"]}</p>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </section>
+      <% end %>
+    <% end %>
+  </div>
+  <div></div>
+</div>
+

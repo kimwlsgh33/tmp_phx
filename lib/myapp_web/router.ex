@@ -22,11 +22,9 @@ defmodule MyappWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/privacy-policy/:version", PrivacyPolicyController, :page
     live "/counter", CounterLive
     live "/files", FileLive
-
-    get "/privacy-policy", PrivacyPolicyController, :page
-    get "/locale/:locale", LocaleController, :set
   end
 
   # Other scopes may use custom stacks.
@@ -35,9 +33,6 @@ defmodule MyappWeb.Router do
 
     post "/files/upload", FileController, :upload
     get "/files/:filename", FileController, :download
-
-    get "/privacy-policy", PrivacyPolicyController, :index
-    get "/privacy-policy/:section", PrivacyPolicyController, :show
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
