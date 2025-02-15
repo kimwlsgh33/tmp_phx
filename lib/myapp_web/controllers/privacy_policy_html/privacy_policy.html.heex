@@ -36,13 +36,15 @@
       <%= for item <- @privacy_policy["document"]["third-party"] do %>
         <section class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <h2 class="text-2xl font-semibold mb-4">{item["title"]}</h2>
-          <a
-            href={item["link"]["href"]}
-            class="text-blue-600 dark:text-blue-400 hover:underline block mb-2"
-          >
-            {item["link"]["text"]}
-          </a>
-          <p class="text-gray-600 dark:text-gray-400">{item["link"]["value"]}</p>
+          <p class="text-gray-600 dark:text-gray-400">
+            <a
+              href={item["link"]["href"]}
+              class="text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {item["link"]["text"]}
+            </a>
+            {item["link"]["value"]}
+          </p>
         </section>
       <% end %>
     <% end %>
