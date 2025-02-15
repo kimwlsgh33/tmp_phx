@@ -1,4 +1,4 @@
-defmodule MyappWeb.TermsOfServices do
+defmodule Myapp.TermsOfServices do
   @versions ["v1", "v1_en"]
 
   def get_versions, do: @versions
@@ -8,9 +8,8 @@ defmodule MyappWeb.TermsOfServices do
     file_path = Path.join([priv_dir, "terms_of_services", "#{version}.json"])
 
     with {:ok, content} <- File.read(file_path),
-         {:ok, policy} <- Jason.decode(content) do
-      # {:ok, policy} <- Map.fetch(json, "document") do
-      {:ok, policy}
+         {:ok, term_of_services} <- Jason.decode(content) do
+      {:ok, term_of_services}
     else
       {:error, :enoent} -> {:error, :not_found}
       {:error, %Jason.DecodeError{}} -> {:error, :invalid_json}

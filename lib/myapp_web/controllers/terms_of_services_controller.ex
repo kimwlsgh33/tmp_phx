@@ -2,7 +2,7 @@ defmodule MyappWeb.TermsOfServicesController do
   use MyappWeb, :controller
 
   def page(conn, %{"version" => version}) do
-    case MyappWeb.TermsOfServices.get_terms_of_services(version) do
+    case Myapp.TermsOfServices.get_terms_of_services(version) do
       {:ok, terms_of_services} ->
         render(conn, :terms_of_services, terms_of_services: terms_of_services)
       {:error, :not_found} ->

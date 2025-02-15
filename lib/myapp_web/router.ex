@@ -22,6 +22,7 @@ defmodule MyappWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/test", TestController, :page
     get "/privacy-policy/:version", PrivacyPolicyController, :page
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
