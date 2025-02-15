@@ -1,11 +1,11 @@
-defmodule MyappWeb.PrivacyPolicy do
+defmodule MyappWeb.TermsOfServices do
   @versions ["v1", "v1_en"]
 
   def get_versions, do: @versions
 
-  def get_privacy_policy(version) when version in @versions do
+  def get_terms_of_services(version) when version in @versions do
     priv_dir = Application.app_dir(:myapp, "priv")
-    file_path = Path.join([priv_dir, "privacy_policy", "#{version}.json"])
+    file_path = Path.join([priv_dir, "terms_of_services", "#{version}.json"])
 
     with {:ok, content} <- File.read(file_path),
          {:ok, policy} <- Jason.decode(content) do
@@ -19,5 +19,5 @@ defmodule MyappWeb.PrivacyPolicy do
     end
   end
 
-  def get_privacy_policy(_version), do: {:error, :invalid_version}
+  def get_terms_of_services(_version), do: {:error, :invalid_version}
 end

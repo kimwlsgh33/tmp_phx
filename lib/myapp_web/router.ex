@@ -23,6 +23,7 @@ defmodule MyappWeb.Router do
 
     get "/", PageController, :home
     get "/privacy-policy/:version", PrivacyPolicyController, :page
+    get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
     live "/files", FileLive
   end

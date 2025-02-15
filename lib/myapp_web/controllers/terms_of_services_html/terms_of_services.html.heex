@@ -1,11 +1,11 @@
 <div class="max-w-4xl mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
-  <h1 class="text-3xl font-bold mb-8">{@privacy_policy["document"]["index"]["title"]}</h1>
+  <h1 class="text-3xl font-bold mb-8">{@terms_of_services["document"]["index"]["title"]}</h1>
 
   <nav class="mb-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
-    <%= if @privacy_policy["document"]["index"] do %>
-      <%= if @privacy_policy["document"]["index"]["title"] do %>
+    <%= if @terms_of_services["document"]["index"] do %>
+      <%= if @terms_of_services["document"]["index"]["title"] do %>
         <ol class="list-decimal list-inside space-y-2">
-          <%= for item <- @privacy_policy["document"]["index"]["items"] do %>
+          <%= for item <- @terms_of_services["document"]["index"]["items"] do %>
             <li>
               <a href={item["ref"]} class="text-blue-600 dark:text-blue-400 hover:underline">
                 {item["title"]}
@@ -20,9 +20,9 @@
   </nav>
 
   <div class="space-y-8">
-    <%= if @privacy_policy["document"]["introduction"] do %>
+    <%= if @terms_of_services["document"]["introduction"] do %>
       <section class="prose dark:prose-invert max-w-none">
-        <%= for content_item <- @privacy_policy["document"]["introduction"]["content"] do %>
+        <%= for content_item <- @terms_of_services["document"]["introduction"]["content"] do %>
           <%= if content_item["type"] == "text" do %>
             <p class="text-lg leading-relaxed">{content_item["value"]}</p>
           <% end %>
@@ -32,8 +32,8 @@
   </div>
 
   <div class="space-y-8">
-    <%= if @privacy_policy["document"]["third-party"] do %>
-      <%= for item <- @privacy_policy["document"]["third-party"] do %>
+    <%= if @terms_of_services["document"]["third-party"] do %>
+      <%= for item <- @terms_of_services["document"]["third-party"] do %>
         <section class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <h2 class="text-2xl font-semibold mb-4">{item["title"]}</h2>
           <p class="text-gray-600 dark:text-gray-400">
@@ -51,8 +51,8 @@
   </div>
 
   <div class="space-y-12">
-    <%= if @privacy_policy["document"]["sections"] do %>
-      <%= for section <- @privacy_policy["document"]["sections"] do %>
+    <%= if @terms_of_services["document"]["sections"] do %>
+      <%= for section <- @terms_of_services["document"]["sections"] do %>
         <section id={section["id"]} class="border-b border-gray-200 dark:border-gray-700 pb-8">
           <h2 class="text-2xl font-bold mb-6">
             {section["number"]}. {section["title"]}
