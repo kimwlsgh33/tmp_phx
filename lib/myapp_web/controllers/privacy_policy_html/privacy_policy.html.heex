@@ -1,71 +1,98 @@
-<div class="text-gray-900 dark:text-gray-100">
-  <h1 class="py-2 text-2xl font-semibold">{@privacy_policy["index"]["title"]}</h1>
-  <nav class="py-1">
+<div class="max-w-4xl mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
+  <h1 class="text-3xl font-bold mb-8">{@privacy_policy["document"]["index"]["title"]}</h1>
+
+  <nav class="mb-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
     <%= if @privacy_policy["document"]["index"] do %>
       <%= if @privacy_policy["document"]["index"]["title"] do %>
-        <ol class="list-decimal">
+        <ol class="list-decimal list-inside space-y-2">
           <%= for item <- @privacy_policy["document"]["index"]["items"] do %>
-            <li><a href="#{item['ref']}">{item["title"]}</a></li>
+            <li>
+              <a href={item["ref"]} class="text-blue-600 dark:text-blue-400 hover:underline">
+                {item["title"]}
+              </a>
+            </li>
           <% end %>
         </ol>
       <% end %>
     <% else %>
-      <p>No index found.</p>
+      <p class="text-gray-600 dark:text-gray-400">No index found.</p>
     <% end %>
   </nav>
-  <div>
+
+  <div class="space-y-8">
     <%= if @privacy_policy["document"]["introduction"] do %>
-      <section>
+      <section class="prose dark:prose-invert max-w-none">
         <%= for content_item <- @privacy_policy["document"]["introduction"]["content"] do %>
           <%= if content_item["type"] == "text" do %>
-            <p>{content_item["value"]}</p>
+            <p class="text-lg leading-relaxed">{content_item["value"]}</p>
           <% end %>
         <% end %>
       </section>
     <% end %>
   </div>
-  <div>
+
+  <div class="space-y-8">
     <%= if @privacy_policy["document"]["third-party"] do %>
       <%= for item <- @privacy_policy["document"]["third-party"] do %>
-        <section>
-          <h2 class="py-2 text-2xl font-semibold">{item["title"]}</h2>
-          <a href={item["link"]["href"]}>{item["link"]["text"]}</a>
-          {item["link"]["value"]}
+        <section class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <h2 class="text-2xl font-semibold mb-4">{item["title"]}</h2>
+          <a
+            href={item["link"]["href"]}
+            class="text-blue-600 dark:text-blue-400 hover:underline block mb-2"
+          >
+            {item["link"]["text"]}
+          </a>
+          <p class="text-gray-600 dark:text-gray-400">{item["link"]["value"]}</p>
         </section>
       <% end %>
     <% end %>
   </div>
 
-  <div>
+  <div class="space-y-12">
     <%= if @privacy_policy["document"]["sections"] do %>
       <%= for section <- @privacy_policy["document"]["sections"] do %>
-        <section>
-          <h2 class="py-2 text-2xl font-semibold">{section["number"]}. {section["title"]}</h2>
+        <section id={section["id"]} class="border-b border-gray-200 dark:border-gray-700 pb-8">
+          <h2 class="text-2xl font-bold mb-6">
+            {section["number"]}. {section["title"]}
+          </h2>
+
           <%= for chapter <- section["chapters"] do %>
-            <div>
-              <h3 class="py-2 text-xl font-semibold">{chapter["number"]}. {chapter["title"]}</h3>
-              <%= if chapter["content"]["type"] == "text" do %>
-                <p>{chapter["content"]["value"]}</p>
-              <% else %>
-                <%= for content_item <- chapter["content"]["items"] do %>
-                  <%= if content_item["text"] do %>
-                    <p>{content_item["text"]}</p>
-                  <% end %>
-                  <%= if content_item["subItems"] do %>
-                    <%= for sub_item <- content_item["subItems"] do %>
-                      <%= if sub_item["text"] do %>
-                        <p>{sub_item["text"]}</p>
-                      <% end %>
+            <div class="mt-6 pl-4 border-l-4 border-gray-200 dark:border-gray-700">
+              <h3 class="text-xl font-semibold mb-4">
+                {chapter["number"]}. {chapter["title"]}
+              </h3>
+
+              <div class="space-y-4">
+                <%= if chapter["content"]["type"] == "text" do %>
+                  <p class="text-gray-800 dark:text-gray-200 leading-relaxed">
+                    {chapter["content"]["value"]}
+                  </p>
+                <% else %>
+                  <%= for content_item <- chapter["content"]["items"] do %>
+                    <%= if content_item["text"] do %>
+                      <p class="text-gray-800 dark:text-gray-200 leading-relaxed">
+                        {content_item["text"]}
+                      </p>
+                    <% end %>
+
+                    <%= if content_item["subItems"] do %>
+                      <div class="pl-6 mt-2 space-y-2">
+                        <%= for sub_item <- content_item["subItems"] do %>
+                          <%= if sub_item["text"] do %>
+                            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              {sub_item["text"]}
+                            </p>
+                          <% end %>
+                        <% end %>
+                      </div>
                     <% end %>
                   <% end %>
                 <% end %>
-              <% end %>
+              </div>
             </div>
           <% end %>
         </section>
       <% end %>
     <% end %>
   </div>
-  <div></div>
 </div>
-
