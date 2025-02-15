@@ -1,0 +1,905 @@
+{
+  "metadata": {
+    "version": "3.0.0",
+    "schemaVersion": "2024.2",
+    "releaseDate": "2025-01-26",
+    "effectiveDate": "2025-02-01",
+    "language": "en",
+    "revisionHistory": [
+      {
+        "version": "2.0.0",
+        "date": "2025-01-26",
+        "changes": "Content restructuring and enhanced accessibility features"
+      },
+      {
+        "version": "1.0.0",
+        "date": "2025-01-13",
+        "changes": "Initial release"
+      }
+    ],
+    "availableLanguages": ["en", "ko"],
+    "accessibility": {
+      "role": "document",
+      "lang": "en-US",
+      "ariaLabel": "Terms of Service",
+      "structure": {
+        "landmarks": true,
+        "headings": true
+      }
+    },
+    "formatting": {
+      "supported": ["text", "list", "link", "heading"],
+      "schema": "https://schema.org/TermsOfService"
+    }
+  },
+  "document": {
+    "index": {
+      "type": "navigation",
+      "title": "Table of Contents and Quick Links",
+      "subtitle": "Main Sections",
+      "items": [
+        {
+          "id": "section-1",
+          "title": "General Provisions",
+          "ref": "#section-1"
+        },
+        {
+          "id": "section-2",
+          "title": "Service Usage Agreement",
+          "ref": "#section-2"
+        },
+        {
+          "id": "section-3",
+          "title": "Service Usage",
+          "ref": "#section-3"
+        },
+        {
+          "id": "section-4",
+          "title": "Service Usage Fees",
+          "ref": "#section-4"
+        },
+        {
+          "id": "section-5",
+          "title": "Miscellaneous",
+          "ref": "#section-5"
+        }
+      ]
+    },
+    "introduction": {
+      "type": "section",
+      "content": [
+        {
+          "type": "text",
+          "value": "Welcome ('Members'). Thank you for using ingrey (hereinafter referred to as 'Service'). These terms and conditions explain the relationship between ingrey (hereinafter 'ingrey'), which provides ingrey services, and ingrey service members (hereinafter 'members') or non-members who use these services, and include useful information that can help you use ingrey services."
+        },
+        {
+          "type": "text",
+          "value": "When you use ingrey services or sign up as an ingrey service member, you will be required to review and agree to these terms and conditions and related operating policies, so please take a moment to carefully review them."
+        }
+      ]
+    },
+    "third-party": [
+      {
+        "type": "section",
+        "title": "YouTube Terms of Service",
+        "link": {
+          "text": "here",
+          "href": "https://policies.google.com/privacy",
+          "value": " to read about YouTube Terms of Service. By using the YouTube API Client, you are deemed to have agreed to the YouTube Terms of Service."
+        }
+      }
+    ],
+    "sections": [
+      {
+        "id": "section-1",
+        "type": "section",
+        "number": "1",
+        "title": "General Provisions",
+        "chapters": [
+          {
+            "id": "chapter-1",
+            "type": "chapter",
+            "number": "1",
+            "title": "Purpose",
+            "content": {
+              "type": "text",
+              "value": "These terms and conditions establish the basic provisions regarding the rights, obligations, and responsibilities between members and the company, as well as the conditions and procedures for using the service when members use the social media management tool (including web, mobile web, and app services) provided by ingrey (hereinafter referred to as the 'Company'). This service allows users to schedule and upload posts to social platforms, and provides content analysis and design tools to enhance social media content (hereinafter referred to as the 'Service')."
+            }
+          },
+          {
+            "id": "chapter-2",
+            "type": "chapter",
+            "number": "2",
+            "title": "Effect and Amendment of Terms",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. These terms are effective for all members who wish to use the service within the Republic of Korea. Furthermore, when the company makes the service available in other countries through contracts with overseas rights holders, these terms will also be effective for all members who wish to use the service within those countries."
+                },
+                {
+                  "text": "2. The contents of these terms are posted on the service screen or otherwise made public to members, and become effective when members who agree to them join the service. Before members agree, the company provides separate linked screens or popup screens to ensure that members can easily understand the terms and conduct transactions without errors, seeking member confirmation."
+                },
+                {
+                  "text": "3. The company may modify these terms when deemed necessary, within the scope that does not violate relevant laws such as the 'Act on the Regulation of Terms and Conditions,' 'Act on Promotion of Information and Communications Network Utilization and Information Protection,' 'Content Industry Promotion Act,' and 'Act on Consumer Protection in Electronic Commerce.' When modifying the terms, the company will specify the effective date and reasons for modification and announce them on the service site from 15 days before the effective date. For modifications disadvantageous to members, the company will clearly display the modified content from 30 days before the effective date and individually notify members via email address, text message, etc. If individual notification is difficult due to changes in member contact information, or if notifications are returned more than twice despite being sent to the registered contact information, the notification as per these terms shall be deemed as individual notification."
+                },
+                {
+                  "text": "4. If the company notifies or announces the modified terms according to Paragraph 3 and informs members that they will be deemed to have agreed to the changes if they do not express their objection by the effective date of the modified terms, and if members do not explicitly express their objection to the modified terms, the company shall deem that members have agreed to the modified terms."
+                },
+                {
+                  "text": "5. Members who express objection to the modified terms may choose to terminate the contract or withdraw their membership. Regarding the effectiveness of terminating individual usage rights, the provisions of the relevant clauses in the 00 Paid Service Terms shall apply."
+                },
+                {
+                  "text": "6. The company shall take necessary technical measures to ensure that members can print and verify these terms in their entirety."
+                },
+                {
+                  "text": "7. In principle, these terms apply from the date members agree to them until they withdraw their membership. However, some provisions of these terms may remain valid even after membership withdrawal."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-3",
+            "type": "chapter",
+            "number": "3",
+            "title": "Standards Outside Terms",
+            "content": {
+              "type": "text",
+              "value": "Matters not specified in these terms shall be governed by the provisions of relevant laws such as the Content Industry Promotion Act, Act on Consumer Protection in Electronic Commerce, Copyright Act, and general commercial practices."
+            }
+          },
+          {
+            "id": "chapter-4",
+            "type": "chapter",
+            "number": "4",
+            "title": "Definition of Terms",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The definitions of terms used in these terms are as follows:",
+                  "subItems": [
+                    {
+                      "text": "1. Member: All customers who access the service site to use the service and enter into a service usage contract by agreeing to these terms or completing other procedures requested by the company"
+                    },
+                    {
+                      "text": "2. ID: A combination of letters and numbers selected by the member and approved by the company for member identification and service use"
+                    },
+                    {
+                      "text": "3. Password: A combination of characters and numbers set by members themselves to protect their information"
+                    },
+                    {
+                      "text": "4. Nickname: A unique alternate name designated by the member separately from their ID"
+                    },
+                    {
+                      "text": "5. Operator: A person selected by the company for overall management and smooth operation of the service"
+                    },
+                    {
+                      "text": "6. Service Suspension: The act of providing service according to certain requirements set by the company during normal use"
+                    },
+                    {
+                      "text": "7. Text Message Authentication: A member verification process where a random number is sent via mobile phone text message, and the customer registers that number on the site"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "type": "section",
+        "number": "2",
+        "title": "Service Usage Agreement",
+        "chapters": [
+          {
+            "id": "chapter-5",
+            "type": "chapter",
+            "number": "5",
+            "title": "Establishment of Paid Service Usage Contract",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Users shall apply for usage through the following or similar procedures provided by the 'Company'. Before concluding the contract, the 'Company' shall provide information so that 'Users' can accurately understand and transact without mistakes or errors regarding the following matters:",
+                  "subItems": [
+                    {
+                      "text": "① Confirmation and selection of paid service content, types, prices, and provision period"
+                    },
+                    {
+                      "text": "② Input of identity verification information (name, mobile phone number)"
+                    },
+                    {
+                      "text": "Confirmation of paid service usage application and terms of use, or consent to the company's confirmation, and selection of payment method and input of payment information"
+                    }
+                  ]
+                },
+                {
+                  "text": "2. The 'Company' may not accept or reserve acceptance if the 'User's' usage application falls under any of the following cases:",
+                  "subItems": [
+                    {
+                      "text": "- When using a false name or another person's name"
+                    },
+                    {
+                      "text": "- When providing false information or failing to provide information required by the 'Company'"
+                    },
+                    {
+                      "text": "- When a minor attempts to use 'Content' prohibited by the Juvenile Protection Act"
+                    },
+                    {
+                      "text": "- When there is insufficient service-related equipment capacity, or technical or operational issues exist"
+                    }
+                  ]
+                },
+                {
+                  "text": "3. The contract shall be deemed established when the 'Company's' acceptance reaches the 'User' in the form of a receipt confirmation notice under Article 14, Paragraph 1."
+                },
+                {
+                  "text": "4. The 'Company's' expression of acceptance includes information about confirmation of the 'User's' usage application, service availability, correction of usage application, cancellation, etc."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-6",
+            "type": "chapter",
+            "number": "6",
+            "title": "Service Usage Application",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Most service functions require account registration.",
+                  "subItems": [
+                    {
+                      "text": "1. Users are solely responsible for securely managing their account and password."
+                    },
+                    {
+                      "text": "2. Users must immediately notify the 'Company' if any account security threat occurs."
+                    }
+                  ]
+                },
+                {
+                  "text": "2. The usage application is made by customers recording the following information in the registration form on the service's user registration screen:",
+                  "subItems": [
+                    {
+                      "text": "1. Name"
+                    },
+                    {
+                      "text": "2. ID"
+                    },
+                    {
+                      "text": "3. Nickname"
+                    },
+                    {
+                      "text": "4. Password"
+                    },
+                    {
+                      "text": "5. Date of birth"
+                    },
+                    {
+                      "text": "6. Service access country"
+                    },
+                    {
+                      "text": "7. Email address"
+                    },
+                    {
+                      "text": "8. Other information deemed necessary by the company"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-7",
+            "type": "chapter",
+            "number": "7",
+            "title": "Acceptance of Service Usage Application",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company accepts service usage applications from customers who accurately provide the information specified in Article 6 and complete the authentication procedures set by the company, such as email address approval or text message verification."
+                },
+                {
+                  "text": "2. The service usage agreement between the company and members is established when the company's acceptance reaches the member (in the case of paid services, when the 'Purchase/Payment Complete' or similar indication is procedurally displayed to the member)."
+                },
+                {
+                  "text": "3. When there is a paid service usage application from a user, the company sends a receipt notification to the user."
+                },
+                {
+                  "text": "4. Users who receive a confirmation notification may request changes or cancellations to their paid service usage application immediately upon receiving the confirmation notification if there are discrepancies in the expression of intent, etc. The company must process such requests without delay if received before providing the paid service. However, if payment has already been made, the provisions of Chapter 4 of the Paid Service Terms of Use regarding withdrawal of subscription shall apply."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-8",
+            "type": "chapter",
+            "number": "8",
+            "title": "Restrictions on Service Usage Application Acceptance",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company may restrict registration, reserve acceptance for a certain period, or claim damages depending on the severity of the case if any of the following circumstances occur:",
+                  "subItems": [
+                    {
+                      "text": "1. When service provision is impossible due to business or technical circumstances of the company"
+                    },
+                    {
+                      "text": "2. When approval is impossible due to user's fault, such as omitting or incorrectly entering user registration information, or attaching false documents"
+                    },
+                    {
+                      "text": "3. When the application is made to disturb or with the purpose of disturbing social peace, order, or public morals"
+                    },
+                    {
+                      "text": "4. In the case of children under 14 years of age"
+                    },
+                    {
+                      "text": "When membership was previously terminated under <bold>Article 27 (Contract Termination and Usage Restrictions)</bold>. However, exceptions may be made for those who have received company approval for re-registration after more than one year has passed since the loss of qualification."
+                    },
+                    {
+                      "text": "6. When service fees charged by the company are not paid without valid reason due to arbitrary cancellation, suspension of payment, or inability to pay with the payment method registered by the member after using the service"
+                    },
+                    {
+                      "text": "7. When the person resides or stays in a country where the company has not been granted service business rights or copyrights, or accesses the site from such countries"
+                    },
+                    {
+                      "text": "8. When there is a history of membership loss (withdrawal) due to criminal activities, repeated paid membership registration and cancellation within a specific period clearly indicating use other than normal purposes, or interference with company services"
+                    },
+                    {
+                      "text": "9. When other usage application requirements set by the company are not satisfied"
+                    }
+                  ]
+                },
+                {
+                  "text": "2. <bold>If any of the circumstances in Paragraph 1 are discovered after accepting the usage application, the company may terminate or suspend the service usage agreement concluded under these terms.</bold>"
+                },
+                {
+                  "text": "3. The company may restrict part of the service usage based on user qualification or age.",
+                  "subItems": [
+                    {
+                      "text": "1. Members under 19 years of age (excluding those who reach January 1st of the year they turn 19, same applies throughout this article) cannot access media harmful to juveniles according to the Act on Promotion of Information and Communications Network Utilization and Information Protection and the Juvenile Protection Act."
+                    },
+                    {
+                      "text": "2. To access media harmful to juveniles, members must be 19 years or older and must verify their identity and age through real-name authentication as required by the Act on Promotion of Information and Communications Network Utilization and Information Protection and the Juvenile Protection Act. Without authentication, access to relevant services will be restricted."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-9",
+            "type": "chapter",
+            "number": "9",
+            "title": "Service Usage Fees",
+            "content": {
+              "type": "text",
+              "value": "The 'Company' may integrate third-party software or services, and the 'User' is responsible for complying with the terms of service of such third-party services."
+            }
+          },
+          {
+            "id": "chapter-10",
+            "type": "chapter",
+            "number": "10",
+            "title": "Special Provisions for Minor Membership Registration",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. 'Users' under the age of 14 must fully understand the purpose of collecting and using personal information and obtain consent from their parents or legal guardians before applying for membership and providing their personal information."
+                },
+                {
+                  "text": "2. The company will cancel or deny membership for users under 14 years of age who have not completed the verification process for parental or legal guardian consent."
+                },
+                {
+                  "text": "3. Parents or legal guardians of 'Users' under 14 years of age may request to view, correct, or update the child's personal information, or withdraw consent for membership registration, and in such cases, the 'Company' must take necessary measures without delay."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-11",
+            "type": "chapter",
+            "number": "11",
+            "title": "Changes to Contract Details",
+            "content": {
+              "type": "text",
+              "value": "Members must update their information using the designated usage method and prescribed format when there are changes to the details provided during the service usage application."
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "type": "section",
+        "number": "3",
+        "title": "Service Usage",
+        "chapters": [
+          {
+            "id": "chapter-12",
+            "type": "chapter",
+            "number": "12",
+            "title": "Service Usage Commencement",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company begins providing services from the moment it accepts a member's usage application. However, some services may begin from a designated date, and paid services become available after payment is completed through means specified by the company."
+                },
+                {
+                  "text": "2. If the service cannot be initiated due to business or technical difficulties of the company, this will be posted on the site or notified to members."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-13",
+            "type": "chapter",
+            "number": "13",
+            "title": "Service Usage Hours",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The service is available 24 hours a day, 365 days a year in principle. However, the service may be temporarily suspended due to regular maintenance or other business or technical reasons, and may also be temporarily suspended during periods determined by the company for operational purposes. In such cases, the company will, in principle, announce the fact of temporary suspension and the suspension period in advance, but if there are urgent or unavoidable circumstances that prevent prior notice, it will be announced immediately afterward."
+                },
+                {
+                  "text": "2. The company may divide the service into certain ranges and set separate available times for each range, in which case the details will be announced."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-14",
+            "type": "chapter",
+            "number": "14",
+            "title": "Service Changes and Suspension",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company may change the service according to operational and technical needs when there is reasonable cause, and in such cases, will notify members of the content of the changes and the provision date in the manner specified in Article 2 (Effect and Amendment of Terms) Paragraph 3. However, if the changed content is significant or disadvantageous to members, the company will notify and obtain consent from members in the manner specified in these terms or the 00 paid service terms."
+                },
+                {
+                  "text": "2. The company may temporarily restrict or suspend all or part of the service in the following cases:",
+                  "subItems": [
+                    {
+                      "text": "1. When unavoidable due to maintenance or construction of service facilities"
+                    },
+                    {
+                      "text": "2. When a member intentionally interferes with the company's normal business and service provision activities, such as repeatedly registering and canceling specific services within a certain period"
+                    },
+                    {
+                      "text": "3. When normal service use is hindered due to power outages, facility failures, or traffic surges"
+                    },
+                    {
+                      "text": "4. When the service cannot be maintained due to various circumstances of the company, such as termination of contracts with service providers"
+                    },
+                    {
+                      "text": "5. When there are force majeure reasons beyond the company's control, such as natural disasters, national emergencies, administrative or judicial dispositions by national institutions like the Korea Communications Commission, Korea Internet & Security Agency, government organizations, investigative agencies, courts, etc."
+                    }
+                  ]
+                },
+                {
+                  "text": "3. In case of service suspension under Paragraph 2, the company will notify users in the manner specified in Article 2 (Effect and Amendment of Terms) Paragraph 3. However, if prior notification is difficult, urgent, or unavoidable, notification may be made afterward."
+                },
+                {
+                  "text": "4. The company may modify, suspend, or change all or part of the services provided free of charge based on company policy and operational needs, and no separate compensation will be provided to members for this."
+                },
+                {
+                  "text": "5. All matters related to the suspension or termination of paid services shall be governed by Article 00 of the 00 Paid Service Terms."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-15",
+            "type": "chapter",
+            "number": "15",
+            "title": "Member's Obligations and Responsibilities Regarding Email",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company may provide email services for each site to members. The company does not edit or monitor members' email content, and each member is responsible for their email content."
+                },
+                {
+                  "text": "2. Members must not use the company's email to send pornographic or inappropriate content, junk mail, spam mail, chain letters, or emails that promote pyramid schemes, cause harm to others, or violate public morals."
+                },
+                {
+                  "text": "3. All responsibility for violations of Paragraph 2 lies with the member, and in such cases, the company may provide the member's personal information, such as ID and PASSWORD, to investigative agencies according to procedures specified by relevant laws."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-16",
+            "type": "chapter",
+            "number": "16",
+            "title": "Information Provision and Advertisement Posting",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company may post various information or advertisements on the service screen or provide them to members through email, postal mail, text messages, KakaoTalk channel messages, etc."
+                },
+                {
+                  "text": "2. Regarding Paragraph 1, members may refuse to receive emails at any time, except for transaction-related information and responses to customer inquiries as required by relevant laws, and the company will specify the method of refusal. However, when the company sends advertisements through telephone, fax machines, etc., excluding transaction-related information and customer inquiries exempt from consent obligations under relevant laws, it will obtain prior consent from members."
+                },
+                {
+                  "text": "3. All interactions between users and advertisers through paths provided in videos, images, banners, etc., regarding advertisements posted on the service are matters between the 'User' and the advertiser, and the 'Company' bears no responsibility in this regard."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-17",
+            "type": "chapter",
+            "number": "17",
+            "title": "Company's Obligations",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The 'Company' must faithfully exercise rights and fulfill obligations as stipulated by laws and these terms in good faith."
+                },
+                {
+                  "text": "2. The 'Company' must maintain security systems for personal information (including credit information) protection to ensure that 'Users' can safely use the service, and must publish and comply with its personal information processing policy."
+                },
+                {
+                  "text": "3. The 'Company' shall enable 'Users' to check their service usage and payment details at any time."
+                },
+                {
+                  "text": "4. The 'Company' shall process without delay any opinions or complaints raised by 'Users' regarding service use if deemed legitimate. For opinions or complaints raised by 'Users', the bulletin board will be utilized for responses."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-18",
+            "type": "chapter",
+            "number": "18",
+            "title": "User's Obligations",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. 'Users' must not engage in the following actions:",
+                  "subItems": [
+                    {
+                      "text": "Providing false information during application or modification"
+                    },
+                    {
+                      "text": "Impersonating others"
+                    },
+                    {
+                      "text": "Modifying information posted by the 'Company'"
+                    },
+                    {
+                      "text": "Transmitting or posting information (including computer programs) prohibited by the 'Company'"
+                    },
+                    {
+                      "text": "Infringing on intellectual property rights, including copyrights, of the 'Company' and other third parties"
+                    },
+                    {
+                      "text": "Damaging the reputation of or interfering with the operations of the 'Company' and other third parties"
+                    },
+                    {
+                      "text": "Distributing obscene or violent words, text, images, sounds, or other information contrary to public morals through public posting, email transmission, or other methods on the 'Company's' site"
+                    },
+                    {
+                      "text": "Engaging in sales activities or other business activities using the service without prior approval from the 'Company'"
+                    },
+                    {
+                      "text": "Using the 'Service' provided by the 'Company' beyond private use, such as public reproduction in public places, commercial establishments, stores, etc., or other illegal activities"
+                    }
+                  ]
+                },
+                {
+                  "text": "2. 'Users' must comply with relevant laws, provisions of these terms, usage guidelines, precautions announced in relation to the service, matters notified by the 'Company', etc., and must not engage in any activities that interfere with the company's operations."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-19",
+            "type": "chapter",
+            "number": "19",
+            "title": "Article 19 (Paid Service Terms)",
+            "content": {
+              "type": "text",
+              "value": "Separate terms and conditions, such as paid service terms, may exist for service use. Separate terms may be established according to additional paid services, and in case of conflict between the terms of use and 00 paid service terms, the 00 paid service terms shall take precedence."
+            }
+          },
+          {
+            "id": "chapter-20",
+            "type": "chapter",
+            "number": "20",
+            "title": "Service Usage Payment Methods",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "Payment methods for service usage can be made through any available methods specified in the paid service terms."
+                },
+                {
+                  "text": "• Paid Service Terms",
+                  "subItems": [
+                    {
+                      "text": "All fees are displayed in Korean Won and are non-refundable."
+                    },
+                    {
+                      "text": "The 'Company' will provide advance notice of any fee changes."
+                    },
+                    {
+                      "text": "Payment Authorization - 'Users' authorize the 'Company' to charge fees using the payment method specified in their account."
+                    },
+                    {
+                      "text": "Subscription - Subscription services include automatic payment.",
+                      "subItems": [
+                        {
+                          "text": "The next fee will be charged unless cancelled before subscription renewal."
+                        },
+                        {
+                          "text": "Cancellation can be processed through the website or account settings."
+                        }
+                      ]
+                    },
+                    {
+                      "text": "Delinquent Accounts - Service may be suspended or terminated for delinquent accounts."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-21",
+            "type": "chapter",
+            "number": "21",
+            "title": "User Content",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "'Users' retain ownership of content uploaded through the 00 service ('User Content'), but must grant certain rights to the 'Company' to provide the service."
+                },
+                {
+                  "text": "License Granted to the 'Company'",
+                  "subItems": [
+                    {
+                      "text": "'Users' grant the 'Company' the right to store, display, and reproduce user content."
+                    }
+                  ]
+                },
+                {
+                  "text": "User Content Restrictions",
+                  "subItems": [
+                    {
+                      "text": "'Users' may not upload content that infringes on third-party rights or is illegal or unethical."
+                    }
+                  ]
+                },
+                {
+                  "text": "Company's Rights",
+                  "subItems": [
+                    {
+                      "text": "The 'Company' reserves the right to monitor or delete user content."
+                    },
+                    {
+                      "text": "The 'Company' may delete posts made by members whose accounts have been terminated by themselves or for legitimate reasons."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-22",
+            "type": "chapter",
+            "number": "22",
+            "title": "Personal Information Protection",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "3. The 'Company' complies with the Personal Information Protection Act regarding the collection, use, provision, and other processing and protection of personal information."
+                },
+                {
+                  "text": "4. 'Users' rights regarding access to, correction of, and suspension of processing of their personal information are protected under the Personal Information Protection Act."
+                },
+                {
+                  "text": "5. The 'Company' is not responsible for risks associated with 'Personal Information' voluntarily provided by 'Users' through online means such as bulletin boards, mail, chat, etc., which may be collected and used by others."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-23",
+            "type": "chapter",
+            "number": "23",
+            "title": "Advertisement Posting and Transactions with Advertisers",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The 'Company' may post advertisements on content playback or usage screens, homepages, etc., for both paid and free service 'Users'."
+                },
+                {
+                  "text": "2. Personalized and behavior-based advertising materials may be selected and provided to offer optimized advertisements to members."
+                },
+                {
+                  "text": "3. Personalized and behavior-based advertising materials under Paragraph 2 will only be provided with the member's prior consent."
+                },
+                {
+                  "text": "4. 'Members' can refuse the selection and provision of personalized and behavior-based advertising materials in the user information management screen. If refused, personalized and behavior-based advertising materials will not be provided, but advertisement provision may continue."
+                },
+                {
+                  "text": "5. All interactions between users and advertisers through paths provided in videos, images, banners, etc., regarding advertisements posted on this service are matters between the 'User' and the advertiser, and the 'Company' bears no responsibility in this regard."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-4",
+        "type": "section",
+        "number": "4",
+        "title": "Obligations of Contracting Parties",
+        "chapters": [
+          {
+            "id": "chapter-24",
+            "type": "chapter",
+            "number": "24",
+            "title": "Obligations and Responsibilities for Member ID and Password Management",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. As the company may charge usage fees for certain service requests within the site, members must strictly manage their member ID and password."
+                },
+                {
+                  "text": "2. Members are responsible for all consequences arising from negligent management of their member ID and password, while the company is responsible for issues arising from causes attributable to the company, such as system failures."
+                },
+                {
+                  "text": "3. Members must not allow third parties to use their ID and password, and if members become aware that their ID and password have been stolen or are being used by a third party, they must immediately notify the company and follow the company's guidance if provided."
+                },
+                {
+                  "text": "4. In cases under Paragraph 3, the company is not responsible for any disadvantages arising from the member's failure to notify of ID theft or failure to follow the company's guidance after notification."
+                },
+                {
+                  "text": "5. Member IDs cannot be changed without prior consent from the company."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-25",
+            "type": "chapter",
+            "number": "25",
+            "title": "Protection of User Personal Information",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The company strives to protect members' personal information, including member registration information, in accordance with relevant laws. The protection of members' personal information is governed by relevant laws and the company's 'Personal Information Processing Policy'. In particular, the company complies with the Act on Promotion of Information and Communications Network Utilization and Information Protection and other relevant laws regarding the collection, storage, processing, use, and protection of personal information."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-26",
+            "type": "chapter",
+            "number": "26",
+            "title": "Notice to Members",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company may send notices to members through email addresses registered by the members."
+                },
+                {
+                  "text": "2. When sending notices to all members, the company may replace individual notices by posting on the service screen for more than one week."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-27",
+            "type": "chapter",
+            "number": "27",
+            "title": "Withdrawal of Service Usage Agreement, Contract Termination, Cancellation, and Usage Restrictions",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Members may request termination of their service usage agreement at any time through the member information management screen, and the company shall process such requests according to prescribed procedures."
+                },
+                {
+                  "text": "2. When a member's service usage agreement is terminated, all member data will be deleted, except for information that must be retained in accordance with relevant laws."
+                },
+                {
+                  "text": "3. If a member violates the obligations under these terms, the company may restrict or suspend service usage or terminate the service usage agreement after giving notice."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-5",
+        "type": "section",
+        "number": "5",
+        "title": "Miscellaneous",
+        "chapters": [
+          {
+            "id": "chapter-28",
+            "type": "chapter",
+            "number": "28",
+            "title": "Posting of Terms and Conditions",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company shall post these terms and conditions within the service where members can easily view them."
+                },
+                {
+                  "text": "2. The company may revise these terms and conditions to the extent not violating relevant laws such as the Act on the Regulation of Terms and Conditions, the Framework Act on Electronic Documents and Electronic Transactions, the Electronic Signature Act, the Act on Promotion of Information and Communications Network Utilization and Information Protection, the Act on Door-to-Door Sales, and the Electronic Commerce Act."
+                },
+                {
+                  "text": "3. When the company revises the terms and conditions, it shall notify the effective date and reasons for revision at least 7 days prior to the effective date. However, when revising terms and conditions disadvantageous to members, the company shall notify at least 30 days in advance."
+                },
+                {
+                  "text": "4. When the company notifies the revision of terms and conditions according to Paragraph 3 and the member does not express explicit intent to refuse within 7 days from the date of notice to the effective date of the revised terms and conditions, it shall be deemed that the member has agreed to the revision of the terms and conditions."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-29",
+            "type": "chapter",
+            "number": "29",
+            "title": "Dispute Resolution",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. The company shall establish and operate a grievance handling department to handle members' legitimate complaints and grievances regarding the service."
+                },
+                {
+                  "text": "2. The company shall immediately process complaints or grievances raised by members. However, if immediate processing is difficult, the company shall notify the member of the reason and processing schedule."
+                },
+                {
+                  "text": "3. For disputes arising from electronic transactions between the company and members, the Electronic Commerce Mediation Committee may be requested for mediation."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-30",
+            "type": "chapter",
+            "number": "30",
+            "title": "Jurisdiction and Governing Law",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Lawsuits concerning disputes between the company and members shall be filed in the court having jurisdiction over the member's address at the time of filing the lawsuit. However, if the member's address is unknown at the time of filing the lawsuit, it shall be filed in the competent court according to the Civil Procedure Act."
+                },
+                {
+                  "text": "2. The governing law for electronic transactions between the company and members shall be the laws of the Republic of Korea."
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

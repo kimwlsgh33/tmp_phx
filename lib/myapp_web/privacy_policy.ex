@@ -1,5 +1,5 @@
 defmodule MyappWeb.PrivacyPolicy do
-  @versions ["v1"]
+  @versions ["v1", "v1_en"]
 
   def get_versions, do: @versions
 
