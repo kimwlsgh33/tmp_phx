@@ -1,1 +1,31 @@
-<h1>Hello World!</h1>
+<%!-- Basic text translation --%>
+<h1><%= gettext("Hello World!") %></h1>
+
+<%!-- Translation with interpolation --%>
+<p><%= gettext("Welcome %{name}!", name: "John") %></p>
+
+<%!-- Pluralization example --%>
+<p>
+  <%= ngettext("You have %{count} message.",
+               "You have %{count} messages.",
+               3,
+               count: 3) %>
+</p>
+
+<%!-- Domain-specific translation --%>
+<div class="errors">
+  <%= dgettext("errors", "Invalid credentials") %>
+</div>
+
+<%!-- Date formatting with gettext --%>
+<p>
+  <%= gettext("Today is %{date}",
+      date: Calendar.strftime(DateTime.utc_now(), "%B %d, %Y")) %>
+</p>
+
+<%!-- Multiple interpolations --%>
+<p>
+  <%= gettext("%{user} sent %{recipient} a message",
+      user: "Alice",
+      recipient: "Bob") %>
+</p>

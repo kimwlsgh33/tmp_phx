@@ -51,3 +51,30 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr ""
+
+#: lib/myapp_web/controllers/test_html/test.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "%{user} sent %{recipient} a message"
+msgstr ""
+
+#: lib/myapp_web/controllers/test_html/test.html.heex:2
+#, elixir-autogen, elixir-format
+msgid "Hello World!"
+msgstr ""
+
+#: lib/myapp_web/controllers/test_html/test.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "Today is %{date}"
+msgstr ""
+
+#: lib/myapp_web/controllers/test_html/test.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Welcome %{name}!"
+msgstr ""
+
+#: lib/myapp_web/controllers/test_html/test.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "You have %{count} message."
+msgid_plural "You have %{count} messages."
+msgstr[0] ""
+msgstr[1] ""
