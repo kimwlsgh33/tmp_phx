@@ -13,6 +13,13 @@
           class="flex-1 px-4 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           required
         />
+        <button 
+          type="button" 
+          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700"
+          onclick="document.querySelector('input[name=api_key]').value = ''; document.querySelector('input[name=api_key]').focus();"
+        >
+          Clear API Key
+        </button>
       </div>
       <div class="flex gap-4">
         <input 

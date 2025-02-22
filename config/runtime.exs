@@ -114,18 +114,4 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
-
-  # YouTube API Configuration
-  config :myapp, Myapp.Youtube,
-    api_key: System.get_env("YOUTUBE_API_KEY") || raise("environment variable YOUTUBE_API_KEY is missing"),
-    client_id: System.get_env("YOUTUBE_CLIENT_ID") || raise("environment variable YOUTUBE_CLIENT_ID is missing"),
-    client_secret: System.get_env("YOUTUBE_CLIENT_SECRET") || raise("environment variable YOUTUBE_CLIENT_SECRET is missing")
-end
-
-# YouTube API Configuration for development and test
-if config_env() in [:dev, :test] do
-  config :myapp, Myapp.Youtube,
-    api_key: System.get_env("YOUTUBE_API_KEY"),
-    client_id: System.get_env("YOUTUBE_CLIENT_ID"),
-    client_secret: System.get_env("YOUTUBE_CLIENT_SECRET")
 end
