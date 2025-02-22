@@ -16,7 +16,51 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-      }
+      },
+      animation: {
+        'gradient-background': 'gradient 15s ease infinite',
+        'grid-flow': 'grid-flow 20s linear infinite',
+        'button-glow': 'button-glow 1.5s ease-in-out infinite',
+        'button-shine': 'button-shine 8s ease-in-out infinite',
+        'logo-scroll': 'logo-scroll 30s linear infinite',
+      },
+      keyframes: {
+        gradient: {
+          '0%, 100%': {
+            'background-position': '0% 50%',
+          },
+          '50%': {
+            'background-position': '100% 50%',
+          },
+        },
+        'grid-flow': {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-100%)' },
+        },
+        'button-glow': {
+          '0%, 100%': {
+            'box-shadow': '0 0 0 0 rgba(99, 102, 241, 0.4)',
+          },
+          '50%': {
+            'box-shadow': '0 0 20px 5px rgba(99, 102, 241, 0.4)',
+          },
+        },
+        'button-shine': {
+          '0%': {
+            'background-position': '200% center',
+          },
+          '100%': {
+            'background-position': '-200% center',
+          },
+        },
+        'logo-scroll': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+      },
+      backgroundSize: {
+        'gradient-size': '400% 400%',
+      },
     },
   },
   plugins: [
