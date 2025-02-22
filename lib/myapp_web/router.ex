@@ -35,6 +35,12 @@ defmodule MyappWeb.Router do
 
     post "/files/upload", FileController, :upload
     get "/files/:filename", FileController, :download
+
+    # Thread API routes
+    post "/threads", ThreadController, :create
+    post "/threads/:thread_id/reply", ThreadController, :reply
+    get "/threads/:id", ThreadController, :show
+    delete "/threads/:id", ThreadController, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

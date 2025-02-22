@@ -6,7 +6,7 @@ defmodule MyappWeb.YoutubeChannel do
     {:ok, socket}
   end
 
-  handle_info :refresh_stats, socket do
+  def handle_info(:refresh_stats, socket) do
     {:ok, stats} = Youtube.get_video_details(socket.assigns.video_id)
 
     push(socket, "stats_update", stats)

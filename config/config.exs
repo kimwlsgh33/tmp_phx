@@ -65,6 +65,10 @@ config :phoenix, :json_library, Jason
 config :google_api_you_tube,
   key: System.get_env("YOUTUBE_API_KEY")
 
+# Configures the Thread API
+config :myapp, :thread_api,
+  access_token: System.get_env("THREAD_API_ACCESS_TOKEN")
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
