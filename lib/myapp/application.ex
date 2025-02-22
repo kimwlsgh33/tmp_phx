@@ -14,8 +14,8 @@ defmodule Myapp.Application do
       {Phoenix.PubSub, name: Myapp.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Myapp.Finch},
-      # Start a worker by calling: Myapp.Worker.start_link(arg)
-      # {Myapp.Worker, arg},
+      # Start the YouTube API client
+      Myapp.Youtube,
       # Start to serve requests, typically the last entry
       MyappWeb.Endpoint
     ]
