@@ -62,7 +62,8 @@ defmodule Myapp.MixProject do
       {:aws, "~> 1.0.0"},
       {:hackney, "~> 1.18"},
       {:google_api_you_tube, "~> 0.53.0"},
-      {:oauth2, "~> 2.1"}
+      {:oauth2, "~> 2.1"},
+      {:httpoison, "~> 2.0"}
     ]
   end
 
