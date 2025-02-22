@@ -1,37 +1,71 @@
-<%!-- Basic text translation --%>
-<h1><%= gettext("Hello World!") %></h1>
+<div class="container mx-auto p-4 dark:bg-gray-800 dark:text-white">
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4">Search YouTube Videos</h2>
+    <form id="search-form" class="flex gap-4" onsubmit="handleSearch(event)">
+      <input type="text" name="query" placeholder="Search videos..." class="flex-1 px-4 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"/>
+      <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800">Search</button>
+    </form>
+  </div>
 
-<%!-- Translation with interpolation --%>
-<p><%= gettext("Welcome %{name}!", name: "John") %></p>
+  <div id="search-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <%= for video <- @videos || [] do %>
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-700">
+        <img src={video.thumbnail} alt={video.title} class="w-full"/>
+        <div class="p-4">
+          <h3 class="font-bold text-lg mb-2"><%= video.title %></h3>
+          <p class="text-gray-600 text-sm mb-2 dark:text-gray-400"><%= video.channel_title %></p>
+          <p class="text-gray-500 text-sm dark:text-gray-300"><%= video.description %></p>
+          <p class="text-gray-400 text-xs mt-2 dark:text-gray-500">
+            Published: <%= MyappWeb.Helpers.YoutubeHelper.format_published_date(video.published_at) %>
+          </p>
+          <div class="mt-4">
+            <a href={MyappWeb.Helpers.YoutubeHelper.video_url(video.id)} 
+               target="_blank"
+               class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200">
+              Watch on YouTube
+            </a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 
-<%!-- Pluralization example --%>
-<p>
-  <%= ngettext("You have %{count} message.",
-               "You have %{count} messages.",
-               3,
-               count: 3) %>
-</p>
-
-<%!-- Domain-specific translation --%>
-<div class="errors">
-  <%= dgettext("errors", "Invalid credentials") %>
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">Video Details Example</h2>
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-700">
+      <%= if @video_details do %>
+        <div class="aspect-w-16 aspect-h-9">
+          <iframe 
+            src={MyappWeb.Helpers.YoutubeHelper.embed_url("dQw4w9WgXcQ")} 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            class="w-full h-full"
+          ></iframe>
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-xl mb-2"><%= @video_details.title %></h3>
+          <div class="flex gap-4 text-sm text-gray-600 mb-4 dark:text-gray-400">
+            <span>
+              <%= MyappWeb.Helpers.YoutubeHelper.format_view_count(@video_details.view_count) %> views
+            </span>
+            <span>
+              <%= MyappWeb.Helpers.YoutubeHelper.format_duration(@video_details.duration) %>
+            </span>
+            <span>
+              <%= MyappWeb.Helpers.YoutubeHelper.format_published_date(@video_details.published_at) %>
+            </span>
+          </div>
+          <p class="text-gray-700 mb-4 dark:text-gray-300"><%= @video_details.description %></p>
+          <div class="flex flex-wrap gap-2">
+            <%= for tag <- @video_details.tags do %>
+              <span class="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600 dark:bg-gray-600 dark:text-gray-200">
+                <%= tag %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
-
-<%!-- Date formatting with gettext --%>
-<p>
-  <%= gettext("Today is %{date}",
-      date: Calendar.strftime(DateTime.utc_now(), "%B %d, %Y")) %>
-</p>
-
-<%!-- Multiple interpolations --%>
-<p>
-  <%= gettext("%{user} sent %{recipient} a message",
-      user: "Alice",
-      recipient: "Bob") %>
-</p>
-
-<iframe
-  src={YouTubeHelper.embed_url(@video_id)}
-  frameborder="0"
-  allowfullscreen
-></iframe>

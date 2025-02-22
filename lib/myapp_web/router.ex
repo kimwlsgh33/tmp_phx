@@ -23,6 +23,7 @@ defmodule MyappWeb.Router do
 
     get "/", PageController, :home
     get "/test", TestController, :page
+    post "/test/search", TestController, :search
     get "/privacy-policy/:version", PrivacyPolicyController, :page
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
