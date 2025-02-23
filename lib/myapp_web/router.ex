@@ -13,9 +13,24 @@ defmodule MyappWeb.Router do
     plug :fetch_current_user
   end
 
+  pipeline :browser_without_layout do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
     plug :fetch_api_user
+  end
+
+  scope "/landing", MyappWeb do
+    pipe_through :browser_without_layout
+
+    get "/", LandingController, :index
   end
 
   scope "/", MyappWeb do
