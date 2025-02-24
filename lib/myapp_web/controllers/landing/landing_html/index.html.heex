@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>landingPage</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+      @import url('https://unpkg.com/normalize.css') layer(normalize);
+      @import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
+      @layer normalize, base, demo, stick, effect, scrollbar;
+
+      .main-content-1 {
+        width: 100%;
+        height: 500vh;
+      }
+
+      .sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .sticky-background {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 6vw;
+        font-family: 'Titan One', cursive;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+      }
+
+      .card-frame {
+        position: absolute;
+        width: 95vw;
+        height: 30vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 2;
+      }
+      .card {
+        width: 24%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transform: perspective(100vw) translateX(100vw) rotateY(180deg);
+        transition: transform 0.3s ease-out;
+      }
+      .naver {
+        border-radius: 3vw;
+      }
+      .front,
+      .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 1vw;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .front img {
+        width: 60%;
+      }
+      .back {
+        background: #E0DED7;
+        transform: rotateY(180deg);
+      }
+      .back img {
+        width: 50%;
+      }
+      .card.instagram .front {
+        background: var(--insta-gradient);
+      }
+      .card.youtube .front {
+        background: var(--youtube-color);
+      }
+      .card.tiktok .front {
+        background: var(--tiktok-color);
+      }
+      .card.naver .front {
+        background: var(--naver-color);
+      }
+
+      @media screen and (orientation: portrait) {
+        .card-frame {
+          display: grid;
+          height: initial;
+          width: initial;
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10vw;
+          justify-items: center;
+        }
+        .card {
+          font-size: 20vw;
+          width: 35vw;
+          height: 50vw;
+        }
+      }
+
+      @layer scrollbar {
+        @property --hue {
+          initial-value: 0;
+          syntax: '<number>';
+          inherits: false;
+        }
+        @property --chroma {
+          initial-value: 0;
+          syntax: '<number>';
+          inherits: true;
+        }
+        [data-sync-scrollbar='true'] {
+          scrollbar-color: oklch(var(--lightness) var(--chroma) var(--hue)) #0000;
+        }
+        @supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
+          [data-sync-scrollbar='true'][data-animate='true'] {
+            timeline-scope: --list;
+            scrollbar-color: oklch(var(--lightness) var(--chroma, 0) var(--hue)) #0000;
+            animation-name: change, chroma-on, chroma-off;
+            animation-fill-mode: both;
+            animation-timing-function: linear;
+            animation-range: entry 50% exit 50%, entry 40% entry 50%, exit 30% exit 40%;
+            animation-timeline: --list;
+            ul {
+              view-timeline: --list;
+            }
+          }
+        }
+        @keyframes change {
+          to {
+            --hue: var(--end);
+          }
+        }
+        @keyframes chroma-on {
+          to {
+            --chroma: 0.3;
+          }
+        }
+        @keyframes chroma-off {
+          to {
+            --chroma: 0;
+          }
+        }
+      }
+
+      @layer effect {
+        :root {
+          --start: 0;
+          --end: 360;
+          --lightness: 75%;
+          --base-chroma: 0.3;
+        }
+        [data-theme='dark'] {
+          --lightness: 75%;
+        }
+        [data-theme='light'] {
+          --lightness: 65%;
+        }
+        @media (prefers-color-scheme: dark) {
+          --lightness: 75%;
+        }
+        ul {
+          --step: calc((var(--end) - var(--start)) / (var(--count) - 1));
+        }
+        li:not(:last-of-type) {
+          color: oklch(var(--lightness) var(--base-chroma) calc(var(--start) + (var(--step) * var(--i))));
+        }
+      }
+
+      @layer stick {
+        section:first-of-type {
+          --font-level: 6;
+          display: flex;
+          line-height: 1.25;
+          width: 100%;
+          padding-left: 5rem;
+        }
+        section:last-of-type {
+          min-height: 100vh;
+          display: flex;
+          place-items: center;
+          width: 100%;
+          justify-content: center;
+          h2 {
+            --font-level: 6;
+          }
+        }
+        main {
+          width: 100%;
+        }
+        section:first-of-type h2 {
+          position: sticky;
+          top: calc(50% - 0.5lh);
+          font-size: inherit;
+          margin: 0;
+          display: inline-block;
+          height: fit-content;
+          font-weight: 600;
+        }
+        ul {
+          font-weight: 600;
+          padding-inline: 0;
+          margin: 0;
+          list-style-type: none;
+        }
+        h2,
+        li:last-of-type {
+          background: linear-gradient(var(--text-color) 50%, var(--bg-color));
+          background-clip: text;
+          color: transparent;
+          transition: background 0.3s ease;
+        }
+      }
+
+      @layer demo {
+        header {
+          min-height: 100vh;
+          display: flex;
+          place-items: center;
+          width: 100%;
+          padding-inline: 5rem;
+        }
+        h1 {
+          --font-size-min: 24;
+          --font-level: 7;
+          text-wrap: pretty;
+          line-height: 0.8;
+          margin: 0;
+          background: linear-gradient(var(--text-color) 80%, var(--bg-color));
+          background-clip: text;
+          color: transparent;
+          transition: background 0.3s ease;
+        }
+      }
+
+      @layer base {
+        :root {
+          --font-size-min: 14;
+          --font-size-max: 20;
+          --font-ratio-min: 1.1;
+          --font-ratio-max: 1.33;
+          --font-width-min: 375;
+          --font-width-max: 1500;
+          --insta-gradient: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF);
+          --youtube-color: #FF0000;
+          --tiktok-color: #000000;
+          --naver-color: #03C75A;
+          --text-color: white;
+          --bg-color: black;
+          --grid-color: rgba(255, 255, 255, 0.3);
+        }
+
+        [data-theme='light'] {
+          --text-color: black;
+          --bg-color: white;
+          --grid-color: rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme='dark'] {
+          --text-color: white;
+          --bg-color: black;
+          --grid-color: rgba(255, 255, 255, 0.3);
+        }
+
+        html {
+          color-scheme: light dark;
+          transition: background-color 0.3s ease;
+        }
+
+        [data-theme='light'] {
+          color-scheme: light only;
+        }
+        [data-theme='dark'] {
+          color-scheme: dark only;
+        }
+
+        :where(.fluid) {
+          --fluid-min: calc(var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0)));
+          --fluid-max: calc(var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0)));
+          --fluid-preferred: calc((var(--fluid-max) - var(--fluid-min)) / (var(--font-width-max) - var(--font-width-min)));
+          --fluid-type: clamp(
+            (var(--fluid-min) / 16) * 1rem,
+            ((var(--fluid-min) / 16) * 1rem) - (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
+              (var(--fluid-preferred) * var(--variable-unit, 100vi)),
+            (var(--fluid-max) / 16) * 1rem
+          );
+          font-size: var(--fluid-type);
+        }
+
+        *,
+        *:after,
+        *:before {
+          box-sizing: border-box;
+        }
+
+        body {
+          display: grid;
+          place-items: center;
+          color: var(--text-color);
+          background: var(--bg-color);
+          transition: background-color 0.3s ease;
+          min-height: 100vh;
+          font-family: 'Geist', 'SF Pro Text', 'SF Pro Icons', 'AOS Icons', 'Helvetica Neue', Helvetica, Arial,
+            sans-serif, system-ui;
+          position: relative;
+        }
+
+        body::before {
+          --size: 45px;
+          content: '';
+          height: 100vh;
+          width: 100vw;
+          position: fixed;
+          background: linear-gradient(90deg, var(--grid-color) 1px, transparent 1px var(--size)) 50% 50% / var(--size)
+              var(--size),
+            linear-gradient(var(--grid-color) 1px, transparent 1px var(--size)) 50% 50% / var(--size) var(--size);
+          mask: linear-gradient(-20deg, transparent 50%, white);
+          top: 0;
+          transform-style: flat;
+          pointer-events: none;
+          z-index: -1;
+          transition: background 0.3s ease;
+        }
+
+        .theme-toggle {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1000;
+        }
+
+        .theme-toggle-button {
+          width: 40px;
+          height: 40px;
+          background: none; /* 배경 제거 */
+          border: none; /* 테두리 제거 */
+          cursor: pointer;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.3s ease;
+        }
+
+        .theme-toggle-button::before {
+          content: '☀️';
+          font-size: 28px; /* 아이콘 크기 살짝 키움 */
+          color: var(--text-color); /* 글자색과 동일하게 */
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        [data-theme='dark'] .theme-toggle-button::before {
+          content: '🌙';
+          opacity: 1;
+        }
+
+        .theme-toggle-button:hover {
+          transform: scale(1.4); /* 호버 시 살짝 커짐 */
+        }
+
+        h1,
+        h2,
+        li {
+          color: var(--text-color);
+          transition: color 0.3s ease, background 0.3s ease;
+        }
+      }
+    </style>
+  </head>
+  <body data-theme="dark">
+    <div class="theme-toggle">
+      <button class="theme-toggle-button" aria-label="Toggle theme"></button>
+    </div>
+
+    <header>
+      <h1 class="fluid">All for <br />creators.</h1>
+    </header>
+
+    <div class="main-content-1">
+      <div class="sticky">
+        <div class="sticky-background">
+          upload your creation onetime, <br />upload to the world.
+        </div>
+        <div class="card-frame">
+          <div class="card instagram">
+            <div class="front">
+              <img src="/images/instagram.png" alt="Instagram" loading="lazy" />
+            </div>
+            <div class="back">
+              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+            </div>
+          </div>
+          <div class="card youtube">
+            <div class="front">
+              <img src="/images/youtube.png" alt="YouTube" loading="lazy" />
+            </div>
+            <div class="back">
+              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+            </div>
+          </div>
+          <div class="card tiktok">
+            <div class="front">
+              <img src="/images/tiktok_logo.png" alt="TikTok" loading="lazy" />
+            </div>
+            <div class="back">
+              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+            </div>
+          </div>
+          <div class="card naver">
+            <div class="front">
+              <img class="naver" src="/images/naver_logo.png" alt="Naver Clip" loading="lazy" />
+            </div>
+            <div class="back">
+              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <section class="content fluid">
+        <h2>you can do&nbsp</h2>
+        <ul style="--count: 22">
+          <li style="--i: 0">easier.</li>
+          <li style="--i: 1">faster.</li>
+          <li style="--i: 2">better.</li>
+          <li style="--i: 3">simpler.</li>
+          <li style="--i: 4">smarter.</li>
+          <li style="--i: 5">clearer.</li>
+          <li style="--i: 6">quicker.</li>
+          <li style="--i: 7">everything.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="fluid">coming soon.</h2>
+      </section>
+    </main>
+
+    <script>
+      const themeToggle = document.querySelector('.theme-toggle-button');
+      const body = document.body;
+
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      body.setAttribute('data-theme', currentTheme);
+
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      });
+
+      class CardFlipOnScroll {
+        constructor(wrapper, sticky) {
+          this.wrapper = wrapper;
+          this.sticky = sticky;
+          this.cards = sticky.querySelectorAll('.card');
+          this.length = this.cards.length;
+          this.start = 0;
+          this.end = 0;
+          this.step = 0;
+        }
+
+        init() {
+          this.start = this.wrapper.offsetTop - 100;
+          this.end = this.wrapper.offsetTop + this.wrapper.offsetHeight - innerHeight * 1.2;
+          this.step = (this.end - this.start) / (this.length * 2);
+        }
+
+        animate() {
+          this.cards.forEach((card, i) => {
+            const s = this.start + this.step * i;
+            const e = s + this.step * (this.length + 1);
+
+            if (scrollY <= s) {
+              card.style.transform = `
+                perspective(100vw)
+                translateX(100vw) 
+                rotateY(180deg)
+              `;
+            } else if (scrollY > s && scrollY <= e - this.step) {
+              card.style.transform = `
+                perspective(100vw)
+                translateX(${100 + (scrollY - s) / (e - s) * -100}vw)
+                rotateY(180deg)
+              `;
+            } else if (scrollY > e - this.step && scrollY <= e) {
+              card.style.transform = `
+                perspective(100vw)
+                translateX(${100 + (scrollY - s) / (e - s) * -100}vw)
+                rotateY(${180 + -(scrollY - (e - this.step)) / this.step * 180}deg)
+              `;
+            } else if (scrollY > e) {
+              card.style.transform = `
+                perspective(100vw)
+                translateX(0vw) 
+                rotateY(0deg)
+              `;
+            }
+          });
+        }
+      }
+
+      const mainContent1 = document.querySelector('.main-content-1');
+      const sticky = document.querySelector('.sticky');
+      const cardFlipOnScroll = new CardFlipOnScroll(mainContent1, sticky);
+      cardFlipOnScroll.init();
+
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            cardFlipOnScroll.animate();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+
+      window.addEventListener('resize', debounce(() => cardFlipOnScroll.init(), 200));
+
+      function debounce(func, wait) {
+        let timeout;
+        return function () {
+          clearTimeout(timeout);
+          timeout = setTimeout(func, wait);
+        };
+      }
+    </script>
+  </body>
+</html>
