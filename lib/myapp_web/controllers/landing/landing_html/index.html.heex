@@ -69,6 +69,9 @@
         justify-content: center;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
+      .front {
+        cursor: pointer; /* 클릭 가능하다는 힌트 */
+      }
       .front img {
         width: 60%;
       }
@@ -109,34 +112,6 @@
         }
       }
 
-      @layer scrollbar {
-        @property --hue {
-          initial-value: 0;
-          syntax: '<number>';
-          inherits: false;
-        }
-        @property --chroma {
-          initial-value: 0;
-          syntax: '<number>';
-          inherits: true;
-        }
-        [data-sync-scrollbar='true'] {
-          scrollbar-color: oklch(var(--lightness) var(--chroma) var(--hue)) #0000;
-        }
-        @supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
-          [data-sync-scrollbar='true'][data-animate='true'] {
-            timeline-scope: --list;
-            scrollbar-color: oklch(var(--lightness) var(--chroma, 0) var(--hue)) #0000;
-            animation-name: change, chroma-on, chroma-off;
-            animation-fill-mode: both;
-            animation-timing-function: linear;
-            animation-range: entry 50% exit 50%, entry 40% entry 50%, exit 30% exit 40%;
-            animation-timeline: --list;
-            ul {
-              view-timeline: --list;
-            }
-          }
-        }
         @keyframes change {
           to {
             --hue: var(--end);
@@ -343,8 +318,8 @@
         .theme-toggle-button {
           width: 40px;
           height: 40px;
-          background: none; /* 배경 제거 */
-          border: none; /* 테두리 제거 */
+          background: none;
+          border: none;
           cursor: pointer;
           padding: 0;
           display: flex;
@@ -355,8 +330,8 @@
 
         .theme-toggle-button::before {
           content: '☀️';
-          font-size: 28px; /* 아이콘 크기 살짝 키움 */
-          color: var(--text-color); /* 글자색과 동일하게 */
+          font-size: 28px;
+          color: var(--text-color);
           transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
@@ -366,7 +341,7 @@
         }
 
         .theme-toggle-button:hover {
-          transform: scale(1.4); /* 호버 시 살짝 커짐 */
+          transform: scale(1.4);
         }
 
         h1,
@@ -394,7 +369,7 @@
         </div>
         <div class="card-frame">
           <div class="card instagram">
-            <div class="front">
+            <div class="front" data-route="/instagram">
               <img src="/images/instagram.png" alt="Instagram" loading="lazy" />
             </div>
             <div class="back">
@@ -402,7 +377,7 @@
             </div>
           </div>
           <div class="card youtube">
-            <div class="front">
+            <div class="front" data-route="/test">
               <img src="/images/youtube.png" alt="YouTube" loading="lazy" />
             </div>
             <div class="back">
@@ -410,7 +385,7 @@
             </div>
           </div>
           <div class="card tiktok">
-            <div class="front">
+            <div class="front" data-route="/tiktok">
               <img src="/images/tiktok_logo.png" alt="TikTok" loading="lazy" />
             </div>
             <div class="back">
@@ -418,7 +393,7 @@
             </div>
           </div>
           <div class="card naver">
-            <div class="front">
+            <div class="front" data-route="/naver">
               <img class="naver" src="/images/naver_logo.png" alt="Naver Clip" loading="lazy" />
             </div>
             <div class="back">
@@ -472,6 +447,7 @@
           this.start = 0;
           this.end = 0;
           this.step = 0;
+          this.initClickEvents(); // 클릭 이벤트 초기화
         }
 
         init() {
@@ -512,6 +488,18 @@
             }
           });
         }
+
+        initClickEvents() {
+          this.cards.forEach(card => {
+            const front = card.querySelector('.front');
+            front.addEventListener('click', () => {
+              const route = front.getAttribute('data-route');
+              if (route) {
+                window.location.href = route; // 경로로 이동
+              }
+            });
+          });
+        }
       }
 
       const mainContent1 = document.querySelector('.main-content-1');
@@ -542,3 +530,4 @@
     </script>
   </body>
 </html>
+

@@ -27,7 +27,7 @@ defmodule MyappWeb.Router do
     plug :fetch_api_user
   end
 
-  scope "/landing", MyappWeb do
+  scope "/", MyappWeb do
     pipe_through :browser_without_layout
 
     get "/", LandingController, :index
@@ -36,7 +36,7 @@ defmodule MyappWeb.Router do
   scope "/", MyappWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search
     get "/privacy-policy/:version", PrivacyPolicyController, :page
