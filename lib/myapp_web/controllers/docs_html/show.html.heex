@@ -1,8 +1,12 @@
-<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+  <!-- Breadcrumb navigation -->
   <nav class="flex mb-8" aria-label="Breadcrumb">
     <ol class="inline-flex items-center space-x-1 md:space-x-3">
       <li class="inline-flex items-center">
-        <a href={~p"/"} class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+        <a href={~p"/"} class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 transition">
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+          </svg>
           Home
         </a>
       </li>
@@ -11,7 +15,7 @@
           <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
           </svg>
-          <a href={~p"/docs"} class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Documentation</a>
+          <a href={~p"/docs"} class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 transition">Documentation</a>
         </div>
       </li>
       <li aria-current="page">
@@ -25,184 +29,348 @@
     </ol>
   </nav>
 
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6">
-      <h1 class="text-2xl font-bold text-gray-900"><%= String.capitalize(@topic) %></h1>
-      <p class="mt-1 max-w-2xl text-sm text-gray-500">Documentation for <%= String.capitalize(@topic) %></p>
+  <div class="flex flex-col md:flex-row gap-8">
+    <!-- Left sidebar for navigation (hidden on mobile) -->
+    <div class="hidden md:block w-64 flex-shrink-0">
+      <div class="sticky top-8">
+        <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Documentation</h4>
+        <nav class="space-y-1">
+          <%= for doc <- ["Cloudflare", "LLC", "Tiktok", "Youtube", "getting-started", "features", "api"] do %>
+            <a 
+              href={~p"/docs/#{doc}"} 
+              class={"group flex items-center px-3 py-2 text-sm font-medium rounded-md " <> 
+                if @topic == doc, 
+                do: "bg-blue-50 text-blue-700", 
+                else: "text-gray-700 hover:text-blue-700 hover:bg-blue-50"
+              }
+            >
+              <%= String.capitalize(doc) %>
+            </a>
+          <% end %>
+        </nav>
+      </div>
     </div>
-    <div class="border-t border-gray-200">
-      <div class="px-4 py-5 sm:p-6 prose max-w-none">
-        <%= case @topic do %>
-          <% "getting-started" -> %>
-            <h2>Getting Started Guide</h2>
-            <p>Welcome to our platform! This guide will help you get up and running quickly.</p>
-            
-            <h3>Step 1: Create an Account</h3>
-            <p>To start using our service, you'll need to create an account. Click the "Sign Up" button in the top right corner of the page and follow the instructions.</p>
-            
-            <h3>Step 2: Set Up Your Profile</h3>
-            <p>Once you've created an account, you'll want to set up your profile. This helps personalize your experience and makes it easier for others to find and connect with you.</p>
-            
-            <h3>Step 3: Explore Features</h3>
-            <p>Now that you're all set up, take some time to explore the features of our platform. Check out the dashboard, browse content, and familiarize yourself with the interface.</p>
-            
-            <h3>Next Steps</h3>
-            <p>Once you're comfortable with the basics, check out our <a href={~p"/docs/tutorials"} class="text-blue-600 hover:underline">Tutorials</a> for more detailed guides on specific features.</p>
 
-          <% "features" -> %>
-            <h2>Platform Features</h2>
-            <p>Our platform offers a wide range of features designed to help you achieve your goals. Here's an overview of what's available:</p>
-            
-            <h3>Core Features</h3>
-            <ul>
-              <li><strong>Feature 1:</strong> Description of feature 1 and its benefits.</li>
-              <li><strong>Feature 2:</strong> Description of feature 2 and its benefits.</li>
-              <li><strong>Feature 3:</strong> Description of feature 3 and its benefits.</li>
-            </ul>
-            
-            <h3>Advanced Features</h3>
-            <ul>
-              <li><strong>Advanced Feature 1:</strong> Description of advanced feature 1.</li>
-              <li><strong>Advanced Feature 2:</strong> Description of advanced feature 2.</li>
-            </ul>
-            
-            <h3>Premium Features</h3>
-            <p>Available on paid plans only:</p>
-            <ul>
-              <li><strong>Premium Feature 1:</strong> Description of premium feature 1.</li>
-              <li><strong>Premium Feature 2:</strong> Description of premium feature 2.</li>
-            </ul>
-
-          <% "faq" -> %>
-            <h2>Frequently Asked Questions</h2>
-            
-            <h3>General Questions</h3>
-            
-            <h4>What is your service about?</h4>
-            <p>Our service provides [brief description of your service]. We help users to [value proposition].</p>
-            
-            <h4>How much does it cost?</h4>
-            <p>We offer several pricing plans to fit different needs. Our basic plan starts at $X/month, while our premium plan is $Y/month. You can find more details on our <a href="#" class="text-blue-600 hover:underline">Pricing page</a>.</p>
-            
-            <h4>Is there a free trial?</h4>
-            <p>Yes, we offer a 14-day free trial for new users. No credit card is required to start your trial.</p>
-            
-            <h3>Technical Questions</h3>
-            
-            <h4>Can I export my data?</h4>
-            <p>Yes, we provide data export functionality in CSV and JSON formats. Go to Settings > Data Export to access this feature.</p>
-            
-            <h4>What browsers do you support?</h4>
-            <p>Our platform works best on modern browsers including Chrome, Firefox, Safari, and Edge. We recommend keeping your browser updated to the latest version for the best experience.</p>
-
-          <% "api" -> %>
-            <h2>API Reference</h2>
-            <p>Our API allows you to integrate our services into your own applications. This reference provides detailed information about endpoints, parameters, and responses.</p>
-            
-            <h3>Authentication</h3>
-            <p>All API requests require authentication using an API key. You can generate an API key in your account settings.</p>
-            
-            <pre>Authorization: Bearer YOUR_API_KEY</pre>
-            
-            <h3>Endpoints</h3>
-            
-            <h4>GET /api/resource</h4>
-            <p>Retrieves a list of resources.</p>
-            
-            <h5>Parameters</h5>
-            <ul>
-              <li><code>limit</code> (optional): Maximum number of results to return. Default: 20</li>
-              <li><code>offset</code> (optional): Number of results to skip. Default: 0</li>
-            </ul>
-            
-            <h5>Response</h5>
-            <p>Returns a JSON object containing the resource data and pagination information.</p>
-
-          <% "tutorials" -> %>
-            <h2>Tutorials</h2>
-            <p>Our step-by-step tutorials will help you make the most of our platform. Select a tutorial below to get started.</p>
-            
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-6">
-              <div class="border rounded-lg p-4">
-                <h3 class="text-lg font-medium text-gray-900">Tutorial 1: Getting Started</h3>
-                <p class="mt-1 text-sm text-gray-500">Learn the basics of our platform in this beginner-friendly tutorial.</p>
-                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
-              </div>
-              
-              <div class="border rounded-lg p-4">
-                <h3 class="text-lg font-medium text-gray-900">Tutorial 2: Advanced Features</h3>
-                <p class="mt-1 text-sm text-gray-500">Take your skills to the next level with our advanced features.</p>
-                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
-              </div>
-              
-              <div class="border rounded-lg p-4">
-                <h3 class="text-lg font-medium text-gray-900">Tutorial 3: Integration Guide</h3>
-                <p class="mt-1 text-sm text-gray-500">Learn how to integrate our platform with your existing tools.</p>
-                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
-              </div>
-              
-              <div class="border rounded-lg p-4">
-                <h3 class="text-lg font-medium text-gray-900">Tutorial 4: Best Practices</h3>
-                <p class="mt-1 text-sm text-gray-500">Tips and tricks to get the most out of our platform.</p>
-                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
-              </div>
+    <!-- Main content area -->
+    <div class="flex-1">
+      <div class="bg-white shadow-sm overflow-hidden rounded-xl border border-gray-100">
+        <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+          <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-gray-900"><%= String.capitalize(@topic) %></h1>
+            <!-- Mobile menu button (only visible on mobile) -->
+            <button type="button" class="md:hidden p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100">
+              <span class="sr-only">Open navigation menu</span>
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+          <p class="mt-1 text-sm text-gray-500">Last updated: February 25, 2025</p>
+        </div>
+        
+        <div class="px-6 py-6">
+          <!-- Table of contents for the article -->
+          <%= if @from_markdown do %>
+            <div class="mb-8 p-4 bg-blue-50 rounded-lg">
+              <h3 class="text-sm font-semibold text-blue-800 uppercase tracking-wide mb-2">Table of Contents</h3>
+              <ul class="space-y-1 text-sm">
+                <li><a href="#key-points" class="text-blue-700 hover:underline">Key Points</a></li>
+                <li><a href="#what-is-an-llc" class="text-blue-700 hover:underline">What is an LLC?</a></li>
+                <li><a href="#how-to-form-an-llc" class="text-blue-700 hover:underline">How to Form an LLC</a></li>
+                <li><a href="#why-delaware-stands-out" class="text-blue-700 hover:underline">Why Delaware Stands Out</a></li>
+                <li><a href="#practical-considerations" class="text-blue-700 hover:underline">Practical Considerations</a></li>
+                <li><a href="#example" class="text-blue-700 hover:underline">Example: Single-Member LLC Tax Filing</a></li>
+                <li><a href="#comprehensive-analysis" class="text-blue-700 hover:underline">Comprehensive Analysis</a></li>
+              </ul>
             </div>
+          <% end %>
 
-          <% "support" -> %>
-            <h2>Contact Support</h2>
-            <p>Need help? Our support team is here to assist you. Please use one of the methods below to get in touch.</p>
-            
-            <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div class="border rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900">Email Support</h3>
-                <p class="mt-1 text-sm text-gray-500">Send us an email and we'll respond within 24 hours.</p>
-                <p class="mt-4 text-blue-600">support@example.com</p>
+          <!-- Main content area -->
+          <div class="prose prose-blue max-w-none">
+            <%= if @from_markdown do %>
+              <div id="markdown-content">
+                <%= raw(@content) %>
               </div>
-              
-              <div class="border rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900">Live Chat</h3>
-                <p class="mt-1 text-sm text-gray-500">Chat with a support representative in real-time.</p>
-                <button class="mt-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                  Start Chat
-                </button>
-              </div>
-            </div>
-            
-            <h3 class="mt-8 text-lg font-medium text-gray-900">Frequently Asked Support Questions</h3>
-            <div class="mt-4 space-y-4">
-              <details class="group">
-                <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
-                  <span>How do I reset my password?</span>
-                  <span class="transition group-open:rotate-180">
-                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24">
-                      <path d="M6 9l6 6 6-6"></path>
+            <% else %>
+              <%= case @topic do %>
+                <% "getting-started" -> %>
+                  <h2>Getting Started Guide</h2>
+                  <p>Welcome to our platform! This guide will help you get up and running quickly.</p>
+                  
+                  <h3>Step 1: Create an Account</h3>
+                  <p>To start using our service, you'll need to create an account. Click the "Sign Up" button in the top right corner of the page and follow the instructions.</p>
+                  
+                  <h3>Step 2: Set Up Your Profile</h3>
+                  <p>Once you've created an account, you'll want to set up your profile. This helps personalize your experience and makes it easier for others to find and connect with you.</p>
+                  
+                  <h3>Step 3: Explore Features</h3>
+                  <p>Now that you're all set up, take some time to explore the features of our platform. Check out the dashboard, browse content, and familiarize yourself with the interface.</p>
+                  
+                  <h3>Next Steps</h3>
+                  <p>Once you're comfortable with the basics, check out our <a href={~p"/docs/tutorials"} class="text-blue-600 hover:underline">Tutorials</a> for more detailed guides on specific features.</p>
+      
+                <% "features" -> %>
+                  <h2>Platform Features</h2>
+                  <p>Our platform offers a wide range of features designed to help you achieve your goals. Here's an overview of what's available:</p>
+                  
+                  <h3>Core Features</h3>
+                  <ul>
+                    <li><strong>Feature 1:</strong> Description of feature 1 and its benefits.</li>
+                    <li><strong>Feature 2:</strong> Description of feature 2 and its benefits.</li>
+                    <li><strong>Feature 3:</strong> Description of feature 3 and its benefits.</li>
+                  </ul>
+                  
+                  <h3>Advanced Features</h3>
+                  <ul>
+                    <li><strong>Advanced Feature 1:</strong> Description of advanced feature 1.</li>
+                    <li><strong>Advanced Feature 2:</strong> Description of advanced feature 2.</li>
+                  </ul>
+                  
+                  <h3>Premium Features</h3>
+                  <p>Available on paid plans only:</p>
+                  <ul>
+                    <li><strong>Premium Feature 1:</strong> Description of premium feature 1.</li>
+                    <li><strong>Premium Feature 2:</strong> Description of premium feature 2.</li>
+                  </ul>
+      
+                <% "faq" -> %>
+                  <h2>Frequently Asked Questions</h2>
+                  
+                  <h3>General Questions</h3>
+                  
+                  <h4>What is your service about?</h4>
+                  <p>Our service provides [brief description of your service]. We help users to [value proposition].</p>
+                  
+                  <h4>How much does it cost?</h4>
+                  <p>We offer several pricing plans to fit different needs. Our basic plan starts at $X/month, while our premium plan is $Y/month. You can find more details on our <a href="#" class="text-blue-600 hover:underline">Pricing page</a>.</p>
+                  
+                  <h4>Is there a free trial?</h4>
+                  <p>Yes, we offer a 14-day free trial for new users. No credit card is required to start your trial.</p>
+                  
+                  <h3>Technical Questions</h3>
+                  
+                  <h4>Can I export my data?</h4>
+                  <p>Yes, we provide data export functionality in CSV and JSON formats. Go to Settings > Data Export to access this feature.</p>
+                  
+                  <h4>What browsers do you support?</h4>
+                  <p>Our platform works best on modern browsers including Chrome, Firefox, Safari, and Edge. We recommend keeping your browser updated to the latest version for the best experience.</p>
+      
+                <% "api" -> %>
+                  <h2>API Reference</h2>
+                  <p>Our API allows you to integrate our services into your own applications. This reference provides detailed information about endpoints, parameters, and responses.</p>
+                  
+                  <h3>Authentication</h3>
+                  <p>All API requests require authentication using an API key. You can generate an API key in your account settings.</p>
+                  
+                  <pre>Authorization: Bearer YOUR_API_KEY</pre>
+                  
+                  <h3>Endpoints</h3>
+                  
+                  <h4>GET /api/resource</h4>
+                  <p>Retrieves a list of resources.</p>
+                  
+                  <h5>Parameters</h5>
+                  <ul>
+                    <li><code>limit</code> (optional): Maximum number of results to return. Default: 20</li>
+                    <li><code>offset</code> (optional): Number of results to skip. Default: 0</li>
+                  </ul>
+                  
+                  <h5>Response</h5>
+                  <p>Returns a JSON object containing the resource data and pagination information.</p>
+      
+                <% "tutorials" -> %>
+                  <h2>Tutorials</h2>
+                  <p>Our step-by-step tutorials will help you make the most of our platform. Select a tutorial below to get started.</p>
+                  
+                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-6">
+                    <div class="border rounded-lg p-4 hover:shadow-md transition">
+                      <h3 class="text-lg font-medium text-gray-900">Tutorial 1: Getting Started</h3>
+                      <p class="mt-1 text-sm text-gray-500">Learn the basics of our platform in this beginner-friendly tutorial.</p>
+                      <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+                    </div>
+                    
+                    <div class="border rounded-lg p-4 hover:shadow-md transition">
+                      <h3 class="text-lg font-medium text-gray-900">Tutorial 2: Advanced Features</h3>
+                      <p class="mt-1 text-sm text-gray-500">Take your skills to the next level with our advanced features.</p>
+                      <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+                    </div>
+                    
+                    <div class="border rounded-lg p-4 hover:shadow-md transition">
+                      <h3 class="text-lg font-medium text-gray-900">Tutorial 3: Integration Guide</h3>
+                      <p class="mt-1 text-sm text-gray-500">Learn how to integrate our platform with your existing tools.</p>
+                      <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+                    </div>
+                    
+                    <div class="border rounded-lg p-4 hover:shadow-md transition">
+                      <h3 class="text-lg font-medium text-gray-900">Tutorial 4: Best Practices</h3>
+                      <p class="mt-1 text-sm text-gray-500">Tips and tricks to get the most out of our platform.</p>
+                      <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+                    </div>
+                  </div>
+      
+                <% "support" -> %>
+                  <h2>Contact Support</h2>
+                  <p>Need help? Our support team is here to assist you. Please use one of the methods below to get in touch.</p>
+                  
+                  <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div class="border rounded-lg p-6 hover:shadow-md transition">
+                      <h3 class="text-lg font-medium text-gray-900">Email Support</h3>
+                      <p class="mt-1 text-sm text-gray-500">Send us an email and we'll respond within 24 hours.</p>
+                      <p class="mt-4 text-blue-600">support@example.com</p>
+                    </div>
+                    
+                    <div class="border rounded-lg p-6 hover:shadow-md transition">
+                      <h3 class="text-lg font-medium text-gray-900">Live Chat</h3>
+                      <p class="mt-1 text-sm text-gray-500">Chat with a support representative in real-time.</p>
+                      <button class="mt-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition">
+                        Start Chat
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <h3 class="mt-8 text-lg font-medium text-gray-900">Frequently Asked Support Questions</h3>
+                  <div class="mt-4 space-y-4">
+                    <details class="group border rounded-lg p-3 hover:shadow-sm transition">
+                      <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
+                        <span>How do I reset my password?</span>
+                        <span class="transition group-open:rotate-180">
+                          <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24">
+                            <path d="M6 9l6 6 6-6"></path>
+                          </svg>
+                        </span>
+                      </summary>
+                      <p class="text-gray-500 mt-3 group-open:animate-fadeIn">
+                        You can reset your password by clicking on the "Forgot password" link on the login page. We'll send you an email with instructions to reset your password.
+                      </p>
+                    </details>
+                    
+                    <details class="group border rounded-lg p-3 hover:shadow-sm transition">
+                      <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
+                        <span>How do I update my billing information?</span>
+                        <span class="transition group-open:rotate-180">
+                          <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24">
+                            <path d="M6 9l6 6 6-6"></path>
+                          </svg>
+                        </span>
+                      </summary>
+                      <p class="text-gray-500 mt-3 group-open:animate-fadeIn">
+                        You can update your billing information in your account settings. Go to Settings > Billing and you'll be able to update your payment method and billing address.
+                      </p>
+                    </details>
+                  </div>
+      
+                <% _ -> %>
+                  <div class="text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                  </span>
-                </summary>
-                <p class="text-gray-500 mt-2 pl-4">
-                  You can reset your password by clicking on the "Forgot password" link on the login page. We'll send you an email with instructions to reset your password.
-                </p>
-              </details>
-              
-              <details class="group">
-                <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
-                  <span>How do I update my billing information?</span>
-                  <span class="transition group-open:rotate-180">
-                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24">
-                      <path d="M6 9l6 6 6-6"></path>
-                    </svg>
-                  </span>
-                </summary>
-                <p class="text-gray-500 mt-2 pl-4">
-                  You can update your billing information in your account settings. Go to Settings > Billing and you'll be able to update your payment method and billing address.
-                </p>
-              </details>
-            </div>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">No documentation</h3>
+                    <p class="mt-1 text-sm text-gray-500">Documentation for this topic is not available yet.</p>
+                    <div class="mt-6">
+                      <a href={~p"/docs"} class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                        Back to Documentation
+                      </a>
+                    </div>
+                  </div>
+              <% end %>
+            <% end %>
+          </div>
 
-          <% _ -> %>
-            <p>Documentation for this topic is not available yet. Please check back later or contact support for assistance.</p>
-        <% end %>
+          <!-- Article footer - feedback and sharing options -->
+          <div class="mt-12 pt-6 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-medium text-gray-500">Was this helpful?</h3>
+                <div class="mt-1 flex space-x-2">
+                  <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <svg class="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+                    </svg>
+                    Yes
+                  </button>
+                  <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <svg class="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2"></path>
+                    </svg>
+                    No
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-sm font-medium text-gray-500">Share</h3>
+                <div class="mt-1 flex space-x-2">
+                  <button type="button" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Share on Twitter</span>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+                    </svg>
+                  </button>
+                  <button type="button" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Share on LinkedIn</span>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M16.338 16.338H13.67V12.16c0-1-.02-2.288-1.39-2.288-1.392 0-1.6 1.09-1.6 2.214v4.252H8.014v-8.59h2.556v1.17h.037c.355-.675 1.227-1.39 2.524-1.39 2.704 0 3.2 1.778 3.2 4.092v4.71z" clip-rule="evenodd"></path>
+                      <path fill-rule="evenodd" d="M5.424 10.75H2.756v8.59h2.668v-8.59z" clip-rule="evenodd"></path>
+                      <circle cx="4.09" cy="5.5" r="1.66"></circle>
+                    </svg>
+                  </button>
+                  <button type="button" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Copy link</span>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related documentation links -->
+      <div class="mt-8">
+        <h2 class="text-lg font-medium text-gray-900">Related Documentation</h2>
+        <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <%= for related_doc <- (if @topic == "LLC", do: ["Cloudflare", "Youtube"], else: ["LLC", "Tiktok"]) do %>
+            <a href={~p"/docs/#{related_doc}"} class="flex items-start p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition">
+              <div class="flex-shrink-0">
+                <div class="flex items-center justify-center h-10 w-10 rounded-md bg-blue-50 text-blue-700">
+                  <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-900"><%= String.capitalize(related_doc) %></h3>
+                <p class="mt-1 text-sm text-gray-500">Learn about <%= String.capitalize(related_doc) %> and how it works.</p>
+              </div>
+            </a>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Add ID attributes to markdown headers -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const content = document.getElementById('markdown-content');
+    if (content) {
+      // Find all headers
+      const headers = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      
+      // Add ID to each header based on its text content
+      headers.forEach(header => {
+        const text = header.textContent.trim().toLowerCase();
+        let id = text.replace(/[^\w\s-]/g, '')  // Remove special chars
+                      .replace(/\s+/g, '-')     // Replace spaces with hyphens
+                      .replace(/-+/g, '-');     // Replace multiple hyphens with single
+        
+        if (id.startsWith('-')) id = id.substring(1);
+        if (id.endsWith('-')) id = id.substring(0, id.length - 1);
+        
+        if (!header.id) header.id = id;
+      });
+    }
+  });
+</script>

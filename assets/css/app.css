@@ -21,3 +21,138 @@
 .hover\:pause-animation:hover {
   animation-play-state: paused;
 }
+
+/* Custom animation for fade in content */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.group-open\:animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Enhanced markdown content styling */
+#markdown-content {
+  /* Basic typography */
+  @apply text-gray-800 leading-relaxed;
+  
+  /* Headings */
+  & h1, & h2, & h3, & h4, & h5, & h6 {
+    @apply font-bold text-gray-900 mb-4 mt-6 scroll-mt-24;
+  }
+  
+  & h1 {
+    @apply text-3xl border-b border-gray-200 pb-2;
+  }
+  
+  & h2 {
+    @apply text-2xl border-b border-gray-200 pb-2;
+  }
+  
+  & h3 {
+    @apply text-xl;
+  }
+  
+  & h4 {
+    @apply text-lg;
+  }
+  
+  /* Paragraphs and spacing */
+  & p {
+    @apply my-4;
+  }
+  
+  /* Lists */
+  & ul, & ol {
+    @apply my-4 pl-8;
+  }
+  
+  & ul {
+    @apply list-disc;
+  }
+  
+  & ol {
+    @apply list-decimal;
+  }
+  
+  & li {
+    @apply mb-2;
+  }
+  
+  /* Blockquotes */
+  & blockquote {
+    @apply border-l-4 border-blue-500 pl-4 italic my-4 text-gray-600;
+  }
+  
+  /* Code blocks */
+  & pre {
+    @apply bg-gray-800 text-white p-4 rounded-lg overflow-x-auto my-4;
+  }
+  
+  & code {
+    @apply bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm;
+  }
+  
+  & pre code {
+    @apply bg-transparent text-white p-0;
+  }
+  
+  /* Tables */
+  & table {
+    @apply min-w-full divide-y divide-gray-300 my-6;
+  }
+  
+  & thead {
+    @apply bg-gray-50;
+  }
+  
+  & th {
+    @apply py-3.5 px-4 text-sm font-semibold text-left text-gray-900;
+  }
+  
+  & tbody {
+    @apply divide-y divide-gray-200;
+  }
+  
+  & td {
+    @apply py-4 px-4 text-sm text-gray-500;
+  }
+  
+  /* Links */
+  & a {
+    @apply text-blue-600 hover:text-blue-800 hover:underline;
+  }
+  
+  /* Horizontal rule */
+  & hr {
+    @apply my-8 border-t border-gray-300;
+  }
+  
+  /* Special sections */
+  & .note, & .info, & .warning, & .danger {
+    @apply p-4 my-4 rounded-lg;
+  }
+  
+  & .note {
+    @apply bg-blue-50 border-l-4 border-blue-500;
+  }
+  
+  & .info {
+    @apply bg-green-50 border-l-4 border-green-500;
+  }
+  
+  & .warning {
+    @apply bg-yellow-50 border-l-4 border-yellow-500;
+  }
+  
+  & .danger {
+    @apply bg-red-50 border-l-4 border-red-500;
+  }
+}

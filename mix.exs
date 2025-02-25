@@ -63,7 +63,8 @@ defmodule Myapp.MixProject do
       {:hackney, "~> 1.18"},
       {:google_api_you_tube, "~> 0.53.0"},
       {:oauth2, "~> 2.1"},
-      {:httpoison, "~> 2.0"}
+      {:httpoison, "~> 2.0"},
+      {:earmark, "~> 1.4"}
     ]
   end
 

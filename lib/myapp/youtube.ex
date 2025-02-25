@@ -38,7 +38,8 @@ defmodule Myapp.Youtube do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  def init(opts) do
+  @impl true
+  def init(_opts) do
     {:ok, %{quota_used: 0}}
   end
 
@@ -351,15 +352,6 @@ defmodule Myapp.Youtube do
     end
   end
 
-  defp parse_duration(duration) do
-    # Convert ISO 8601 duration to seconds
-    ~r/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/
-    |> Regex.run(duration)
-    |> case do
-      [_, h, m, s] -> String.to_integer(h) * 3600 + String.to_integer(m) * 60 + String.to_integer(s)
-      [_, nil, m, s] -> String.to_integer(m) * 60 + String.to_integer(s)
-      [_, nil, nil, s] -> String.to_integer(s)
-      _ -> 0
-    end
-  end
+  # Removed the unused parse_duration function
+  # If needed in the future, you can add it back
 end

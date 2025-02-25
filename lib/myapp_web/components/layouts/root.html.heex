@@ -12,6 +12,56 @@
     </script>
   </head>
   <body class="min-h-full flex flex-col">
+    <!-- Navigation -->
+    <header class="bg-white shadow-sm z-10">
+      <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
+        <div class="flex w-full items-center justify-between border-b border-gray-200 py-6 lg:border-none">
+          <div class="flex items-center">
+            <a href={~p"/"} class="flex items-center">
+              <div class="w-8 h-8 bg-blue-600 rounded-full mr-2"></div>
+              <span class="text-xl font-bold text-gray-900">ingrey</span>
+            </a>
+            <div class="ml-10 hidden space-x-8 lg:block">
+              <a href={~p"/docs"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+                Documentation
+              </a>
+              <a href={~p"/pricing"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+                Pricing
+              </a>
+              <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+                Features
+              </a>
+              <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+                Company
+              </a>
+            </div>
+          </div>
+          <div class="ml-10 space-x-4">
+            <a href="#" class="inline-block rounded-md border border-transparent bg-blue-500 py-2 px-4 text-base font-medium text-white hover:bg-blue-600 transition">
+              Sign in
+            </a>
+            <a href="#" class="inline-block rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white hover:bg-blue-700 transition">
+              Sign up
+            </a>
+          </div>
+        </div>
+        <div class="flex flex-wrap justify-center space-x-6 py-4 lg:hidden">
+          <a href={~p"/docs"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+            Documentation
+          </a>
+          <a href={~p"/pricing"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+            Pricing
+          </a>
+          <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+            Features
+          </a>
+          <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+            Company
+          </a>
+        </div>
+      </nav>
+    </header>
+    
     <div class="flex-grow">
       <%= @inner_content %>
     </div>

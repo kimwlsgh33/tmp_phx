@@ -1,4 +1,7 @@
 defmodule Myapp.YoutubeOauth do
+  @moduledoc """
+  YouTube OAuth2 strategy for authorization and token handling.
+  """
   use OAuth2.Strategy
 
   def client do
@@ -20,6 +23,20 @@ defmodule Myapp.YoutubeOauth do
   end
 
   def get_token(code) do
-    OAuth2.Client.get_token(code: code)
+    OAuth2.Client.get_token(client(), code: code)
+  end
+
+  # OAuth2.Strategy implementation
+  @impl OAuth2.Strategy
+  def authorize_url(client, params) do
+    OAuth2.Strategy.AuthCode.authorize_url(client, params)
+  end
+
+  @impl OAuth2.Strategy
+  def get_token(client, params, headers) do
+    client
+    |> OAuth2.Client.put_param(:client_secret, client.client_secret)
+    |> OAuth2.Client.put_header("Accept", "application/json")
+    |> OAuth2.Strategy.AuthCode.get_token(params, headers)
   end
 end
