@@ -4,7 +4,7 @@ defmodule MyappWeb.PrivacyPolicyHTML do
   def page(assigns) do
     ~H"""
     <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold">Privacy Policy v<%= @version %></h1>
+      <h1 class="text-3xl font-bold">Privacy Policy v{@version}</h1>
       <div class="mt-8 prose max-w-none">
         <p>
           This is a placeholder for the privacy policy content. In a real application, this would be loaded from a database or a file.

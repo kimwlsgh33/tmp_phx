@@ -10,7 +10,7 @@ defmodule MyappWeb.FileController do
     case FileServer.write_file(upload_path(filename), File.read!(upload)) do
       :ok ->
         json(conn, %{status: "success", message: "File uploaded successfully"})
-      
+
       {:error, reason} ->
         conn
         |> put_status(:unprocessable_entity)

@@ -35,7 +35,8 @@ defmodule Myapp.Threads do
       {:error, %{"error" => %{"message" => "Thread not found"}}}
 
   """
-  def reply_to_thread(thread_id, text) when is_binary(thread_id) and is_binary(text) and text != "" do
+  def reply_to_thread(thread_id, text)
+      when is_binary(thread_id) and is_binary(text) and text != "" do
     ThreadApi.reply_to_thread(thread_id, text)
   end
 

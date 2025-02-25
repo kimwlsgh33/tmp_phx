@@ -55,44 +55,55 @@ defmodule Myapp.Youtube do
   def search_videos(query, opts \\ []) do
     case validate_api_key(opts) do
       {:ok, api_key} ->
-        url = "https://www.googleapis.com/youtube/v3/search?" <> URI.encode_query(%{
-          "part" => "snippet",
-          "q" => query,
-          "type" => "video",
-          "key" => api_key,
-          "maxResults" => "9"
-        })
+        url =
+          "https://www.googleapis.com/youtube/v3/search?" <>
+            URI.encode_query(%{
+              "part" => "snippet",
+              "q" => query,
+              "type" => "video",
+              "key" => api_key,
+              "maxResults" => "9"
+            })
 
         case HTTPoison.get(url, [], []) do
           {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
             case Jason.decode(body) do
               {:ok, response} ->
-                videos = Enum.map(response["items"], fn item ->
-                  %{
-                    id: item["id"]["videoId"],
-                    title: item["snippet"]["title"],
-                    description: item["snippet"]["description"],
-                    thumbnail: item["snippet"]["thumbnails"]["high"]["url"],
-                    channel_title: item["snippet"]["channelTitle"],
-                    published_at: item["snippet"]["publishedAt"]
-                  }
-                end)
+                videos =
+                  Enum.map(response["items"], fn item ->
+                    %{
+                      id: item["id"]["videoId"],
+                      title: item["snippet"]["title"],
+                      description: item["snippet"]["description"],
+                      thumbnail: item["snippet"]["thumbnails"]["high"]["url"],
+                      channel_title: item["snippet"]["channelTitle"],
+                      published_at: item["snippet"]["publishedAt"]
+                    }
+                  end)
+
                 {:ok, videos}
+
               _ ->
                 {:error, "Failed to parse YouTube response"}
             end
+
           {:ok, %HTTPoison.Response{status_code: 400}} ->
             {:error, "Invalid request. Please check your search query."}
+
           {:ok, %HTTPoison.Response{status_code: 401}} ->
             {:error, "Invalid API key. Please check your API key and try again."}
+
           {:ok, %HTTPoison.Response{status_code: 403}} ->
             {:error, "API quota exceeded. Please try again later."}
+
           {:error, %HTTPoison.Error{reason: reason}} ->
             Logger.error("YouTube API error: #{inspect(reason)}")
             {:error, "Failed to connect to YouTube. Please check your internet connection."}
+
           _ ->
             {:error, "An unexpected error occurred. Please try again later."}
         end
+
       {:error, message} ->
         {:error, message}
     end
@@ -108,11 +119,13 @@ defmodule Myapp.Youtube do
   def get_video_details(video_id, opts \\ []) do
     case validate_api_key(opts) do
       {:ok, api_key} ->
-        url = "https://www.googleapis.com/youtube/v3/videos?" <> URI.encode_query(%{
-          "part" => "snippet,contentDetails,statistics",
-          "id" => video_id,
-          "key" => api_key
-        })
+        url =
+          "https://www.googleapis.com/youtube/v3/videos?" <>
+            URI.encode_query(%{
+              "part" => "snippet,contentDetails,statistics",
+              "id" => video_id,
+              "key" => api_key
+            })
 
         case HTTPoison.get(url, [], []) do
           {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
@@ -120,33 +133,42 @@ defmodule Myapp.Youtube do
               {:ok, response} ->
                 case response["items"] do
                   [item | _] ->
-                    {:ok, %{
-                      id: video_id,
-                      title: item["snippet"]["title"],
-                      description: item["snippet"]["description"],
-                      duration: item["contentDetails"]["duration"],
-                      view_count: String.to_integer(item["statistics"]["viewCount"]),
-                      published_at: item["snippet"]["publishedAt"],
-                      tags: Map.get(item["snippet"], "tags", [])
-                    }}
+                    {:ok,
+                     %{
+                       id: video_id,
+                       title: item["snippet"]["title"],
+                       description: item["snippet"]["description"],
+                       duration: item["contentDetails"]["duration"],
+                       view_count: String.to_integer(item["statistics"]["viewCount"]),
+                       published_at: item["snippet"]["publishedAt"],
+                       tags: Map.get(item["snippet"], "tags", [])
+                     }}
+
                   [] ->
                     {:error, "Video not found"}
                 end
+
               _ ->
                 {:error, "Failed to parse YouTube response"}
             end
+
           {:ok, %HTTPoison.Response{status_code: 400}} ->
             {:error, "Invalid request. Please check the video ID."}
+
           {:ok, %HTTPoison.Response{status_code: 401}} ->
             {:error, "Invalid API key. Please check your API key and try again."}
+
           {:ok, %HTTPoison.Response{status_code: 403}} ->
             {:error, "API quota exceeded. Please try again later."}
+
           {:error, %HTTPoison.Error{reason: reason}} ->
             Logger.error("YouTube API error: #{inspect(reason)}")
             {:error, "Failed to connect to YouTube. Please check your internet connection."}
+
           _ ->
             {:error, "An unexpected error occurred. Please try again later."}
         end
+
       {:error, message} ->
         {:error, message}
     end
@@ -165,24 +187,26 @@ defmodule Myapp.Youtube do
       {:ok, api_key} ->
         case get_connection(api_key) do
           nil ->
-            {:error, "No YouTube API key provided. Either configure server API key or provide a user API key."}
+            {:error,
+             "No YouTube API key provided. Either configure server API key or provide a user API key."}
+
           connection ->
             GenServer.call(__MODULE__, {:track_quota, 50}, :infinity)
             |> case do
               :ok ->
                 case GoogleApi.YouTube.V3.Api.Playlists.youtube_playlists_insert(
-                  connection,
-                  ["snippet,status"],
-                  body: %GoogleApi.YouTube.V3.Model.Playlist{
-                    snippet: %GoogleApi.YouTube.V3.Model.PlaylistSnippet{
-                      title: title,
-                      description: description
-                    },
-                    status: %GoogleApi.YouTube.V3.Model.PlaylistStatus{
-                      privacyStatus: Keyword.get(opts, :privacy_status, "private")
-                    }
-                  }
-                ) do
+                       connection,
+                       ["snippet,status"],
+                       body: %GoogleApi.YouTube.V3.Model.Playlist{
+                         snippet: %GoogleApi.YouTube.V3.Model.PlaylistSnippet{
+                           title: title,
+                           description: description
+                         },
+                         status: %GoogleApi.YouTube.V3.Model.PlaylistStatus{
+                           privacyStatus: Keyword.get(opts, :privacy_status, "private")
+                         }
+                       }
+                     ) do
                   {:ok, response} -> {:ok, response}
                   {:error, %{body: body}} -> {:error, body}
                   error -> {:error, "API request failed: #{inspect(error)}"}
@@ -192,6 +216,7 @@ defmodule Myapp.Youtube do
                 {:error, "Daily quota exceeded"}
             end
         end
+
       {:error, message} ->
         {:error, message}
     end
@@ -208,37 +233,45 @@ defmodule Myapp.Youtube do
       {:ok, api_key} ->
         case get_connection(api_key) do
           nil ->
-            {:error, "No YouTube API key provided. Either configure server API key or provide a user API key."}
+            {:error,
+             "No YouTube API key provided. Either configure server API key or provide a user API key."}
+
           connection ->
             GenServer.call(__MODULE__, {:track_quota, 1}, :infinity)
             |> case do
               :ok ->
                 case GoogleApi.YouTube.V3.Api.Playlists.youtube_playlists_list(
-                  connection,
-                  ["snippet,contentDetails"],
-                  channelId: channel_id,
-                  maxResults: 50
-                ) do
+                       connection,
+                       ["snippet,contentDetails"],
+                       channelId: channel_id,
+                       maxResults: 50
+                     ) do
                   {:ok, response} ->
-                    playlists = Enum.map(response.items, fn item ->
-                      %{
-                        id: item.id,
-                        title: item.snippet.title,
-                        description: item.snippet.description,
-                        thumbnail: item.snippet.thumbnails.default.url,
-                        item_count: item.contentDetails.itemCount
-                      }
-                    end)
+                    playlists =
+                      Enum.map(response.items, fn item ->
+                        %{
+                          id: item.id,
+                          title: item.snippet.title,
+                          description: item.snippet.description,
+                          thumbnail: item.snippet.thumbnails.default.url,
+                          item_count: item.contentDetails.itemCount
+                        }
+                      end)
+
                     {:ok, playlists}
 
-                  {:error, %{body: body}} -> {:error, body}
-                  error -> {:error, "API request failed: #{inspect(error)}"}
+                  {:error, %{body: body}} ->
+                    {:error, body}
+
+                  error ->
+                    {:error, "API request failed: #{inspect(error)}"}
                 end
 
               {:error, :quota_exceeded} ->
                 {:error, "Daily quota exceeded"}
             end
         end
+
       {:error, message} ->
         {:error, message}
     end
@@ -255,7 +288,9 @@ defmodule Myapp.Youtube do
       {:ok, api_key} ->
         case get_connection(api_key) do
           nil ->
-            {:error, "No YouTube API key provided. Either configure server API key or provide a user API key."}
+            {:error,
+             "No YouTube API key provided. Either configure server API key or provide a user API key."}
+
           connection ->
             GenServer.call(__MODULE__, {:track_quota, 50}, :infinity)
             |> case do
@@ -271,10 +306,10 @@ defmodule Myapp.Youtube do
                 }
 
                 case GoogleApi.YouTube.V3.Api.PlaylistItems.youtube_playlist_items_insert(
-                  connection,
-                  ["snippet"],
-                  body: playlist_item
-                ) do
+                       connection,
+                       ["snippet"],
+                       body: playlist_item
+                     ) do
                   {:ok, response} -> {:ok, response}
                   {:error, %{body: body}} -> {:error, body}
                   error -> {:error, "API request failed: #{inspect(error)}"}
@@ -284,6 +319,7 @@ defmodule Myapp.Youtube do
                 {:error, "Daily quota exceeded"}
             end
         end
+
       {:error, message} ->
         {:error, message}
     end
@@ -294,9 +330,12 @@ defmodule Myapp.Youtube do
   @impl true
   def handle_call({:track_quota, cost}, _from, state) do
     today = Date.utc_today()
-    state = if today != state.last_reset, do: %{state | quota_used: 0, last_reset: today}, else: state
+
+    state =
+      if today != state.last_reset, do: %{state | quota_used: 0, last_reset: today}, else: state
 
     new_quota = state.quota_used + cost
+
     if new_quota > @quota_limit do
       {:reply, {:error, :quota_exceeded}, state}
     else

@@ -9,9 +9,10 @@ defmodule Myapp.MarkdownRenderer do
   """
   def render_markdown_file(path) do
     case File.read(path) do
-      {:ok, content} -> 
+      {:ok, content} ->
         {:ok, render_markdown(content)}
-      {:error, reason} -> 
+
+      {:error, reason} ->
         {:error, "Could not read markdown file: #{reason}"}
     end
   end
@@ -32,13 +33,14 @@ defmodule Myapp.MarkdownRenderer do
   """
   def get_available_docs do
     docs_path = Path.join(:code.priv_dir(:myapp), "../docs")
-    
+
     case File.ls(docs_path) do
       {:ok, files} ->
         files
         |> Enum.filter(&String.ends_with?(&1, ".md"))
         |> Enum.map(&String.replace(&1, ".md", ""))
         |> Enum.sort()
+
       {:error, _} ->
         []
     end

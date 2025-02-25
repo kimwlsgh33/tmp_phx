@@ -36,6 +36,7 @@ defmodule MyappWeb.Helpers.YoutubeHelper do
     cond do
       hours > 0 ->
         :io_lib.format("~2..0B:~2..0B:~2..0B", [hours, minutes, remaining_seconds])
+
       true ->
         :io_lib.format("~B:~2..0B", [minutes, remaining_seconds])
     end
@@ -52,8 +53,10 @@ defmodule MyappWeb.Helpers.YoutubeHelper do
     cond do
       count >= 1_000_000 ->
         "#{Float.round(count / 1_000_000, 1)}M"
+
       count >= 1_000 ->
         "#{Float.round(count / 1_000, 1)}K"
+
       true ->
         to_string(count)
     end
@@ -69,6 +72,7 @@ defmodule MyappWeb.Helpers.YoutubeHelper do
     case DateTime.from_iso8601(datetime) do
       {:ok, dt, _offset} ->
         Calendar.strftime(dt, "%b %d, %Y")
+
       _ ->
         datetime
     end

@@ -1,4 +1,4 @@
-defmodule MyappWeb.PricingController do
+defmodule MyappWeb.FeaturesController do
   use MyappWeb, :controller
 
   def index(conn, _params) do

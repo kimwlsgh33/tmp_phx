@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" · Main">
-      <%= assigns[:page_title] || "ingrey" %>
+      {assigns[:page_title] || "ingrey"}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
@@ -22,50 +22,80 @@
               <span class="text-xl font-bold text-gray-900">ingrey</span>
             </a>
             <div class="ml-10 hidden space-x-8 lg:block">
-              <a href={~p"/docs"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+              <a
+                href={~p"/docs"}
+                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+              >
                 Documentation
               </a>
-              <a href={~p"/pricing"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+              <a
+                href={~p"/pricing"}
+                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+              >
                 Pricing
               </a>
-              <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+              <a
+                href={~p"/features"}
+                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+              >
                 Features
               </a>
-              <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+              <a
+                href={~p"/company"}
+                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+              >
                 Company
               </a>
             </div>
           </div>
           <div class="ml-10 space-x-4">
-            <a href="#" class="inline-block rounded-md border border-transparent bg-blue-500 py-2 px-4 text-base font-medium text-white hover:bg-blue-600 transition">
+            <a
+              href="#"
+              class="inline-block rounded-md border border-transparent bg-blue-500 py-2 px-4 text-base font-medium text-white hover:bg-blue-600 transition"
+            >
               Sign in
             </a>
-            <a href="#" class="inline-block rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white hover:bg-blue-700 transition">
+            <a
+              href="#"
+              class="inline-block rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white hover:bg-blue-700 transition"
+            >
               Sign up
             </a>
           </div>
         </div>
         <div class="flex flex-wrap justify-center space-x-6 py-4 lg:hidden">
-          <a href={~p"/docs"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+          <a
+            href={~p"/docs"}
+            class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+          >
             Documentation
           </a>
-          <a href={~p"/pricing"} class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+          <a
+            href={~p"/pricing"}
+            class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+          >
             Pricing
           </a>
-          <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+          <a
+            href={~p"/features"}
+            class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+          >
             Features
           </a>
-          <a href="#" class="text-base font-medium text-gray-700 hover:text-blue-600 transition">
+          <a
+            href={~p"/company"}
+            class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+          >
             Company
           </a>
         </div>
       </nav>
     </header>
-    
+
     <div class="flex-grow">
-      <%= @inner_content %>
+      {@inner_content}
     </div>
-    
+
     <footer class="bg-[#0A0B14] text-gray-300 py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -75,28 +105,46 @@
               <div class="w-8 h-8 bg-purple-600 rounded-full"></div>
               <span class="ml-2 text-white">ingrey.com</span>
             </div>
-            <p class="text-sm text-gray-400">  ingrey.com - All rights reserved.</p>
+            <p class="text-sm text-gray-400">ingrey.com - All rights reserved.</p>
             <div class="flex space-x-4">
               <a href="#" class="text-gray-400 hover:text-white">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </a>
               <a href="#" class="text-gray-400 hover:text-white">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
-                  <path d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z"/>
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+                  <path d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z" />
                 </svg>
               </a>
               <a href="#" class="text-gray-400 hover:text-white">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                  />
                 </svg>
               </a>
             </div>
           </div>
-
-          <!-- Products -->
+          
+<!-- Products -->
           <div>
             <h3 class="text-white font-semibold mb-4">Products</h3>
             <ul class="space-y-2">
@@ -107,20 +155,20 @@
               <li><a href="#" class="hover:text-white">Our method</a></li>
             </ul>
           </div>
-
-          <!-- Company -->
+          
+<!-- Company -->
           <div>
             <h3 class="text-white font-semibold mb-4">Company</h3>
             <ul class="space-y-2">
-              <li><a href="#" class="hover:text-white">About us</a></li>
-              <li><a href="#" class="hover:text-white">Diversity & Inclusion</a></li>
+              <li><a href={~p"/company"} class="hover:text-white">About us</a></li>
+              <li><a href={~p"/company"} class="hover:text-white">Diversity & Inclusion</a></li>
               <li><a href="#" class="hover:text-white">Blog</a></li>
               <li><a href="#" class="hover:text-white">Careers</a></li>
               <li><a href="#" class="hover:text-white">Financial statements</a></li>
             </ul>
           </div>
-
-          <!-- Resources & Legals -->
+          
+<!-- Resources & Legals -->
           <div class="grid grid-cols-2 gap-8">
             <div>
               <h3 class="text-white font-semibold mb-4">Resources</h3>

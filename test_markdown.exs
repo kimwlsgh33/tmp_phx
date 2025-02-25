@@ -11,6 +11,7 @@ case Myapp.MarkdownRenderer.render_markdown_file(llc_path) do
   {:ok, html_content} ->
     IO.puts("Successfully rendered LLC.md to HTML")
     IO.puts("First 100 characters: #{String.slice(html_content, 0..100)}")
+
   {:error, reason} ->
     IO.puts("Error rendering LLC.md: #{reason}")
 end
