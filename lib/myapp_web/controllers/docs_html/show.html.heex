@@ -1,0 +1,208 @@
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <nav class="flex mb-8" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href={~p"/"} class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+          Home
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+          </svg>
+          <a href={~p"/docs"} class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Documentation</a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+          </svg>
+          <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2"><%= String.capitalize(@topic) %></span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+      <h1 class="text-2xl font-bold text-gray-900"><%= String.capitalize(@topic) %></h1>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Documentation for <%= String.capitalize(@topic) %></p>
+    </div>
+    <div class="border-t border-gray-200">
+      <div class="px-4 py-5 sm:p-6 prose max-w-none">
+        <%= case @topic do %>
+          <% "getting-started" -> %>
+            <h2>Getting Started Guide</h2>
+            <p>Welcome to our platform! This guide will help you get up and running quickly.</p>
+            
+            <h3>Step 1: Create an Account</h3>
+            <p>To start using our service, you'll need to create an account. Click the "Sign Up" button in the top right corner of the page and follow the instructions.</p>
+            
+            <h3>Step 2: Set Up Your Profile</h3>
+            <p>Once you've created an account, you'll want to set up your profile. This helps personalize your experience and makes it easier for others to find and connect with you.</p>
+            
+            <h3>Step 3: Explore Features</h3>
+            <p>Now that you're all set up, take some time to explore the features of our platform. Check out the dashboard, browse content, and familiarize yourself with the interface.</p>
+            
+            <h3>Next Steps</h3>
+            <p>Once you're comfortable with the basics, check out our <a href={~p"/docs/tutorials"} class="text-blue-600 hover:underline">Tutorials</a> for more detailed guides on specific features.</p>
+
+          <% "features" -> %>
+            <h2>Platform Features</h2>
+            <p>Our platform offers a wide range of features designed to help you achieve your goals. Here's an overview of what's available:</p>
+            
+            <h3>Core Features</h3>
+            <ul>
+              <li><strong>Feature 1:</strong> Description of feature 1 and its benefits.</li>
+              <li><strong>Feature 2:</strong> Description of feature 2 and its benefits.</li>
+              <li><strong>Feature 3:</strong> Description of feature 3 and its benefits.</li>
+            </ul>
+            
+            <h3>Advanced Features</h3>
+            <ul>
+              <li><strong>Advanced Feature 1:</strong> Description of advanced feature 1.</li>
+              <li><strong>Advanced Feature 2:</strong> Description of advanced feature 2.</li>
+            </ul>
+            
+            <h3>Premium Features</h3>
+            <p>Available on paid plans only:</p>
+            <ul>
+              <li><strong>Premium Feature 1:</strong> Description of premium feature 1.</li>
+              <li><strong>Premium Feature 2:</strong> Description of premium feature 2.</li>
+            </ul>
+
+          <% "faq" -> %>
+            <h2>Frequently Asked Questions</h2>
+            
+            <h3>General Questions</h3>
+            
+            <h4>What is your service about?</h4>
+            <p>Our service provides [brief description of your service]. We help users to [value proposition].</p>
+            
+            <h4>How much does it cost?</h4>
+            <p>We offer several pricing plans to fit different needs. Our basic plan starts at $X/month, while our premium plan is $Y/month. You can find more details on our <a href="#" class="text-blue-600 hover:underline">Pricing page</a>.</p>
+            
+            <h4>Is there a free trial?</h4>
+            <p>Yes, we offer a 14-day free trial for new users. No credit card is required to start your trial.</p>
+            
+            <h3>Technical Questions</h3>
+            
+            <h4>Can I export my data?</h4>
+            <p>Yes, we provide data export functionality in CSV and JSON formats. Go to Settings > Data Export to access this feature.</p>
+            
+            <h4>What browsers do you support?</h4>
+            <p>Our platform works best on modern browsers including Chrome, Firefox, Safari, and Edge. We recommend keeping your browser updated to the latest version for the best experience.</p>
+
+          <% "api" -> %>
+            <h2>API Reference</h2>
+            <p>Our API allows you to integrate our services into your own applications. This reference provides detailed information about endpoints, parameters, and responses.</p>
+            
+            <h3>Authentication</h3>
+            <p>All API requests require authentication using an API key. You can generate an API key in your account settings.</p>
+            
+            <pre>Authorization: Bearer YOUR_API_KEY</pre>
+            
+            <h3>Endpoints</h3>
+            
+            <h4>GET /api/resource</h4>
+            <p>Retrieves a list of resources.</p>
+            
+            <h5>Parameters</h5>
+            <ul>
+              <li><code>limit</code> (optional): Maximum number of results to return. Default: 20</li>
+              <li><code>offset</code> (optional): Number of results to skip. Default: 0</li>
+            </ul>
+            
+            <h5>Response</h5>
+            <p>Returns a JSON object containing the resource data and pagination information.</p>
+
+          <% "tutorials" -> %>
+            <h2>Tutorials</h2>
+            <p>Our step-by-step tutorials will help you make the most of our platform. Select a tutorial below to get started.</p>
+            
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-6">
+              <div class="border rounded-lg p-4">
+                <h3 class="text-lg font-medium text-gray-900">Tutorial 1: Getting Started</h3>
+                <p class="mt-1 text-sm text-gray-500">Learn the basics of our platform in this beginner-friendly tutorial.</p>
+                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+              </div>
+              
+              <div class="border rounded-lg p-4">
+                <h3 class="text-lg font-medium text-gray-900">Tutorial 2: Advanced Features</h3>
+                <p class="mt-1 text-sm text-gray-500">Take your skills to the next level with our advanced features.</p>
+                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+              </div>
+              
+              <div class="border rounded-lg p-4">
+                <h3 class="text-lg font-medium text-gray-900">Tutorial 3: Integration Guide</h3>
+                <p class="mt-1 text-sm text-gray-500">Learn how to integrate our platform with your existing tools.</p>
+                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+              </div>
+              
+              <div class="border rounded-lg p-4">
+                <h3 class="text-lg font-medium text-gray-900">Tutorial 4: Best Practices</h3>
+                <p class="mt-1 text-sm text-gray-500">Tips and tricks to get the most out of our platform.</p>
+                <p class="mt-2"><a href="#" class="text-sm font-medium text-blue-600 hover:underline">Read tutorial →</a></p>
+              </div>
+            </div>
+
+          <% "support" -> %>
+            <h2>Contact Support</h2>
+            <p>Need help? Our support team is here to assist you. Please use one of the methods below to get in touch.</p>
+            
+            <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div class="border rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900">Email Support</h3>
+                <p class="mt-1 text-sm text-gray-500">Send us an email and we'll respond within 24 hours.</p>
+                <p class="mt-4 text-blue-600">support@example.com</p>
+              </div>
+              
+              <div class="border rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900">Live Chat</h3>
+                <p class="mt-1 text-sm text-gray-500">Chat with a support representative in real-time.</p>
+                <button class="mt-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                  Start Chat
+                </button>
+              </div>
+            </div>
+            
+            <h3 class="mt-8 text-lg font-medium text-gray-900">Frequently Asked Support Questions</h3>
+            <div class="mt-4 space-y-4">
+              <details class="group">
+                <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
+                  <span>How do I reset my password?</span>
+                  <span class="transition group-open:rotate-180">
+                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24">
+                      <path d="M6 9l6 6 6-6"></path>
+                    </svg>
+                  </span>
+                </summary>
+                <p class="text-gray-500 mt-2 pl-4">
+                  You can reset your password by clicking on the "Forgot password" link on the login page. We'll send you an email with instructions to reset your password.
+                </p>
+              </details>
+              
+              <details class="group">
+                <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
+                  <span>How do I update my billing information?</span>
+                  <span class="transition group-open:rotate-180">
+                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24">
+                      <path d="M6 9l6 6 6-6"></path>
+                    </svg>
+                  </span>
+                </summary>
+                <p class="text-gray-500 mt-2 pl-4">
+                  You can update your billing information in your account settings. Go to Settings > Billing and you'll be able to update your payment method and billing address.
+                </p>
+              </details>
+            </div>
+
+          <% _ -> %>
+            <p>Documentation for this topic is not available yet. Please check back later or contact support for assistance.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
