@@ -1,32 +1,44 @@
-<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
   <!-- Breadcrumb navigation -->
   <.breadcrumb topic={@topic} />
 
-  <div class="flex flex-col md:flex-row gap-8">
+  <!-- Mobile navigation toggle (visible only on small screens) -->
+  <div class="lg:hidden mt-4">
+    <button
+      type="button"
+      class="w-full flex items-center justify-between px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      phx-click={JS.toggle(to: "#mobile-sidebar") |> JS.toggle(to: "#mobile-sidebar-backdrop")}
+    >
+      <span>Documentation Menu</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="mt-4 sm:mt-6 flex flex-col lg:flex-row gap-6 lg:gap-8">
     <!-- Left sidebar for navigation (hidden on mobile) -->
-    <.sidebar topic={@topic} />
+    <div class="hidden lg:block lg:w-1/4 xl:w-1/5 flex-shrink-0">
+      <.sidebar topic={@topic} />
+    </div>
     
     <!-- Main content area -->
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
       <div class="bg-white shadow-sm overflow-hidden rounded-xl border border-gray-100">
         <.content_header topic={@topic} />
 
-        <div class="px-6 py-6">
+        <div class="px-4 sm:px-6 py-4 sm:py-6 overflow-hidden">
           <!-- Table of contents for the article -->
           <%= if @from_markdown do %>
-            <.table_of_contents />
+            <.table_of_contents content={@content} />
           <% end %>
           
           <!-- Main content area -->
-          <div class="prose prose-blue max-w-none">
-            <%= if @from_markdown do %>
-              <div id="markdown-content">
-                {raw(@content)}
-              </div>
-            <% else %>
-              <.static_content topic={@topic} />
-            <% end %>
-          </div>
+          <%= if @from_markdown do %>
+            <.static_content topic={@topic} content={@content} />
+          <% else %>
+            <.static_content topic={@topic} content="" />
+          <% end %>
           
           <!-- Article footer - feedback and sharing options -->
           <.feedback_section />
@@ -34,7 +46,36 @@
       </div>
       
       <!-- Related documentation links -->
-      <.related_docs topic={@topic} />
+      <div class="mt-6">
+        <.related_docs topic={@topic} />
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Mobile sidebar (hidden by default) -->
+<div id="mobile-sidebar-backdrop" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 z-20"></div>
+<div
+  id="mobile-sidebar"
+  class="hidden fixed inset-y-0 left-0 z-30 w-full max-w-xs bg-white shadow-xl overflow-y-auto"
+  phx-click-away={JS.hide(to: "#mobile-sidebar") |> JS.hide(to: "#mobile-sidebar-backdrop")}
+>
+  <div class="p-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-medium text-gray-900">Documentation</h2>
+      <button
+        type="button"
+        class="text-gray-400 hover:text-gray-500"
+        phx-click={JS.hide(to: "#mobile-sidebar") |> JS.hide(to: "#mobile-sidebar-backdrop")}
+      >
+        <span class="sr-only">Close sidebar</span>
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="p-4">
+    <.sidebar topic={@topic} />
   </div>
 </div>

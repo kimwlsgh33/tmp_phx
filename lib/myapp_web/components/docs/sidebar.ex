@@ -1,12 +1,12 @@
 defmodule MyappWeb.Components.Docs.Sidebar do
   use MyappWeb, :html
-  
+
   attr :topic, :string, required: true
 
   def sidebar(assigns) do
     ~H"""
-    <div class="hidden md:block w-64 flex-shrink-0">
-      <div class="sticky top-8">
+    <div class="w-full">
+      <div class="lg:sticky lg:top-8">
         <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
           Documentation
         </h4>
@@ -20,7 +20,7 @@ defmodule MyappWeb.Components.Docs.Sidebar do
                 else: "text-gray-700 hover:text-blue-700 hover:bg-blue-50"
               }
             >
-              {String.capitalize(doc)}
+              <span class="truncate">{String.capitalize(doc)}</span>
             </a>
           <% end %>
         </nav>
