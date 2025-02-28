@@ -30,6 +30,7 @@ defmodule MyappWeb.TestController do
   end
 
   defp get_first_video_details([], _api_key), do: nil
+
   defp get_first_video_details([%{id: video_id} | _], api_key) do
     case Myapp.Youtube.get_video_details(video_id, api_key: api_key) do
       {:ok, details} -> details

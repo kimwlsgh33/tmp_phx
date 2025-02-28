@@ -76,7 +76,6 @@
         width: 60%;
       }
       .back {
-        background: #E0DED7;
         transform: rotateY(180deg);
       }
       .back img {
@@ -112,6 +111,34 @@
         }
       }
 
+      @layer scrollbar {
+        @property --hue {
+          initial-value: 0;
+          syntax: '<number>';
+          inherits: false;
+        }
+        @property --chroma {
+          initial-value: 0;
+          syntax: '<number>';
+          inherits: true;
+        }
+        [data-sync-scrollbar='true'] {
+          scrollbar-color: oklch(var(--lightness) var(--chroma) var(--hue)) #0000;
+        }
+        @supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
+          [data-sync-scrollbar='true'][data-animate='true'] {
+            timeline-scope: --list;
+            scrollbar-color: oklch(var(--lightness) var(--chroma, 0) var(--hue)) #0000;
+            animation-name: change, chroma-on, chroma-off;
+            animation-fill-mode: both;
+            animation-timing-function: linear;
+            animation-range: entry 50% exit 50%, entry 40% entry 50%, exit 30% exit 40%;
+            animation-timeline: --list;
+            ul {
+              view-timeline: --list;
+            }
+          }
+        }
         @keyframes change {
           to {
             --hue: var(--end);
@@ -350,6 +377,20 @@
           color: var(--text-color);
           transition: color 0.3s ease, background 0.3s ease;
         }
+        .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 1vw;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: var(--bg-color); /* 테마에 따라 배경색 동적으로 적용 */
+            transition: background 0.3s ease; /* 부드러운 전환 효과 추가 */
+          }
+
       }
     </style>
   </head>
@@ -373,7 +414,7 @@
               <img src="/images/instagram.png" alt="Instagram" loading="lazy" />
             </div>
             <div class="back">
-              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+              <img src="/images/logos/ingrey.svg" alt="CreatorSync Logo" loading="lazy" />
             </div>
           </div>
           <div class="card youtube">
@@ -381,7 +422,7 @@
               <img src="/images/youtube.png" alt="YouTube" loading="lazy" />
             </div>
             <div class="back">
-              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+              <img src="/images/logos/ingrey.svg" alt="CreatorSync Logo" loading="lazy" />
             </div>
           </div>
           <div class="card tiktok">
@@ -389,7 +430,7 @@
               <img src="/images/tiktok_logo.png" alt="TikTok" loading="lazy" />
             </div>
             <div class="back">
-              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+              <img src="/images/logos/ingrey.svg" alt="CreatorSync Logo" loading="lazy" />
             </div>
           </div>
           <div class="card naver">
@@ -397,7 +438,7 @@
               <img class="naver" src="/images/naver_logo.png" alt="Naver Clip" loading="lazy" />
             </div>
             <div class="back">
-              <img src="/images/service-logo.svg" alt="CreatorSync Logo" loading="lazy" />
+              <img src="/images/logos/ingrey.svg" alt="CreatorSync Logo" loading="lazy" />
             </div>
           </div>
         </div>
@@ -530,4 +571,3 @@
     </script>
   </body>
 </html>
-
