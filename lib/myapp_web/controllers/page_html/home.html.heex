@@ -1,119 +1,176 @@
 <div class="min-h-screen relative overflow-hidden">
   <!-- Animated gradient background -->
-  <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-blue-800 bg-gradient-size animate-gradient-background"></div>
-  
-  <!-- Animated grid overlay with doubled height for seamless scrolling -->
-  <div class="absolute inset-0">
-    <div class="absolute inset-0 bg-[url('/images/grid.svg')] bg-repeat animate-grid-flow" style="height: 200%"></div>
+  <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-blue-800 bg-gradient-size animate-gradient-background">
   </div>
   
-  <!-- Content -->
+<!-- Animated grid overlay with doubled height for seamless scrolling -->
+  <div class="absolute inset-0">
+    <div
+      class="absolute inset-0 bg-[url('/images/grid.svg')] bg-repeat animate-grid-flow"
+      style="height: 200%"
+    >
+    </div>
+  </div>
+  
+<!-- Content -->
   <div class="relative">
     <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 text-center">
       <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-        A powerful suite of
-        <br/>
-        user-centric products
+        A powerful suite of <br /> user-centric products
       </h1>
       <p class="mt-6 text-lg leading-8 text-gray-300">
-        Our landing page template works on all devices, so you only have to set it up once,
-        <br/>
+        Our landing page template works on all devices, so you only have to set it up once, <br />
         and get beautiful results forever.
       </p>
       <div class="mt-10 flex items-center justify-center gap-x-6">
-        <a href="#" class="relative rounded-md bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 bg-[length:200%_auto] animate-button-shine px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:scale-105 animate-button-glow transition-transform duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <a
+          href="#"
+          class="relative rounded-md bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 bg-[length:200%_auto] animate-button-shine px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:scale-105 animate-button-glow transition-transform duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
           Get Started Free →
         </a>
-        <a href="#" class="text-sm font-semibold leading-6 text-white hover:text-indigo-300 transition-colors duration-200">
+        <a
+          href="#"
+          class="text-sm font-semibold leading-6 text-white hover:text-indigo-300 transition-colors duration-200"
+        >
           Read Docs
         </a>
       </div>
-
-      <!-- Integration diagram -->
+      
+<!-- Integration diagram -->
       <div class="mt-20 relative">
         <div class="flex justify-center items-center gap-16 relative">
           <!-- Left side -->
           <div class="flex items-center gap-8">
             <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
               <svg class="w-6 h-6 text-purple-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
             </div>
             <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
               <svg class="w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.022A9.607 9.607 0 0112 6.82c.85.004 1.705.114 2.504.336 1.909-1.29 2.747-1.022 2.747-1.022.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.167 22 16.42 22 12c0-5.523-4.477-10-10-10z"/>
+                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.022A9.607 9.607 0 0112 6.82c.85.004 1.705.114 2.504.336 1.909-1.29 2.747-1.022 2.747-1.022.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.167 22 16.42 22 12c0-5.523-4.477-10-10-10z" />
               </svg>
             </div>
           </div>
-
-          <!-- Center -->
+          
+<!-- Center -->
           <div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border-2 border-blue-500/30">
             <svg class="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-              <path d="M12 8l-4 4 4 4 4-4-4-4z" fill="white"/>
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+              <path d="M12 8l-4 4 4 4 4-4-4-4z" fill="white" />
             </svg>
           </div>
-
-          <!-- Right side -->
+          
+<!-- Right side -->
           <div class="flex items-center gap-8">
             <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
               <svg class="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.022A9.607 9.607 0 0112 6.82c.85.004 1.705.114 2.504.336 1.909-1.29 2.747-1.022 2.747-1.022.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.167 22 16.42 22 12c0-5.523-4.477-10-10-10z"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.022A9.607 9.607 0 0112 6.82c.85.004 1.705.114 2.504.336 1.909-1.29 2.747-1.022 2.747-1.022.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.167 22 16.42 22 12c0-5.523-4.477-10-10-10z" />
               </svg>
             </div>
             <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
               <svg class="w-6 h-6 text-green-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" />
               </svg>
             </div>
           </div>
-
-          <!-- Connecting lines -->
+          
+<!-- Connecting lines -->
           <div class="absolute inset-0 -z-10">
             <svg class="w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="none">
-              <path d="M100,50 L180,50" stroke="rgba(59, 130, 246, 0.2)" stroke-width="2"/>
-              <path d="M220,50 L300,50" stroke="rgba(59, 130, 246, 0.2)" stroke-width="2"/>
-              <circle cx="200" cy="50" r="4" fill="rgba(59, 130, 246, 0.2)"/>
+              <path d="M100,50 L180,50" stroke="rgba(59, 130, 246, 0.2)" stroke-width="2" />
+              <path d="M220,50 L300,50" stroke="rgba(59, 130, 246, 0.2)" stroke-width="2" />
+              <circle cx="200" cy="50" r="4" fill="rgba(59, 130, 246, 0.2)" />
             </svg>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-
-  <!-- Animated logo bar -->
+  
+<!-- Animated logo bar -->
   <div class="relative mt-20 w-full overflow-hidden bg-gray-900/30 py-12 backdrop-blur-sm">
     <div class="flex animate-logo-scroll">
       <!-- First set of logos -->
       <div class="flex min-w-full justify-around items-center px-4">
-        <img src="https://svgl.app/library/facebook.svg" alt="Facebook" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/airbnb.svg" alt="Airbnb" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/spotify.svg" alt="Spotify" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/discord.svg" alt="Discord" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/netflix.svg" alt="Netflix" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/github-dark.svg" alt="GitHub" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
+        <img
+          src="https://svgl.app/library/facebook.svg"
+          alt="Facebook"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/airbnb.svg"
+          alt="Airbnb"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/spotify.svg"
+          alt="Spotify"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/discord.svg"
+          alt="Discord"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/netflix.svg"
+          alt="Netflix"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/github-dark.svg"
+          alt="GitHub"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
       </div>
       <!-- Duplicate set for seamless scrolling -->
       <div class="flex min-w-full justify-around items-center px-4">
-        <img src="https://svgl.app/library/facebook.svg" alt="Facebook" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/airbnb.svg" alt="Airbnb" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/spotify.svg" alt="Spotify" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/discord.svg" alt="Discord" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/netflix.svg" alt="Netflix" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
-        <img src="https://svgl.app/library/github-dark.svg" alt="GitHub" class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300" />
+        <img
+          src="https://svgl.app/library/facebook.svg"
+          alt="Facebook"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/airbnb.svg"
+          alt="Airbnb"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/spotify.svg"
+          alt="Spotify"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/discord.svg"
+          alt="Discord"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/netflix.svg"
+          alt="Netflix"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
+        <img
+          src="https://svgl.app/library/github-dark.svg"
+          alt="GitHub"
+          class="h-8 opacity-40 hover:opacity-100 transition-opacity duration-300"
+        />
       </div>
     </div>
   </div>
-
-  <!-- Testimonials Section -->
+  
+<!-- Testimonials Section -->
   <div class="relative mt-20 pb-20">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Top startups love Simple</h2>
+        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          Top startups love Simple
+        </h2>
       </div>
       
-      <!-- Testimonial Cards Container with Animation -->
+<!-- Testimonial Cards Container with Animation -->
       <div class="relative overflow-hidden">
         <div class="flex gap-6 animate-scroll hover:pause-animation" style="width: max-content">
           <!-- First set of testimonials -->
@@ -122,8 +179,8 @@
             <div class="flex items-center gap-4 mb-4">
               <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                 <svg class="w-6 h-6 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
                 </svg>
               </div>
               <div>
@@ -131,17 +188,19 @@
                 <p class="text-sm text-gray-400">@MicheleLex</p>
               </div>
             </div>
-            <p class="text-gray-300">I've tried several website builders before, but none were as user-friendly and versatile as this one. From design to functionality, it exceeded my expectations!</p>
+            <p class="text-gray-300">
+              I've tried several website builders before, but none were as user-friendly and versatile as this one. From design to functionality, it exceeded my expectations!
+            </p>
             <p class="text-sm text-gray-400 mt-4">Mar 04, 2027</p>
           </div>
-
-          <!-- Testimonial 2 -->
+          
+<!-- Testimonial 2 -->
           <div class="flex-none w-96 p-6 bg-white/5 backdrop-blur-sm rounded-2xl">
             <div class="flex items-center gap-4 mb-4">
               <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                 <svg class="w-6 h-6 text-green-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
                 </svg>
               </div>
               <div>
@@ -149,17 +208,19 @@
                 <p class="text-sm text-gray-400">@michaelross</p>
               </div>
             </div>
-            <p class="text-gray-300">Simple lives up to its name in every way. It's incredibly easy to use yet powerful enough to handle all my tasks effortlessly. It's become an essential part of my daily routine.</p>
+            <p class="text-gray-300">
+              Simple lives up to its name in every way. It's incredibly easy to use yet powerful enough to handle all my tasks effortlessly. It's become an essential part of my daily routine.
+            </p>
             <p class="text-sm text-gray-400 mt-4">Jan 15, 2027</p>
           </div>
-
-          <!-- Testimonial 3 -->
+          
+<!-- Testimonial 3 -->
           <div class="flex-none w-96 p-6 bg-white/5 backdrop-blur-sm rounded-2xl">
             <div class="flex items-center gap-4 mb-4">
               <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                 <svg class="w-6 h-6 text-purple-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
                 </svg>
               </div>
               <div>
@@ -167,18 +228,20 @@
                 <p class="text-sm text-gray-400">@peterlowe</p>
               </div>
             </div>
-            <p class="text-gray-300">As a founder, having a visually appealing and user-friendly website is essential. This tool not only helped me achieve that but also improved my site performance and SEO.</p>
+            <p class="text-gray-300">
+              As a founder, having a visually appealing and user-friendly website is essential. This tool not only helped me achieve that but also improved my site performance and SEO.
+            </p>
             <p class="text-sm text-gray-400 mt-4">May 19, 2027</p>
           </div>
-
-          <!-- Second set of testimonials (duplicate) -->
+          
+<!-- Second set of testimonials (duplicate) -->
           <!-- Testimonial 1 duplicate -->
           <div class="flex-none w-96 p-6 bg-white/5 backdrop-blur-sm rounded-2xl">
             <div class="flex items-center gap-4 mb-4">
               <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                 <svg class="w-6 h-6 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
                 </svg>
               </div>
               <div>
@@ -186,17 +249,19 @@
                 <p class="text-sm text-gray-400">@MicheleLex</p>
               </div>
             </div>
-            <p class="text-gray-300">I've tried several website builders before, but none were as user-friendly and versatile as this one. From design to functionality, it exceeded my expectations!</p>
+            <p class="text-gray-300">
+              I've tried several website builders before, but none were as user-friendly and versatile as this one. From design to functionality, it exceeded my expectations!
+            </p>
             <p class="text-sm text-gray-400 mt-4">Mar 04, 2027</p>
           </div>
-
-          <!-- Testimonial 2 duplicate -->
+          
+<!-- Testimonial 2 duplicate -->
           <div class="flex-none w-96 p-6 bg-white/5 backdrop-blur-sm rounded-2xl">
             <div class="flex items-center gap-4 mb-4">
               <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                 <svg class="w-6 h-6 text-green-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
                 </svg>
               </div>
               <div>
@@ -204,17 +269,19 @@
                 <p class="text-sm text-gray-400">@michaelross</p>
               </div>
             </div>
-            <p class="text-gray-300">Simple lives up to its name in every way. It's incredibly easy to use yet powerful enough to handle all my tasks effortlessly. It's become an essential part of my daily routine.</p>
+            <p class="text-gray-300">
+              Simple lives up to its name in every way. It's incredibly easy to use yet powerful enough to handle all my tasks effortlessly. It's become an essential part of my daily routine.
+            </p>
             <p class="text-sm text-gray-400 mt-4">Jan 15, 2027</p>
           </div>
-
-          <!-- Testimonial 3 duplicate -->
+          
+<!-- Testimonial 3 duplicate -->
           <div class="flex-none w-96 p-6 bg-white/5 backdrop-blur-sm rounded-2xl">
             <div class="flex items-center gap-4 mb-4">
               <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                 <svg class="w-6 h-6 text-purple-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
                 </svg>
               </div>
               <div>
@@ -222,15 +289,17 @@
                 <p class="text-sm text-gray-400">@peterlowe</p>
               </div>
             </div>
-            <p class="text-gray-300">As a founder, having a visually appealing and user-friendly website is essential. This tool not only helped me achieve that but also improved my site performance and SEO.</p>
+            <p class="text-gray-300">
+              As a founder, having a visually appealing and user-friendly website is essential. This tool not only helped me achieve that but also improved my site performance and SEO.
+            </p>
             <p class="text-sm text-gray-400 mt-4">May 19, 2027</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Pricing Section -->
+  
+<!-- Pricing Section -->
   <div class="relative mt-20 pb-20">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="text-center">
@@ -240,18 +309,21 @@
           necessary, making this the first true generator on the Internet.
         </p>
       </div>
-
-      <!-- Toggle switch -->
+      
+<!-- Toggle switch -->
       <div class="mt-8 flex justify-center items-center gap-x-4">
         <span class="text-sm text-gray-300">Monthly</span>
         <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" value="" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          <input type="checkbox" value="" class="sr-only peer" />
+          <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600">
+          </div>
         </label>
-        <span class="text-sm text-gray-300">Yearly <span class="text-indigo-400">(-20%)</span></span>
+        <span class="text-sm text-gray-300">
+          Yearly <span class="text-indigo-400">(-20%)</span>
+        </span>
       </div>
-
-      <!-- Pricing cards -->
+      
+<!-- Pricing cards -->
       <div class="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <!-- Pro -->
         <div class="rounded-3xl p-8 ring-1 ring-white/10 backdrop-blur-sm bg-gray-900/30 sm:p-10">
@@ -261,36 +333,73 @@
             <span class="text-base text-gray-400">/mo</span>
           </p>
           <p class="mt-6 text-base leading-7 text-gray-300">Everything at your fingertips.</p>
-          <a href="#" class="mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 text-white bg-gradient-to-r from-indigo-600/50 via-blue-600/50 to-indigo-600/50 bg-[length:200%_auto] animate-button-shine hover:scale-105 animate-button-glow transition-transform duration-200">Get Started →</a>
+          <a
+            href="#"
+            class="mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 text-white bg-gradient-to-r from-indigo-600/50 via-blue-600/50 to-indigo-600/50 bg-[length:200%_auto] animate-button-shine hover:scale-105 animate-button-glow transition-transform duration-200"
+          >
+            Get Started →
+          </a>
           <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-300">
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               100 Social Connections
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               4 Custom Domains
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               Unlimited User Role Management
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               1 External Database
             </li>
           </ul>
         </div>
-
-        <!-- Team -->
+        
+<!-- Team -->
         <div class="rounded-3xl p-8 ring-2 ring-indigo-500 backdrop-blur-sm bg-gray-900/30 sm:p-10">
           <h3 class="text-base font-semibold leading-7 text-white">Team</h3>
           <p class="mt-4 flex items-baseline gap-x-2">
@@ -298,36 +407,73 @@
             <span class="text-base text-gray-400">/mo</span>
           </p>
           <p class="mt-6 text-base leading-7 text-gray-300">Everything at your fingertips.</p>
-          <a href="#" class="mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 bg-[length:200%_auto] animate-button-shine hover:scale-105 animate-button-glow transition-transform duration-200">Get Started →</a>
+          <a
+            href="#"
+            class="mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 bg-[length:200%_auto] animate-button-shine hover:scale-105 animate-button-glow transition-transform duration-200"
+          >
+            Get Started →
+          </a>
           <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-300">
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               250 Social Connections
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               Unlimited Custom Domains
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               Unlimited User Role Management
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               5 External Databases
             </li>
           </ul>
         </div>
-
-        <!-- Enterprise -->
+        
+<!-- Enterprise -->
         <div class="rounded-3xl p-8 ring-1 ring-white/10 backdrop-blur-sm bg-gray-900/30 sm:p-10">
           <h3 class="text-base font-semibold leading-7 text-white">Enterprise</h3>
           <p class="mt-4 flex items-baseline gap-x-2">
@@ -335,29 +481,66 @@
             <span class="text-base text-gray-400">/mo</span>
           </p>
           <p class="mt-6 text-base leading-7 text-gray-300">Everything at your fingertips.</p>
-          <a href="#" class="mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 text-white bg-gradient-to-r from-indigo-600/50 via-blue-600/50 to-indigo-600/50 bg-[length:200%_auto] animate-button-shine hover:scale-105 animate-button-glow transition-transform duration-200">Get Started →</a>
+          <a
+            href="#"
+            class="mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 text-white bg-gradient-to-r from-indigo-600/50 via-blue-600/50 to-indigo-600/50 bg-[length:200%_auto] animate-button-shine hover:scale-105 animate-button-glow transition-transform duration-200"
+          >
+            Get Started →
+          </a>
           <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-300">
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               Unlimited Social Connections
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               Unlimited Custom Domains
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               Unlimited User Role Management
             </li>
             <li class="flex gap-x-3 items-center">
-              <svg class="h-6 w-5 flex-none text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              <svg
+                class="h-6 w-5 flex-none text-indigo-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                  clip-rule="evenodd"
+                />
               </svg>
               Unlimited External Databases
             </li>

@@ -1,28 +1,26 @@
+# Phoenix Documentation Project
+
+A Phoenix-based project for creating and displaying documentation for various services and platforms.
 
 ## Features
 
-- [LiveView]
-
-- 초기연결
-  - 첫 접속시 일반적 HTTP 요청-응답으로 페이지 로드
-  - WebSocket 연결이 자동으로 설정됨.
-
-- 실시간 업데이트
-  - WebSocket을 통해 서버와 클라이언트가 지속적으로 연결 유지
-  - 양방향 통신이 가능하여 데이터 변경시 즉시 반영
-  - 전체 페이지 새로고침을 하지 않아도 필요한 부분만 업데이트 가능
-
-Myapp_web/ live/ counter_live 확인할것
-이름_live를 쓰는것이 약속임
-- [Key feature 2]
-- [Key feature 3]
+- **Phoenix Framework**: Built with Elixir and Phoenix for robustness and scalability
+- **LiveView**: Real-time updates without refreshing the page
+- **Documentation System**: Comprehensive markdown-based documentation for various services
+- **Responsive Design**: Fully responsive documentation UI that works across all device sizes
 
 ## Quick Start
 
 1. **Setup Development Environment**
    ```bash
    # Install dependencies
-   mix setup
+   mix deps.get
+   
+   # Setup database
+   mix ecto.setup
+   
+   # Install Node.js dependencies
+   cd assets && npm install && cd ..
    
    # Start Phoenix server
    mix phx.server
@@ -30,42 +28,48 @@ Myapp_web/ live/ counter_live 확인할것
 
 2. Visit [`localhost:4000`](http://localhost:4000) in your browser
 
-## Development
-
-For detailed development documentation, please see our [documentation guides](docs/README.md). Key resources:
-
-- [Getting Started Guide](docs/getting-started/installation.md)
-- [Contributing Guidelines](docs/CONTRIBUTING.md)
-- [Development Guidelines](docs/development/README.md)
-
-## Architecture Overview
-
-This project follows Phoenix's standard architecture:
-
-- Phoenix LiveView for real-time features
-- PostgreSQL database
-- [Other key architectural decisions]
-
 ## Documentation
 
-Comprehensive documentation is available in the [docs](docs/) directory:
+This project contains documentation for various platforms:
 
-- [Installation & Setup](docs/getting-started/installation.md)
-- [API Documentation](docs/api/README.md)
-- [Development Guidelines](docs/development/README.md)
-- [Deployment Guides](docs/deployment/README.md)
+- [Claude-Code](docs/Claude-Code.md) - Documentation for Claude AI coding capabilities
+- [Cloudflare](docs/Cloudflare.md) - Cloudflare service documentation
+- [Instagram](docs/Instagram.md) - Instagram platform documentation
+- [LLC](docs/LLC.md) - LLC formation documentation
+- [TikTok](docs/Tiktok.md) - TikTok platform documentation
+- [YouTube](docs/Youtube.md) - YouTube platform documentation
+
+## Development
+
+The documentation UI components have been improved with:
+
+- Fully responsive design across all device sizes
+- Proper handling of code blocks and tables with horizontal scrolling
+- Dynamic table of contents generation based on headings
+- Optimized content layout with better spacing
+- Enhanced visual indicators for scrollable content
+
+## Project Structure
+
+The project follows the standard Phoenix structure with the following key directories:
+
+- `assets/` - Frontend assets (CSS, JS)
+- `config/` - Application configuration
+- `docs/` - Markdown documentation files
+- `lib/` - Elixir source code
+- `priv/` - Private application files
+- `test/` - Test files
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details.
+We welcome contributions to our documentation! Please see our guidelines for details.
 
 ## License
 
-[Your license information]
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Learn More
 
 - [Phoenix Framework](https://www.phoenixframework.org/)
-- [Phoenix Guides](https://hexdocs.pm/phoenix/overview.html)
-- [Phoenix Documentation](https://hexdocs.pm/phoenix)
-- [Elixir Forum](https://elixirforum.com/c/phoenix-forum)
+- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view)
+- [Elixir Language](https://elixir-lang.org/)

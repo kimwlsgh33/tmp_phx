@@ -1,193 +1,105 @@
 # Project File Structure
 
+This document outlines the current file structure of the Phoenix Documentation project.
+
 ## Root Files
 - `.formatter.exs` - Code formatter configuration
 - `.gitignore` - Git ignore rules
-- `elixir_buildpack.config` - Buildpack configuration
 - `mix.exs` - Mix project configuration
 - `mix.lock` - Dependency lock file
-- `phoenix_static_buildpack.config` - Phoenix static assets build config
 - `README.md` - Project overview
+- `FILE_STRUCTURE.md` - This file structure documentation
 
 ## Assets (Frontend)
 ```
 assets/
-├── package.json
-├── tailwind.config.js
+├── package.json - Node.js dependencies
+├── tailwind.config.js - Tailwind CSS configuration
 ├── css/
-│   └── app.css
+│   └── app.css - Main stylesheet with Tailwind imports
 └── js/
-    ├── app.js
-    ├── user_socket.js
-    └── hooks/
-        └── theme_toggle.js
+    ├── app.js - Main JavaScript entry point
+    ├── hooks/ - LiveView hooks
 ```
 
 ## Configuration
 ```
 config/
-├── config.exs
-├── dev.exs
-├── prod.exs
-├── runtime.exs
-└── test.exs
+├── config.exs - Base configuration
+├── dev.exs - Development environment configuration
+├── prod.exs - Production environment configuration
+├── runtime.exs - Runtime configuration
+└── test.exs - Test environment configuration
 ```
 
 ## Documentation
 ```
 docs/
-├── CONTRIBUTING.md
-├── README.md
-├── STYLE-GUIDE.md
-├── api/
-│   ├── authentication.md
-│   ├── graphql.md
-│   ├── protocols.md
-│   └── rest.md
-├── architecture/
-│   ├── communication.md
-│   ├── components.md
-│   ├── error-handling.md
-│   ├── overview.md
-│   ├── postgresql.md
-│   └── state-management.md
-├── deployment/
-│   ├── environments.md
-│   ├── operations.md
-│   ├── performance.md
-│   ├── README.md
-│   └── reliability.md
-├── development/
-│   ├── README.md
-│   ├── guidelines/
-│   ├── implementation/
-│   └── processes/
-├── frontend/
-│   ├── components.md
-│   ├── js-interop.md
-│   └── styling.md
-├── getting-started/
-│   ├── configuration.md
-│   ├── installation.md
-│   └── quick-start.md
-├── procedure/
-│   ├── errs/
-│   ├── feats/
-│   └── usages/
-└── testing/
-    ├── integration.md
-    └── unit.md
+├── Claude-Code.md - Claude AI coding documentation
+├── Cloudflare.md - Cloudflare service documentation
+├── Instagram.md - Instagram platform documentation
+├── LLC.md - LLC formation documentation
+├── Tiktok.md - TikTok platform documentation
+└── Youtube.md - YouTube platform documentation
 ```
 
 ## Application Code
 ```
 lib/
-├── myapp.ex
-├── myapp_web.ex
-├── myapp/
-│   ├── accounts.ex
-│   ├── application.ex
-│   ├── file_server.ex
-│   ├── mailer.ex
-│   ├── privacy_policy.ex
-│   ├── release.ex
-│   ├── repo.ex
-│   └── accounts/
-│       ├── user_notifier.ex
-│       ├── user_token.ex
-│       └── user.ex
-└── myapp_web/
-    ├── endpoint.ex
-    ├── gettext.ex
-    ├── privacy_policy_localizer.ex
-    ├── router.ex
-    ├── telemetry.ex
-    ├── user_auth.ex
-    ├── channels/
-    │   ├── chat_channel.ex
-    │   └── user_socket.ex
-    ├── components/
+├── myapp.ex - Main application module
+├── myapp_web.ex - Web-related module imports and aliases
+├── myapp/ - Core application logic
+│   ├── application.ex - OTP Application setup
+│   ├── repo.ex - Database repository
+│   └── [other core modules]
+└── myapp_web/ - Web interface
+    ├── endpoint.ex - HTTP endpoint configuration
+    ├── router.ex - URL routing
+    ├── channels/ - WebSocket channels
+    ├── components/ - Reusable UI components
     │   ├── core_components.ex
     │   ├── layouts.ex
     │   └── layouts/
-    ├── controllers/
+    ├── controllers/ - Request handlers
     │   ├── error_html.ex
     │   ├── error_json.ex
-    │   ├── file_controller.ex
-    │   ├── privacy_policy_controller.ex
-    │   ├── privacy_policy_html.ex
-    │   ├── user_session_controller.ex
-    │   ├── page/
-    │   └── privacy_policy_html/
-    └── live/
-        ├── user_confirmation_instructions_live.ex
-        ├── user_confirmation_live.ex
-        ├── user_forgot_password_live.ex
-        ├── user_login_live.ex
-        ├── user_registration_live.ex
-        ├── user_reset_password_live.ex
-        ├── user_settings_live.ex
-        ├── counter_live/
-        └── file_live/
+    │   └── [other controllers]
+    └── live/ - LiveView modules
+        └── [LiveView controllers]
 ```
 
 ## Private Files
 ```
 priv/
-├── gettext/
-│   ├── default.pot
-│   ├── errors.pot
-│   ├── en/
-│   └── ko/
-├── privacy_policy/
-│   ├── Paid Terms of Services.md
-│   ├── v1.json
-│   ├── v1.md
-│   ├── v2.json
-│   └── v2.md
+├── gettext/ - Internationalization
 ├── repo/
-│   ├── seeds.exs
-│   └── migrations/
-└── static/
+│   ├── seeds.exs - Database seed data
+│   └── migrations/ - Database migrations
+└── static/ - Static files served by Phoenix
     ├── favicon.ico
     ├── robots.txt
-    ├── assets/
-    ├── images/
-    └── uploads/
+    ├── assets/ - Compiled assets
+    └── images/ - Static images
 ```
 
 ## Tests
 ```
 test/
-├── test_helper.exs
-├── myapp/
-│   └── accounts_test.exs
-└── myapp_web/
-    ├── user_auth_test.exs
-    ├── channels/
-    │   └── chat_channel_test.exs
+├── test_helper.exs - Test configuration
+├── myapp/ - Core application tests
+└── myapp_web/ - Web interface tests
     ├── controllers/
-    │   ├── error_html_test.exs
-    │   ├── error_json_test.exs
-    │   ├── page_controller_test.exs
-    │   └── user_session_controller_test.exs
     └── live/
-        ├── user_confirmation_instructions_live_test.exs
-        ├── user_confirmation_live_test.exs
-        ├── user_forgot_password_live_test.exs
-        ├── user_login_live_test.exs
-        ├── user_registration_live_test.exs
-        ├── user_reset_password_live_test.exs
-        └── user_settings_live_test.exs
 ```
 
-## Build and Release
+## Scripts
 ```
-_build/
+scripts/
+└── [utility scripts]
+```
+
+## Release Configuration
+```
 rel/
-└── overlays/
-    └── bin/
-        ├── migrate
-        ├── migrate.bat
-        ├── server
-        └── server.bat
+└── [release configuration]
+```

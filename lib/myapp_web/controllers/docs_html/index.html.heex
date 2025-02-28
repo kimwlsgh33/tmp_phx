@@ -1,60 +1,356 @@
-<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-  <div class="text-center mb-12">
-    <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-      Documentation
+<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+  <div class="text-center mb-14">
+    <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+      Documentation Center
     </h1>
-    <p class="mt-4 text-lg text-gray-500">
-      Everything you need to know about using our service
+    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+      Everything you need to know about using our service and getting the most out of our platform
     </p>
   </div>
-
-  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    <!-- Getting Started Card -->
-    <a href={~p"/docs/getting-started"} class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-50">
-      <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900">Getting Started</h5>
-      <p class="font-normal text-gray-700">
-        Learn the basics and get your account set up quickly.
+  
+<!-- Search Bar -->
+  <div class="max-w-3xl mx-auto mb-12 relative">
+    <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+      <div class="pl-4 pr-2">
+        <svg
+          class="h-5 w-5 text-gray-400"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <input
+        type="text"
+        placeholder="Search documentation..."
+        class="w-full py-3 px-2 text-gray-700 focus:outline-none"
+      />
+      <button class="bg-blue-600 text-white px-5 py-3 hover:bg-blue-700 transition-colors">
+        Search
+      </button>
+    </div>
+  </div>
+  
+<!-- Documentation Categories -->
+  <div class="mb-14">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Featured Documentation</h2>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Getting Started Card -->
+      <a
+        href={~p"/docs/getting-started"}
+        class="group block p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all transform hover:-translate-y-1"
+      >
+        <div class="flex items-center mb-4">
+          <div class="bg-blue-100 text-blue-700 p-3 rounded-lg">
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              >
+              </path>
+            </svg>
+          </div>
+          <h5 class="ml-3 text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-700 transition-colors">
+            Getting Started
+          </h5>
+        </div>
+        <p class="font-normal text-gray-600">
+          Learn the basics and get your account set up quickly with our step-by-step guide.
+        </p>
+        <div class="mt-4 flex items-center text-blue-600 font-medium">
+          <span>Read guide</span>
+          <svg
+            class="ml-1 w-4 h-4 group-hover:ml-2 transition-all"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            >
+            </path>
+          </svg>
+        </div>
+      </a>
+      
+<!-- API Card -->
+      <a
+        href={~p"/docs/api"}
+        class="group block p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all transform hover:-translate-y-1"
+      >
+        <div class="flex items-center mb-4">
+          <div class="bg-indigo-100 text-indigo-700 p-3 rounded-lg">
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+              >
+              </path>
+            </svg>
+          </div>
+          <h5 class="ml-3 text-xl font-bold tracking-tight text-gray-900 group-hover:text-indigo-700 transition-colors">
+            API Reference
+          </h5>
+        </div>
+        <p class="font-normal text-gray-600">
+          Comprehensive API documentation for developers who want to integrate with our platform.
+        </p>
+        <div class="mt-4 flex items-center text-indigo-600 font-medium">
+          <span>Explore API</span>
+          <svg
+            class="ml-1 w-4 h-4 group-hover:ml-2 transition-all"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            >
+            </path>
+          </svg>
+        </div>
+      </a>
+      
+<!-- Features Card -->
+      <a
+        href={~p"/docs/features"}
+        class="group block p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all transform hover:-translate-y-1"
+      >
+        <div class="flex items-center mb-4">
+          <div class="bg-green-100 text-green-700 p-3 rounded-lg">
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              >
+              </path>
+            </svg>
+          </div>
+          <h5 class="ml-3 text-xl font-bold tracking-tight text-gray-900 group-hover:text-green-700 transition-colors">
+            Features
+          </h5>
+        </div>
+        <p class="font-normal text-gray-600">
+          Explore all the features available on our platform and how to use them effectively.
+        </p>
+        <div class="mt-4 flex items-center text-green-600 font-medium">
+          <span>View features</span>
+          <svg
+            class="ml-1 w-4 h-4 group-hover:ml-2 transition-all"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            >
+            </path>
+          </svg>
+        </div>
+      </a>
+    </div>
+  </div>
+  
+<!-- Topic Sections -->
+  <div>
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Explore Topics</h2>
+    
+<!-- Integration Guides Section -->
+    <div class="mb-10">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <svg
+          class="h-5 w-5 mr-2 text-blue-600"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd"
+          >
+          </path>
+        </svg>
+        Integration Guides
+      </h3>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Markdown Docs Cards -->
+        <%= for doc <- Enum.filter(@available_docs, &(&1 in ["Cloudflare", "Youtube", "Tiktok"])) do %>
+          <a
+            href={~p"/docs/#{doc}"}
+            class="flex p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
+          >
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-10 w-10 rounded-md bg-blue-50 text-blue-700">
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                  >
+                  </path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h5 class="text-md font-medium text-gray-900">{String.capitalize(doc)}</h5>
+              <p class="mt-1 text-sm text-gray-500">
+                Learn how to integrate with {String.capitalize(doc)}
+              </p>
+            </div>
+          </a>
+        <% end %>
+      </div>
+    </div>
+    
+<!-- Business Resources Section -->
+    <div class="mb-10">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <svg
+          class="h-5 w-5 mr-2 text-blue-600"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
+            clip-rule="evenodd"
+          />
+          <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+        </svg>
+        Business Resources
+      </h3>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- LLC Card -->
+        <a
+          href={~p"/docs/LLC"}
+          class="flex p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
+        >
+          <div class="flex-shrink-0">
+            <div class="flex items-center justify-center h-10 w-10 rounded-md bg-green-50 text-green-700">
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                >
+                </path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h5 class="text-md font-medium text-gray-900">LLC</h5>
+            <p class="mt-1 text-sm text-gray-500">
+              Learn about Limited Liability Companies and formation
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+<!-- Help Section -->
+  <div class="bg-gray-50 rounded-2xl p-8 mt-12">
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-900">Need Help?</h2>
+      <p class="mt-2 text-gray-600">
+        Can't find what you're looking for? Our support team is here to help.
       </p>
-    </a>
+    </div>
 
-    <!-- Features Card -->
-    <a href={~p"/docs/features"} class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-50">
-      <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900">Features</h5>
-      <p class="font-normal text-gray-700">
-        Explore all the features available on our platform.
-      </p>
-    </a>
-
-    <!-- FAQ Card -->
-    <a href={~p"/docs/faq"} class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-50">
-      <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900">FAQ</h5>
-      <p class="font-normal text-gray-700">
-        Find answers to commonly asked questions.
-      </p>
-    </a>
-
-    <!-- API Card -->
-    <a href={~p"/docs/api"} class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-50">
-      <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900">API Reference</h5>
-      <p class="font-normal text-gray-700">
-        Learn how to integrate with our API.
-      </p>
-    </a>
-
-    <!-- Tutorials Card -->
-    <a href={~p"/docs/tutorials"} class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-50">
-      <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900">Tutorials</h5>
-      <p class="font-normal text-gray-700">
-        Step-by-step guides for common tasks.
-      </p>
-    </a>
-
-    <!-- Contact Support Card -->
-    <a href={~p"/docs/support"} class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-50">
-      <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900">Contact Support</h5>
-      <p class="font-normal text-gray-700">
-        Get help from our support team.
-      </p>
-    </a>
+    <div class="flex flex-col md:flex-row justify-center gap-4">
+      <a
+        href="#"
+        class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+      >
+        <svg
+          class="mr-2 h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+          >
+          </path>
+        </svg>
+        Contact Support
+      </a>
+      <a
+        href="#"
+        class="inline-flex items-center justify-center px-5 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+      >
+        <svg
+          class="mr-2 h-5 w-5 text-gray-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          >
+          </path>
+        </svg>
+        View FAQs
+      </a>
+    </div>
   </div>
 </div>

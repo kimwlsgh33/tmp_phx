@@ -14,6 +14,7 @@ defmodule MyappWeb.YoutubeChannel do
         push(socket, "stats_update", stats)
         Process.send_after(self(), :refresh_stats, 30_000)
         {:noreply, socket}
+
       {:error, reason} ->
         push(socket, "error", %{reason: reason})
         {:noreply, socket}

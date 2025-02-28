@@ -35,6 +35,7 @@ defmodule Myapp.ThreadApi do
 
   defp request(method, path, body \\ nil) do
     url = @base_url <> path
+
     headers = [
       {"Authorization", "Bearer #{get_access_token()}"},
       {"Content-Type", "application/json"}
@@ -45,8 +46,10 @@ defmodule Myapp.ThreadApi do
     case :hackney.request(method, url, headers, body, [:with_body]) do
       {:ok, status, _headers, response_body} when status in 200..299 ->
         {:ok, Jason.decode!(response_body)}
+
       {:ok, _status, _headers, response_body} ->
         {:error, Jason.decode!(response_body)}
+
       {:error, reason} ->
         {:error, reason}
     end

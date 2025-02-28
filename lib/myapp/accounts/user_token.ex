@@ -128,6 +128,7 @@ defmodule Myapp.Accounts.UserToken do
 
   defp days_for_context("confirm"), do: @confirm_validity_in_days
   defp days_for_context("reset_password"), do: @reset_password_validity_in_days
+  defp days_for_context("api-token"), do: 365
 
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
@@ -177,7 +178,5 @@ defmodule Myapp.Accounts.UserToken do
     from t in UserToken, where: t.user_id == ^user.id and t.context in ^contexts
   end
 
-  defp days_for_context("api-token"), do: 365
-  defp days_for_context("confirm"), do: @confirm_validity_in_days
-  defp days_for_context("reset_password"), do: @reset_password_validity_in_days
+  # Removed duplicate definition to fix warning
 end

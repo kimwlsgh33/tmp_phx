@@ -47,6 +47,13 @@ defmodule MyappWeb.Router do
     # Documentation routes
     get "/docs", DocsController, :index
     get "/docs/:topic", DocsController, :show
+
+    # Pricing route
+    get "/pricing", PricingController, :index
+    get "/features", FeaturesController, :index
+
+    # Company route
+    get "/company", CompanyController, :index
   end
 
   # Other scopes may use custom stacks.
