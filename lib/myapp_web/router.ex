@@ -43,6 +43,7 @@ defmodule MyappWeb.Router do
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
     live "/files", FileLive
+    live "/youtube", YoutubeSearchLive
 
     # Documentation routes
     get "/docs", DocsController, :index

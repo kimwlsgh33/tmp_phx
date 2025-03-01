@@ -65,6 +65,7 @@ defmodule MyappWeb.TestController do
   def search(conn, params) do
     # Handle search form submission
     redirect(conn, to: ~p"/test?#{%{api_key: params["api_key"], query: params["query"]}}")
+    # redirect 말고 post로 데이터만 받아올것 -- 토요일
   end
 
   defp get_first_video_details([], _api_key), do: nil
