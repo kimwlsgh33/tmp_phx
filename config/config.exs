@@ -74,6 +74,19 @@ config :myapp, :tiktok_api,
   client_secret: System.get_env("TIKTOK_CLIENT_SECRET"),
   access_token: System.get_env("TIKTOK_ACCESS_TOKEN")
 
+# Instagram configuration
+config :myapp, Myapp.Instagram,
+  access_token: System.get_env("INSTAGRAM_ACCESS_TOKEN"),
+  client_id: System.get_env("INSTAGRAM_CLIENT_ID"),
+  client_secret: System.get_env("INSTAGRAM_CLIENT_SECRET"),
+  redirect_uri: System.get_env("INSTAGRAM_REDIRECT_URI")
+
+# Configures the Twitter API
+config :myapp, :twitter_api,
+  api_key: System.get_env("TWITTER_API_KEY"),
+  api_secret: System.get_env("TWITTER_API_SECRET"),
+  redirect_uri: System.get_env("TWITTER_REDIRECT_URI")
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

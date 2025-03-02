@@ -39,6 +39,16 @@ defmodule MyappWeb.Router do
     get "/tiktok", TiktokController, :show
     get "/tiktok/upload", TiktokController, :upload_form
     post "/tiktok/upload", TiktokController, :upload_video
+    get "/twitter", TwitterController, :show
+    get "/twitter/tweet", TwitterController, :tweet_form
+    post "/twitter/tweet", TwitterController, :post_tweet
+    get "/twitter/connect", TwitterController, :connect
+    get "/twitter/auth/callback", TwitterController, :auth_callback
+    get "/instagram", InstagramController, :show
+    get "/instagram/upload", InstagramController, :upload_form
+    post "/instagram/upload", InstagramController, :upload_media
+    get "/instagram/connect", InstagramController, :connect
+    get "/instagram/auth/callback", InstagramController, :auth_callback
     get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search

@@ -3,6 +3,8 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+@import "./docs.css";
+
 .spinner {
   position: fixed;
   top: 50%;
