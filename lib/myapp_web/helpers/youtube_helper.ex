@@ -51,6 +51,9 @@ defmodule MyappWeb.Helpers.YoutubeHelper do
   """
   def format_view_count(count) when is_integer(count) do
     cond do
+      count >= 1_000_000_000 ->
+        "#{Float.round(count / 1_000_000_000, 1)}B"
+
       count >= 1_000_000 ->
         "#{Float.round(count / 1_000_000, 1)}M"
 
