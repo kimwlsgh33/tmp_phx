@@ -210,7 +210,7 @@
       </h3>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <!-- Markdown Docs Cards -->
-        <%= for doc <- Enum.filter(@available_docs, &(&1 in ["Cloudflare", "Youtube", "Tiktok"])) do %>
+        <%= for doc <- Enum.filter(@available_docs, &(&1 in ["Cloudflare", "Youtube", "Tiktok", "Instagram"])) do %>
           <a
             href={~p"/docs/#{doc}"}
             class="flex p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"

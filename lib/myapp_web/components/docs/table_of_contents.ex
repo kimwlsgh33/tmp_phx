@@ -1,5 +1,6 @@
 defmodule MyappWeb.Components.Docs.TableOfContents do
   use MyappWeb, :html
+  alias MyappWeb.Components.Docs.StaticContent
 
   attr :content, :string, required: true
 
@@ -13,7 +14,11 @@ defmodule MyappWeb.Components.Docs.TableOfContents do
         <ul class="space-y-1 text-xs sm:text-sm">
           <%= for {heading, id} <- extract_headings(@content) do %>
             <li>
-              <a href={"##{id}"} class="text-blue-700 hover:underline block overflow-hidden text-ellipsis whitespace-nowrap">
+              <a 
+                href={"##{id}"} 
+                class="toc-link text-blue-700 hover:underline block overflow-hidden text-ellipsis whitespace-nowrap"
+                phx-click={JS.push("scroll_to_section", value: %{id: id})}
+              >
                 <%= heading %>
               </a>
             </li>
@@ -39,7 +44,7 @@ defmodule MyappWeb.Components.Docs.TableOfContents do
     heading_without_id_regex = ~r/<h3(?![^>]*id=)[^>]*>([^<]+)<\/h3>/
     headings_without_ids = Regex.scan(heading_without_id_regex, html_content)
                           |> Enum.map(fn [_, heading] -> 
-                               id = generate_id_from_heading(heading)
+                               id = StaticContent.generate_id_from_heading(heading)
                                {heading, id}
                              end)
     
@@ -48,16 +53,4 @@ defmodule MyappWeb.Components.Docs.TableOfContents do
   end
 
   def extract_headings(_), do: []
-  
-  @doc """
-  Generates a URL-friendly ID from a heading text.
-  Converts to lowercase, replaces spaces with hyphens, removes special characters.
-  """
-  def generate_id_from_heading(heading) do
-    heading
-    |> String.downcase()
-    |> String.replace(~r/[^\w\s-]/, "")  # Remove special chars except whitespace and hyphens
-    |> String.replace(~r/\s+/, "-")      # Replace whitespace with hyphens
-    |> String.trim("-")                  # Trim leading/trailing hyphens
-  end
 end

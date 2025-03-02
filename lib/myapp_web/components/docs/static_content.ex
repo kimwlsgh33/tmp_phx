@@ -5,9 +5,12 @@ defmodule MyappWeb.Components.Docs.StaticContent do
   attr :topic, :string, required: true
 
   def static_content(assigns) do
+    content_with_ids = add_ids_to_headings(assigns.content)
+    assigns = assign(assigns, :processed_content, content_with_ids)
+    
     ~H"""
     <div class="static-content prose prose-blue max-w-none">
-      <%= raw(@content) %>
+      <%= raw(@processed_content) %>
       <style>
         /* Add responsive styles for content */
         .static-content {
@@ -101,46 +104,87 @@ defmodule MyappWeb.Components.Docs.StaticContent do
           font-size: 0.875em;
         }
         
-        /* Ensure URLs don't cause overflow issues */
+        /* Responsive blockquote */
+        .static-content blockquote {
+          border-left: 4px solid #e5e7eb;
+          padding-left: 1rem;
+          margin-left: 0;
+          color: #4b5563;
+          font-style: italic;
+        }
+        
+        /* Ensure links don't overflow */
         .static-content a {
-          word-break: break-all;
-          color: #2563eb;
-          text-decoration: none;
+          word-break: break-word;
+          overflow-wrap: break-word;
         }
         
-        .static-content a:hover {
-          text-decoration: underline;
-        }
-        
-        /* Improve headings */
-        .static-content h3 {
-          font-size: 1.25rem;
-          font-weight: 600;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
-          color: #1e3a8a;
-          scroll-margin-top: 70px;
-        }
-        
-        /* Add styles for lists */
+        /* Responsive list items */
         .static-content ul, 
         .static-content ol {
           padding-left: 1.5rem;
-          margin: 0.75rem 0;
         }
         
         .static-content li {
           margin-bottom: 0.5rem;
         }
         
-        /* Add horizontal rule styling */
-        .static-content hr {
-          margin: 1.5rem 0;
-          border: 0;
-          border-top: 1px solid #e5e7eb;
+        /* Add proper spacing for headings */
+        .static-content h1, 
+        .static-content h2, 
+        .static-content h3, 
+        .static-content h4, 
+        .static-content h5, 
+        .static-content h6 {
+          margin-top: 1.5rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
+          line-height: 1.25;
+          scroll-margin-top: 80px; /* Ensures the heading isn't hidden under any fixed headers when scrolled to */
+        }
+        
+        .static-content h3 {
+          font-size: 1.25rem;
+          padding-top: 0.5rem;
+        }
+        
+        @media (min-width: 640px) {
+          .static-content h3 {
+            font-size: 1.5rem;
+          }
         }
       </style>
     </div>
     """
+  end
+  
+  @doc """
+  Adds IDs to h3 headings in the HTML content if they don't already have IDs.
+  Uses the same ID generation logic as the TableOfContents component.
+  """
+  def add_ids_to_headings(html_content) when is_binary(html_content) do
+    # Find h3 tags without IDs
+    heading_without_id_regex = ~r/<h3(?![^>]*id=)([^>]*)>([^<]+)<\/h3>/
+    
+    # Replace them with h3 tags that have IDs
+    Regex.replace(heading_without_id_regex, html_content, fn _, attrs, heading ->
+      id = generate_id_from_heading(heading)
+      "<h3#{attrs} id=\"#{id}\">#{heading}</h3>"
+    end)
+  end
+  
+  def add_ids_to_headings(nil), do: ""
+  
+  @doc """
+  Generates a URL-friendly ID from a heading text.
+  Converts to lowercase, replaces spaces with hyphens, removes special characters.
+  This is the same logic used in the TableOfContents component to ensure consistency.
+  """
+  def generate_id_from_heading(heading) do
+    heading
+    |> String.downcase()
+    |> String.replace(~r/[^\w\s-]/, "")  # Remove special chars except whitespace and hyphens
+    |> String.replace(~r/\s+/, "-")      # Replace whitespace with hyphens
+    |> String.trim("-")                  # Trim leading/trailing hyphens
   end
 end

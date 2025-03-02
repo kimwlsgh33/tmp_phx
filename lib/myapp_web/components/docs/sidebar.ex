@@ -11,7 +11,7 @@ defmodule MyappWeb.Components.Docs.Sidebar do
           Documentation
         </h4>
         <nav class="space-y-1">
-          <%= for doc <- ["Cloudflare", "LLC", "Tiktok", "Youtube", "getting-started", "features", "api"] do %>
+          <%= for doc <- ["Cloudflare", "Instagram", "LLC", "Tiktok", "Youtube", "getting-started", "features", "api"] do %>
             <a
               href={~p"/docs/#{doc}"}
               class={"group flex items-center px-3 py-2 text-sm font-medium rounded-md " <> 

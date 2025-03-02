@@ -8,7 +8,11 @@ defmodule MyappWeb.Components.Docs.RelatedDocs do
     <div class="mt-6 sm:mt-8">
       <h2 class="text-base sm:text-lg font-medium text-gray-900">Related Documentation</h2>
       <div class="mt-3 sm:mt-4 grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
-        <%= for related_doc <- (if @topic == "LLC", do: ["Cloudflare", "Youtube"], else: ["LLC", "Tiktok"]) do %>
+        <%= for related_doc <- (cond do
+              @topic == "LLC" -> ["Cloudflare", "Youtube", "Instagram"]
+              @topic == "Instagram" -> ["Cloudflare", "Youtube", "Tiktok"]
+              true -> ["LLC", "Tiktok", "Instagram"]
+            end) |> Enum.take(2) do %>
           <div class="relative rounded-lg border border-gray-200 bg-white px-4 sm:px-6 py-4 sm:py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
             <div class="flex-shrink-0">
               <span class="inline-flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-md bg-blue-500 text-white">
