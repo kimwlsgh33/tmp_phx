@@ -39,6 +39,11 @@ defmodule MyappWeb.Router do
     get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search
+    
+    # YouTube routes
+    get "/youtube", YoutubeController, :index
+    post "/youtube/search", YoutubeController, :search
+    
     get "/privacy-policy/:version", PrivacyPolicyController, :page
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
