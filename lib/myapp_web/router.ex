@@ -36,6 +36,9 @@ defmodule MyappWeb.Router do
   scope "/", MyappWeb do
     pipe_through :browser
 
+    get "/tiktok", TiktokController, :show
+    get "/tiktok/upload", TiktokController, :upload_form
+    post "/tiktok/upload", TiktokController, :upload_video
     get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search
