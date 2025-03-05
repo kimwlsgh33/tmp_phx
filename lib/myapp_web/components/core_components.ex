@@ -597,6 +597,57 @@ defmodule MyappWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Renders a TikTok OAuth status component that displays connection status with TikTok.
+
+  ## Examples
+
+      <.tiktok_oauth_status is_connected={true} />
+      <.tiktok_oauth_status is_connected={false} connect_path="/tiktok/connect" disconnect_path="/tiktok/disconnect" />
+  """
+  attr :is_connected, :boolean, required: true, doc: "whether the user is connected to TikTok"
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+  attr :connect_path, :string, default: "/tiktok/oauth/connect", doc: "path to the connect endpoint"
+  attr :disconnect_path, :string, default: "/tiktok/oauth/disconnect", doc: "path to the disconnect endpoint"
+
+  def tiktok_oauth_status(assigns) do
+    ~H"""
+    <div class={["flex items-center justify-between p-4 rounded-lg border", @class]}>
+      <div class="flex items-center">
+        <div class={[
+          "w-3 h-3 rounded-full mr-2",
+          @is_connected && "bg-green-500",
+          !@is_connected && "bg-red-500"
+        ]}></div>
+        <span class="font-medium">
+          <%= if @is_connected do %>
+            <span class="text-green-600">Connected to TikTok</span>
+          <% else %>
+            <span class="text-red-600">Not Connected to TikTok</span>
+          <% end %>
+        </span>
+      </div>
+      <div>
+        <%= if @is_connected do %>
+          <.link
+            href={@disconnect_path}
+            class="text-sm px-3 py-2 rounded bg-red-50 text-red-700 hover:bg-red-100 font-medium"
+          >
+            Disconnect
+          </.link>
+        <% else %>
+          <.link
+            href={@connect_path}
+            class="text-sm px-3 py-2 rounded bg-zinc-900 text-white hover:bg-zinc-700 font-medium"
+          >
+            Connect to TikTok
+          </.link>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do
