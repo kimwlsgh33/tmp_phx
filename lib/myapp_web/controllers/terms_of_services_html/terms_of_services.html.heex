@@ -1,7 +1,13 @@
 <div class="max-w-4xl mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
-  <h1 class="text-3xl font-bold mb-8">{@terms_of_services["document"]["index"]["title"]}</h1>
+  <%= if is_binary(@terms_of_services) do %>
+    <div class="p-6 bg-red-50 dark:bg-red-900 rounded-lg mb-8">
+      <h1 class="text-3xl font-bold mb-4 text-red-700 dark:text-red-300">Error</h1>
+      <p class="text-lg text-red-600 dark:text-red-200"><%= @terms_of_services %></p>
+    </div>
+  <% else %>
+    <h1 class="text-3xl font-bold mb-8">{@terms_of_services["document"]["index"]["title"]}</h1>
 
-  <nav class="mb-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
+    <nav class="mb-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
     <%= if @terms_of_services["document"]["index"] do %>
       <%= if @terms_of_services["document"]["index"]["title"] do %>
         <ol class="list-decimal list-inside space-y-2">
@@ -97,4 +103,5 @@
       <% end %>
     <% end %>
   </div>
+  <% end %>
 </div>

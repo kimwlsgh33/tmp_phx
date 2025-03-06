@@ -1,0 +1,710 @@
+{
+  "metadata": {
+    "version": "3.0.0",
+    "schemaVersion": "2024.2",
+    "releaseDate": "2025-01-26",
+    "effectiveDate": "2025-02-01",
+    "language": "en",
+    "revisionHistory": [
+      {
+        "version": "3.0.0",
+        "date": "2025-01-26",
+        "changes": "Added social media platform integrations and enhanced privacy descriptions"
+      },
+      {
+        "version": "2.0.0",
+        "date": "2025-01-20",
+        "changes": "Content restructuring and enhanced privacy descriptions"
+      },
+      {
+        "version": "1.0.0",
+        "date": "2025-01-13",
+        "changes": "Initial release"
+      }
+    ],
+    "availableLanguages": [
+      "en",
+      "ko"
+    ],
+    "accessibility": {
+      "role": "document",
+      "lang": "en-US",
+      "ariaLabel": "Privacy Policy",
+      "structure": {
+        "landmarks": true,
+        "headings": true
+      }
+    },
+    "formatting": {
+      "supported": [
+        "text",
+        "list",
+        "link",
+        "heading"
+      ],
+      "schema": "https://schema.org/PrivacyPolicy"
+    }
+  },
+  "document": {
+    "index": {
+      "type": "navigation",
+      "title": "Table of Contents",
+      "subtitle": "Main Sections",
+      "items": [
+        {
+          "id": "section-1",
+          "title": "Collection and Use of Personal Information",
+          "ref": "#section-1"
+        },
+        {
+          "id": "section-2",
+          "title": "Purpose of Processing Personal Information",
+          "ref": "#section-2"
+        },
+        {
+          "id": "section-3",
+          "title": "Disclosure of Personal Information to Third Parties",
+          "ref": "#section-3"
+        },
+        {
+          "id": "section-4",
+          "title": "Retention and Disposal of Personal Information",
+          "ref": "#section-4"
+        },
+        {
+          "id": "section-5",
+          "title": "Rights of Data Subjects and How to Exercise Them",
+          "ref": "#section-5"
+        },
+        {
+          "id": "section-6",
+          "title": "Technical and Administrative Protection Measures",
+          "ref": "#section-6"
+        },
+        {
+          "id": "section-7",
+          "title": "Privacy Policy Manager and Contact Information",
+          "ref": "#section-7"
+        },
+        {
+          "id": "section-8",
+          "title": "Privacy Policy Changes",
+          "ref": "#section-8"
+        },
+        {
+          "id": "section-9",
+          "title": "Social Media Platform Integrations",
+          "ref": "#section-social-media"
+        }
+      ]
+    },
+    "introduction": {
+      "type": "section",
+      "content": [
+        {
+          "type": "text",
+          "value": "ingrey (hereinafter referred to as 'the Company') values your personal information and makes efforts to comply with relevant laws such as the 'Personal Information Protection Act' and the 'Act on Promotion of Information and Communications Network Utilization and Information Protection'."
+        },
+        {
+          "type": "text",
+          "value": "Through this Privacy Policy, the Company informs users about the categories of personal information collected, the purpose of collection and use, retention and disposal, third-party disclosure, and other matters related to personal information."
+        }
+      ]
+    },
+    "definitions": {
+      "type": "section",
+      "title": "Definitions and Scope",
+      "content": [
+        {
+          "type": "chapter",
+          "title": "Definitions",
+          "content": {
+            "type": "list",
+            "items": [
+              {
+                "text": "Service: The ingrey application, website, and related services provided by the Company."
+              },
+              {
+                "text": "User: Any individual who accesses or uses the Service."
+              },
+              {
+                "text": "Personal Information: Any information relating to an identified or identifiable natural person."
+              },
+              {
+                "text": "Social Media Platforms: Third-party services including but not limited to TikTok, YouTube, Facebook, and Instagram."
+              },
+              {
+                "text": "Content: Any material uploaded, shared, or created through the Service, including text, images, videos, and audio."
+              }
+            ]
+          }
+        },
+        {
+          "type": "chapter",
+          "title": "Scope",
+          "content": {
+            "type": "text",
+            "value": "This Privacy Policy applies to all users of the Service, regardless of how they access it (website, mobile application, API, etc.). It covers the collection, use, and sharing of personal information by the Company and its relationship with connected Social Media Platforms."
+          }
+        }
+      ]
+    },
+    "sections": [
+      {
+        "id": "section-1",
+        "type": "section",
+        "number": "1",
+        "title": "Collection and Use of Personal Information",
+        "chapters": [
+          {
+            "id": "chapter-1",
+            "type": "chapter",
+            "number": "1",
+            "title": "Categories of Personal Information Collected",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company collects the following personal information for membership registration, service use, customer support, etc.",
+                  "subItems": [
+                    {
+                      "text": "1. Required information: Name, ID, password, email address, date of birth"
+                    },
+                    {
+                      "text": "2. Optional information: Nickname, profile image, occupation, areas of interest"
+                    },
+                    {
+                      "text": "3. Information automatically generated and collected during service use: IP address, cookies, visit date and time, service usage records, inappropriate usage records"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-2",
+            "type": "chapter",
+            "number": "2",
+            "title": "Methods of Personal Information Collection",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company collects personal information through the following methods:",
+                  "subItems": [
+                    {
+                      "text": "1. Collection with user consent during membership registration and service use through website and mobile application"
+                    },
+                    {
+                      "text": "2. Automatic collection through data collection tools"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "type": "section",
+        "number": "2",
+        "title": "Purpose of Processing Personal Information",
+        "chapters": [
+          {
+            "id": "chapter-3",
+            "type": "chapter",
+            "number": "3",
+            "title": "Use of Collected Personal Information",
+            "content": {
+              "type": "text",
+              "value": "The Company uses the collected personal information for the following purposes. All information provided by users will not be used for purposes other than those listed below, and prior consent will be sought if the purpose of use changes."
+            }
+          },
+          {
+            "id": "chapter-4",
+            "type": "chapter",
+            "number": "4",
+            "title": "Purposes of Use",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Member Management",
+                  "subItems": [
+                    {
+                      "text": "Verification of membership registration intent, provision of membership services, maintenance and management of membership qualifications, prevention of service misuse, various notifications and announcements"
+                    }
+                  ]
+                },
+                {
+                  "text": "2. Service Provision",
+                  "subItems": [
+                    {
+                      "text": "Provision of social media management tool services, content provision, customized service provision"
+                    }
+                  ]
+                },
+                {
+                  "text": "3. Marketing and Advertising",
+                  "subItems": [
+                    {
+                      "text": "Development of new services and provision of customized services, provision of event and advertising information and participation opportunities, verification of service validity, analysis of access frequency, statistics on members' service usage"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "type": "section",
+        "number": "3",
+        "title": "Disclosure of Personal Information to Third Parties",
+        "chapters": [
+          {
+            "id": "chapter-5",
+            "type": "chapter",
+            "number": "5",
+            "title": "Principles of Personal Information Disclosure to Third Parties",
+            "content": {
+              "type": "text",
+              "value": "The Company processes users' personal information only within the scope specified in this Privacy Policy and does not process it beyond the original scope or disclose it to third parties without users' prior consent. However, personal information may be processed in the following cases."
+            }
+          },
+          {
+            "id": "chapter-6",
+            "type": "chapter",
+            "number": "6",
+            "title": "Cases Where Third-Party Disclosure is Possible",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. When the user has given prior consent to third-party disclosure"
+                },
+                {
+                  "text": "2. When required by law"
+                },
+                {
+                  "text": "3. When necessary for statistical compilation or academic research purposes, and the personal information is provided in a form that cannot identify specific individuals"
+                },
+                {
+                  "text": "4. Other cases specified by law"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-7",
+            "type": "chapter",
+            "number": "7",
+            "title": "Outsourcing of Personal Information Processing",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company outsources personal information processing tasks as follows for smooth service provision:",
+                  "subItems": [
+                    {
+                      "text": "1. Payment service providers: Payment processing"
+                    },
+                    {
+                      "text": "2. Hosting service providers: Server operation and management"
+                    },
+                    {
+                      "text": "3. Customer support companies: Customer inquiry handling and service guidance"
+                    },
+                    {
+                      "text": "4. Social media platforms (TikTok, YouTube, Facebook, Instagram): Content publication, analytics retrieval, and account management functions"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-4",
+        "type": "section",
+        "number": "4",
+        "title": "Retention and Disposal of Personal Information",
+        "chapters": [
+          {
+            "id": "chapter-8",
+            "type": "chapter",
+            "number": "8",
+            "title": "Retention and Disposal Period of Personal Information",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company retains and uses personal information for the following periods:",
+                  "subItems": [
+                    {
+                      "text": "1. Membership information: Until withdrawal of membership (immediately deleted upon request for membership withdrawal)"
+                    },
+                    {
+                      "text": "2. Information required by relevant laws: For periods specified by relevant laws"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-9",
+            "type": "chapter",
+            "number": "9",
+            "title": "Procedure and Method for Disposal of Personal Information",
+            "content": {
+              "type": "text",
+              "value": "In principle, the Company immediately destroys personal information after the purpose of collection and use has been fulfilled. The disposal process and method are as follows."
+            }
+          },
+          {
+            "id": "chapter-10",
+            "type": "chapter",
+            "number": "10",
+            "title": "Disposal Process and Method",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Disposal Process: Personal information that has fulfilled its retention period is transferred to a separate database (or separate document box for paper documents) and destroyed after a certain period according to internal policies and other relevant laws."
+                },
+                {
+                  "text": "2. Disposal Method: Personal information stored in electronic files is deleted using technical methods that prevent recovery. Personal information printed on paper is shredded or incinerated."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-5",
+        "type": "section",
+        "number": "5",
+        "title": "Rights of Data Subjects and How to Exercise Them",
+        "chapters": [
+          {
+            "id": "chapter-11",
+            "type": "chapter",
+            "number": "11",
+            "title": "Rights of Users",
+            "content": {
+              "type": "text",
+              "value": "Users can exercise the following rights regarding their personal information at any time."
+            }
+          },
+          {
+            "id": "chapter-12",
+            "type": "chapter",
+            "number": "12",
+            "title": "Types of Rights and How to Exercise Them",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Right to access personal information"
+                },
+                {
+                  "text": "2. Right to rectify errors in personal information"
+                },
+                {
+                  "text": "3. Right to deletion of personal information"
+                },
+                {
+                  "text": "4. Right to suspension of processing of personal information"
+                },
+                {
+                  "text": "Users can exercise these rights by contacting the personal information protection officer by email at support@ingrey.me"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-13",
+            "type": "chapter",
+            "number": "13",
+            "title": "Procedure for Requesting Personal Information Access",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Users can request access to their personal information through the service's 'Profile Settings > Personal Information' section."
+                },
+                {
+                  "text": "2. The Company will process requests promptly in accordance with relevant laws."
+                },
+                {
+                  "text": "3. To request deletion of account information, users must email support@ingrey.me with the subject 'Account Deletion Request' and include their username and email address."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-6",
+        "type": "section",
+        "number": "6",
+        "title": "Technical and Administrative Protection Measures",
+        "chapters": [
+          {
+            "id": "chapter-14",
+            "type": "chapter",
+            "number": "14",
+            "title": "Technical Measures",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Encryption of personal information: Users' personal information such as passwords are encrypted and stored using one-way encryption."
+                },
+                {
+                  "text": "2. Countermeasures against hacking: The Company uses security programs to prevent leakage or damage of personal information due to hacking or computer viruses."
+                },
+                {
+                  "text": "3. Access control: The Company minimizes the handling of users' personal information by limiting access rights to personal information and manages them through access control."
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-15",
+            "type": "chapter",
+            "number": "15",
+            "title": "Administrative Measures",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Regular employee training on personal information protection"
+                },
+                {
+                  "text": "2. Formulation and implementation of internal management plans for personal information protection"
+                },
+                {
+                  "text": "3. Regular inspection of personal information handling status"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-7",
+        "type": "section",
+        "number": "7",
+        "title": "Privacy Policy Manager and Contact Information",
+        "chapters": [
+          {
+            "id": "chapter-16",
+            "type": "chapter",
+            "number": "16",
+            "title": "Privacy Policy Manager",
+            "content": {
+              "type": "text",
+              "value": "The Company has appointed the following department and officer to protect users' personal information and handle complaints related to personal information."
+            }
+          },
+          {
+            "id": "chapter-17",
+            "type": "chapter",
+            "number": "17",
+            "title": "Contact Information",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Personal Information Protection Officer: Privacy Team",
+                  "subItems": [
+                    {
+                      "text": "Name: Privacy Protection Team"
+                    },
+                    {
+                      "text": "Email: support@ingrey.me"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-8",
+        "type": "section",
+        "number": "8",
+        "title": "Privacy Policy Changes",
+        "chapters": [
+          {
+            "id": "chapter-18",
+            "type": "chapter",
+            "number": "18",
+            "title": "Policy Updates",
+            "content": {
+              "type": "text",
+              "value": "This Privacy Policy may be changed in accordance with the Company's policies or changes in related laws. If there are additions, deletions, or modifications to the Privacy Policy, the Company will notify users of the changes at least 7 days before the changes take effect through announcements on the service."
+            }
+          },
+          {
+            "id": "chapter-19",
+            "type": "chapter",
+            "number": "19",
+            "title": "Effective Date",
+            "content": {
+              "type": "text",
+              "value": "This Privacy Policy is effective from February 1, 2025."
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-9",
+        "type": "section",
+        "number": "9",
+        "title": "Social Media Platform Integrations",
+        "chapters": [
+          {
+            "id": "social-tiktok",
+            "type": "chapter",
+            "number": "21",
+            "title": "TikTok Integration",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "When you connect your TikTok account to our Service:",
+                  "subItems": [
+                    {
+                      "text": "We request access to your public profile information, content, and engagement metrics."
+                    },
+                    {
+                      "text": "We may collect and process your TikTok account information, content (including videos, comments, and captions), analytics data, and follower information."
+                    },
+                    {
+                      "text": "Your use of TikTok features through our Service is subject to TikTok's Terms of Service and Privacy Policy."
+                    },
+                    {
+                      "text": "You can revoke access anytime by disconnecting your TikTok account in the Service settings or through TikTok's security settings."
+                    },
+                    {
+                      "link": {
+                        "text": "TikTok Privacy Policy",
+                        "href": "https://www.tiktok.com/legal/privacy-policy"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "social-youtube",
+            "type": "chapter",
+            "title": "YouTube API Services",
+            "number": "22",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "Our Service uses YouTube API Services. By using YouTube-related functions in our Service:",
+                  "subItems": [
+                    {
+                      "text": "We access your YouTube account information, channel data, videos, analytics, and comments as authorized by you."
+                    },
+                    {
+                      "text": "Your information is processed according to our Privacy Policy and Google's Privacy Policy."
+                    },
+                    {
+                      "text": "You can revoke access to your YouTube account at any time by visiting Google Security Settings."
+                    },
+                    {
+                      "link": {
+                        "text": "YouTube Privacy Policy",
+                        "href": "https://policies.google.com/privacy"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "social-facebook",
+            "type": "chapter",
+            "title": "Facebook Integration",
+            "number": "23",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "When connecting Facebook accounts to our Service:",
+                  "subItems": [
+                    {
+                      "text": "We access profile information, pages you manage, posts, engagement metrics, and advertising data as authorized."
+                    },
+                    {
+                      "text": "We collect and process your Facebook pages data, posts, analytics, audience information, and ad performance."
+                    },
+                    {
+                      "text": "Your Facebook data usage through our Service is subject to Facebook's Data Policy."
+                    },
+                    {
+                      "text": "You can disconnect your Facebook account at any time through our Service or Facebook's App settings."
+                    },
+                    {
+                      "link": {
+                        "text": "Facebook Privacy Policy",
+                        "href": "https://www.facebook.com/privacy/policy/"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "social-instagram",
+            "type": "chapter",
+            "title": "Instagram Integration",
+            "number": "24",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "When connecting Instagram accounts to our Service:",
+                  "subItems": [
+                    {
+                      "text": "We access your profile data, media, comments, and analytics as authorized by you."
+                    },
+                    {
+                      "text": "We collect and process your posts, stories, audience demographics, and engagement metrics."
+                    },
+                    {
+                      "text": "Your Instagram data usage is governed by Instagram's Data Policy."
+                    },
+                    {
+                      "text": "You can revoke access at any time through our Service settings or Instagram's Authorized Apps section."
+                    },
+                    {
+                      "link": {
+                        "text": "Instagram Privacy Policy",
+                        "href": "https://www.facebook.com/privacy/policy/"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

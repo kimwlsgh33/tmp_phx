@@ -1,0 +1,468 @@
+{
+  "metadata": {
+    "version": "3.0.0",
+    "schemaVersion": "2024.2",
+    "releaseDate": "2025-01-26",
+    "effectiveDate": "2025-02-01",
+    "language": "en",
+    "revisionHistory": [
+      {
+        "version": "2.0.0",
+        "date": "2025-01-26",
+        "changes": "Content restructuring and enhanced privacy descriptions"
+      },
+      {
+        "version": "1.0.0",
+        "date": "2025-01-13",
+        "changes": "Initial release"
+      }
+    ],
+    "availableLanguages": ["en", "ko"],
+    "accessibility": {
+      "role": "document",
+      "lang": "en-US",
+      "ariaLabel": "Privacy Policy",
+      "structure": {
+        "landmarks": true,
+        "headings": true
+      }
+    },
+    "formatting": {
+      "supported": ["text", "list", "link", "heading"],
+      "schema": "https://schema.org/PrivacyPolicy"
+    }
+  },
+  "document": {
+    "index": {
+      "type": "navigation",
+      "title": "Table of Contents and Quick Links",
+      "subtitle": "Main Sections",
+      "items": [
+        {
+          "id": "section-1",
+          "title": "Collection and Use of Personal Information",
+          "ref": "#section-1"
+        },
+        {
+          "id": "section-2",
+          "title": "Purpose of Processing Personal Information",
+          "ref": "#section-2"
+        },
+        {
+          "id": "section-3",
+          "title": "Disclosure of Personal Information to Third Parties",
+          "ref": "#section-3"
+        },
+        {
+          "id": "section-4",
+          "title": "Retention and Disposal of Personal Information",
+          "ref": "#section-4"
+        },
+        {
+          "id": "section-5",
+          "title": "Rights of Data Subjects and How to Exercise Them",
+          "ref": "#section-5"
+        },
+        {
+          "id": "section-6",
+          "title": "Technical and Administrative Protection Measures",
+          "ref": "#section-6"
+        }
+      ]
+    },
+    "introduction": {
+      "type": "section",
+      "content": [
+        {
+          "type": "text",
+          "value": "ingrey (hereinafter referred to as 'the Company') values your personal information and makes efforts to comply with relevant laws such as the 'Personal Information Protection Act' and the 'Act on Promotion of Information and Communications Network Utilization and Information Protection'."
+        },
+        {
+          "type": "text",
+          "value": "Through this Privacy Policy, the Company informs users about the categories of personal information collected, the purpose of collection and use, retention and disposal, third-party disclosure, and other matters related to personal information."
+        }
+      ]
+    },
+    "third-party": [
+      {
+        "type": "section",
+        "title": "YouTube API Services",
+        "link": {
+          "text": "here",
+          "href": "https://policies.google.com/privacy",
+          "value": " to read about Google's Privacy Policy. By using YouTube API Services, you are deemed to have agreed to Google's Privacy Policy."
+        }
+      }
+    ],
+    "sections": [
+      {
+        "id": "section-1",
+        "type": "section",
+        "number": "1",
+        "title": "Collection and Use of Personal Information",
+        "chapters": [
+          {
+            "id": "chapter-1",
+            "type": "chapter",
+            "number": "1",
+            "title": "Categories of Personal Information Collected",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company collects the following personal information for membership registration, service use, customer support, etc.",
+                  "subItems": [
+                    {
+                      "text": "1. Required information: Name, ID, password, email address, date of birth"
+                    },
+                    {
+                      "text": "2. Optional information: Nickname, profile image, occupation, areas of interest"
+                    },
+                    {
+                      "text": "3. Information automatically generated and collected during service use: IP address, cookies, visit date and time, service usage records, inappropriate usage records"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-2",
+            "type": "chapter",
+            "number": "2",
+            "title": "Methods of Personal Information Collection",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company collects personal information through the following methods:",
+                  "subItems": [
+                    {
+                      "text": "1. Collection with user consent during membership registration and service use through website and mobile application"
+                    },
+                    {
+                      "text": "2. Automatic collection through data collection tools"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "type": "section",
+        "number": "2",
+        "title": "Purpose of Processing Personal Information",
+        "chapters": [
+          {
+            "id": "chapter-3",
+            "type": "chapter",
+            "number": "3",
+            "title": "Use of Collected Personal Information",
+            "content": {
+              "type": "text",
+              "value": "The Company uses the collected personal information for the following purposes. All information provided by users will not be used for purposes other than those listed below, and prior consent will be sought if the purpose of use changes."
+            }
+          },
+          {
+            "id": "chapter-4",
+            "type": "chapter",
+            "number": "4",
+            "title": "Purposes of Use",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Member Management",
+                  "subItems": [
+                    {
+                      "text": "Verification of membership registration intent, provision of membership services, maintenance and management of membership qualifications, prevention of service misuse, various notifications and announcements"
+                    }
+                  ]
+                },
+                {
+                  "text": "2. Service Provision",
+                  "subItems": [
+                    {
+                      "text": "Provision of social media management tool services, content provision, customized service provision"
+                    }
+                  ]
+                },
+                {
+                  "text": "3. Marketing and Advertising",
+                  "subItems": [
+                    {
+                      "text": "Development of new services and provision of customized services, provision of event and advertising information and participation opportunities, verification of service validity, analysis of access frequency, statistics on members' service usage"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "type": "section",
+        "number": "3",
+        "title": "Disclosure of Personal Information to Third Parties",
+        "chapters": [
+          {
+            "id": "chapter-5",
+            "type": "chapter",
+            "number": "5",
+            "title": "Principles of Personal Information Disclosure to Third Parties",
+            "content": {
+              "type": "text",
+              "value": "The Company processes users' personal information only within the scope specified in this Privacy Policy and does not process it beyond the original scope or disclose it to third parties without users' prior consent. However, personal information may be processed in the following cases."
+            }
+          },
+          {
+            "id": "chapter-6",
+            "type": "chapter",
+            "number": "6",
+            "title": "Cases Where Third-Party Disclosure is Possible",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. When the user has given prior consent to third-party disclosure"
+                },
+                {
+                  "text": "2. When required by law"
+                },
+                {
+                  "text": "3. When necessary for statistical compilation or academic research purposes, and the personal information is provided in a form that cannot identify specific individuals"
+                },
+                {
+                  "text": "4. Other cases specified by law"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-7",
+            "type": "chapter",
+            "number": "7",
+            "title": "Outsourcing of Personal Information Processing",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company outsources personal information processing tasks as follows for smooth service provision:",
+                  "subItems": [
+                    {
+                      "text": "1. Payment service providers: Payment processing"
+                    },
+                    {
+                      "text": "2. Hosting service providers: Server operation and management"
+                    },
+                    {
+                      "text": "3. Customer support companies: Customer inquiry handling and service guidance"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-4",
+        "type": "section",
+        "number": "4",
+        "title": "Retention and Disposal of Personal Information",
+        "chapters": [
+          {
+            "id": "chapter-8",
+            "type": "chapter",
+            "number": "8",
+            "title": "Retention Period of Personal Information",
+            "content": {
+              "type": "text",
+              "value": "In principle, the Company promptly disposes of personal information once the purpose of collection and use has been achieved. However, information is retained for the duration required by relevant laws."
+            }
+          },
+          {
+            "id": "chapter-9",
+            "type": "chapter",
+            "number": "9",
+            "title": "Retention Periods Required by Law",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Records on contracts or subscription withdrawals: 5 years"
+                },
+                {
+                  "text": "2. Records on payment and supply of goods: 5 years"
+                },
+                {
+                  "text": "3. Records on consumer complaints or dispute handling: 3 years"
+                },
+                {
+                  "text": "4. Website visit records: 3 months"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-10",
+            "type": "chapter",
+            "number": "10",
+            "title": "Personal Information Disposal Procedures and Methods",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The procedures and methods for disposing of personal information are as follows:",
+                  "subItems": [
+                    {
+                      "text": "1. Disposal Procedure: Personal information that has achieved its purpose or whose retention period has expired is promptly disposed of according to the Company's internal policies."
+                    },
+                    {
+                      "text": "2. Disposal Method: Personal information stored in electronic files is securely deleted using technical methods that prevent recovery, and information printed on paper is shredded or incinerated."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-5",
+        "type": "section",
+        "number": "5",
+        "title": "Rights of Data Subjects and How to Exercise Them",
+        "chapters": [
+          {
+            "id": "chapter-11",
+            "type": "chapter",
+            "number": "11",
+            "title": "Rights of Data Subjects",
+            "content": {
+              "type": "text",
+              "value": "Users can exercise the following rights regarding their personal information at any time:"
+            }
+          },
+          {
+            "id": "chapter-12",
+            "type": "chapter",
+            "number": "12",
+            "title": "Details of Data Subject Rights",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "1. Right to access personal information"
+                },
+                {
+                  "text": "2. Right to request correction of errors"
+                },
+                {
+                  "text": "3. Right to request deletion"
+                },
+                {
+                  "text": "4. Right to request suspension of processing"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-13",
+            "type": "chapter",
+            "number": "13",
+            "title": "How to Exercise Rights",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "Users can exercise their rights through the following methods:",
+                  "subItems": [
+                    {
+                      "text": "1. Personal information manager: Through written request, phone, or email"
+                    },
+                    {
+                      "text": "2. My Page > Personal Information Management: Through the online service"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-6",
+        "type": "section",
+        "number": "6",
+        "title": "Technical and Administrative Protection Measures",
+        "chapters": [
+          {
+            "id": "chapter-14",
+            "type": "chapter",
+            "number": "14",
+            "title": "Technical Measures",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company implements the following technical measures to protect personal information:",
+                  "subItems": [
+                    {
+                      "text": "1. Encryption of personal information: Encrypting users' personal information such as passwords"
+                    },
+                    {
+                      "text": "2. Hacking prevention system: Installing security programs and regularly updating them"
+                    },
+                    {
+                      "text": "3. Access control: Minimizing the number of employees handling personal information and implementing access restrictions"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-15",
+            "type": "chapter",
+            "number": "15",
+            "title": "Administrative Measures",
+            "content": {
+              "type": "list",
+              "items": [
+                {
+                  "text": "The Company implements the following administrative measures to protect personal information:",
+                  "subItems": [
+                    {
+                      "text": "1. Regular employee training: Conducting personal information protection training for employees"
+                    },
+                    {
+                      "text": "2. Management of outsourcing companies: Supervising outsourcing companies that handle personal information"
+                    },
+                    {
+                      "text": "3. Regular inspections: Conducting regular inspections on personal information protection"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "chapter-16",
+            "type": "chapter",
+            "number": "16",
+            "title": "Privacy Policy Changes",
+            "content": {
+              "type": "text",
+              "value": "This Privacy Policy is effective from the date indicated at the top, and any changes due to the amendment of laws or policies will be announced through the website at least 7 days before implementation. However, significant changes to user rights will be announced at least 30 days in advance."
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
