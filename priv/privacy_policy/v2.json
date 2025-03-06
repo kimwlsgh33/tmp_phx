@@ -22,10 +22,7 @@
         "changes": "최초 출시"
       }
     ],
-    "availableLanguages": [
-      "en",
-      "ko"
-    ],
+    "availableLanguages": ["en", "ko"],
     "accessibility": {
       "role": "document",
       "lang": "ko-KR",
@@ -36,12 +33,7 @@
       }
     },
     "formatting": {
-      "supported": [
-        "text",
-        "list",
-        "link",
-        "heading"
-      ],
+      "supported": ["text", "list", "link", "heading"],
       "schema": "https://schema.org/PrivacyPolicy"
     }
   },
@@ -92,9 +84,9 @@
           "ref": "#section-8"
         },
         {
-          "id": "section-social-media",
+          "id": "section-9",
           "title": "소셜 미디어 플랫폼 통합",
-          "ref": "#section-social-media"
+          "ref": "#section-9"
         }
       ]
     },

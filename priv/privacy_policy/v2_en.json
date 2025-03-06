@@ -22,10 +22,7 @@
         "changes": "Initial release"
       }
     ],
-    "availableLanguages": [
-      "en",
-      "ko"
-    ],
+    "availableLanguages": ["en", "ko"],
     "accessibility": {
       "role": "document",
       "lang": "en-US",
@@ -36,12 +33,7 @@
       }
     },
     "formatting": {
-      "supported": [
-        "text",
-        "list",
-        "link",
-        "heading"
-      ],
+      "supported": ["text", "list", "link", "heading"],
       "schema": "https://schema.org/PrivacyPolicy"
     }
   },
@@ -94,7 +86,7 @@
         {
           "id": "section-9",
           "title": "Social Media Platform Integrations",
-          "ref": "#section-social-media"
+          "ref": "#section-9"
         }
       ]
     },
