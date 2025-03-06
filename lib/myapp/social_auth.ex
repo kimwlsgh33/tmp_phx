@@ -71,6 +71,7 @@ defmodule Myapp.SocialAuth do
       :twitter -> Myapp.SocialAuth.Twitter
       :tiktok -> Myapp.SocialAuth.TikTok
       :instagram -> Myapp.SocialAuth.Instagram
+      :youtube -> Myapp.SocialAuth.YouTube
       _ -> nil
     end
   end
@@ -88,7 +89,7 @@ defmodule Myapp.SocialAuth do
   """
   @spec list_providers() :: [provider()]
   def list_providers() do
-    [:twitter, :tiktok, :instagram]
+    [:twitter, :tiktok, :instagram, :youtube]
   end
 end
 

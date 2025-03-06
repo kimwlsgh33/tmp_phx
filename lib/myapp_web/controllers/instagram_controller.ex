@@ -4,12 +4,25 @@ defmodule MyappWeb.InstagramController do
   
   This controller handles web requests related to Instagram functionality,
   providing a user interface for interacting with the Instagram API and
-  related features implemented in the Myapp.Instagram module.
+  related features implemented in the Myapp.SocialMedia.Instagram module.
   """
   use MyappWeb, :controller
   
-  alias Myapp.Instagram
-  alias Myapp.InstagramOauth
+  import MyappWeb.SocialMediaController, only: [
+    validate_provider: 1,
+    handle_connect: 3,
+    handle_auth_callback: 3,
+    handle_post: 5,
+    handle_media_upload: 5,
+    validate_media_upload: 1,
+    parse_hashtags: 1,
+    get_expiry_datetime: 1,
+    get_current_user_id: 1,
+    check_auth: 3
+  ]
+  
+  alias Myapp.SocialMedia.Instagram
+  alias Myapp.SocialAuth.Instagram, as: InstagramAuth
   
   # Define a struct for Instagram uploads for form handling
   defmodule UploadForm do
@@ -59,9 +72,10 @@ defmodule MyappWeb.InstagramController do
     error = get_flash(conn, :error)
     success = get_flash(conn, :info) != nil
     
-    {connected, recent_media} = case Instagram.validate_access_token([]) do
-      {:ok, _access_token} ->
-        case Instagram.list_media() do
+    user_id = get_current_user_id(conn)
+    {connected, recent_media} = case check_auth(conn, "instagram", user_id) do
+      {:ok, _status} ->
+        case Instagram.list_media(user_id) do
           {:ok, %{"data" => media}} ->
             {true, media}
           _ ->
@@ -91,8 +105,9 @@ defmodule MyappWeb.InstagramController do
     * `connected` - Boolean indicating whether the user is connected to Instagram
   """
   def upload_form(conn, params) do
-    case Instagram.validate_access_token([]) do
-      {:ok, _access_token} ->
+    user_id = get_current_user_id(conn)
+    case check_auth(conn, "instagram", user_id) do
+      {:ok, _status} ->
         # Create a new changeset for the form
         changeset = UploadForm.changeset(%UploadForm{}, params["upload"] || %{})
         
@@ -124,51 +139,28 @@ defmodule MyappWeb.InstagramController do
   """
   def upload_media(conn, params) do
     upload_params = params["upload_form"] || %{}
+    user_id = get_current_user_id(conn)
     
-    case Instagram.validate_access_token([]) do
-      {:ok, _access_token} ->
+    case check_auth(conn, "instagram", user_id) do
+      {:ok, _status} ->
         # Validate the submitted form data
         changeset = UploadForm.changeset(%UploadForm{}, upload_params)
         
         if changeset.valid? do
           # First validate the upload to get the media path and type
           upload_result = 
-            with {:ok, media_path, media_type} <- validate_upload(upload_params) do
+            with {:ok, media_path, media_type} <- validate_media_upload(upload_params) do
               # Now that we have media_type, set up the options and function
               options = [
                 caption: upload_params["caption"] || "",
                 location: upload_params["location"] || "",
                 hashtags: parse_hashtags(upload_params["hashtags"] || ""),
-                media_type: media_type
+                media_type: media_type,
+                share_to_feed: upload_params["share_to_feed"] == "true"
               ]
               
-              upload_func = case media_type do
-                "image" -> 
-                  if function_exported?(Instagram, :post_photo, 2) do
-                    &Instagram.post_photo/2
-                  else
-                    &upload_media_fallback/2
-                  end
-                "video" ->
-                  if function_exported?(Instagram, :post_video, 2) do
-                    &Instagram.post_video/2
-                  else
-                    &upload_media_fallback/2
-                  end
-                _ ->
-                  # This would handle the case where "upload_media" might exist as a generic function
-                  if function_exported?(Instagram, :upload_media, 2) do
-                    &Instagram.upload_media/2
-                  else
-                    &upload_media_fallback/2
-                  end
-              end
-              
-              # Call upload function with file path and options
-              case upload_func.(media_path, options) do
-                {:ok, response} -> {:ok, response}
-                {:error, reason} -> {:error, reason}
-              end
+              # Use the shared media upload handler
+              handle_media_upload(conn, "instagram", media_path, options, user_id)
             else
               {:error, reason} -> {:error, reason}
             end
@@ -203,11 +195,8 @@ defmodule MyappWeb.InstagramController do
   Redirects the user to Instagram's authorization page where they will be asked
   to grant permission to access their Instagram account and media.
   """
-  def connect(conn, _params) do
-    redirect_url = InstagramOauth.authorize_url()
-    
-    conn
-    |> redirect(external: redirect_url)
+  def connect(conn, params) do
+    handle_connect(conn, "instagram", params)
   end
 
   @doc """
@@ -221,94 +210,11 @@ defmodule MyappWeb.InstagramController do
     * `code` - The authorization code returned by Instagram
     * `error` - Any error returned by Instagram
   """
-  def auth_callback(conn, %{"code" => code}) do
-    case InstagramOauth.get_token(code) do
-      {:ok, token_info} ->
-        # Store the token in the session or a more permanent storage
-        # Include the expiration time for refresh token purposes
-        conn = conn
-          |> put_session(:instagram_token, token_info["access_token"])
-          |> put_session(:instagram_token_expires_at, get_expiry_datetime(token_info["expires_in"]))
-        
-        # Save the token to application config for Instagram module to use
-        Application.put_env(:myapp, Myapp.Instagram, 
-          Keyword.put(Application.get_env(:myapp, Myapp.Instagram, []), 
-                    :access_token, token_info["access_token"]))
-        
-        conn
-        |> put_flash(:info, "Successfully connected to Instagram!")
-        |> redirect(to: ~p"/instagram")
-      
-      {:error, reason} ->
-        conn
-        |> put_flash(:error, "Failed to connect to Instagram: #{reason}")
-        |> redirect(to: ~p"/instagram")
-    end
+  def auth_callback(conn, params) do
+    handle_auth_callback(conn, "instagram", params)
   end
   
-  def auth_callback(conn, %{"error" => error, "error_description" => error_description}) do
-    conn
-    |> put_flash(:error, "Instagram authorization error: #{error} - #{error_description}")
-    |> redirect(to: ~p"/instagram")
-  end
-  
-  def auth_callback(conn, %{"error" => error}) do
-    conn
-    |> put_flash(:error, "Instagram authorization error: #{error}")
-    |> redirect(to: ~p"/instagram")
-  end
-  
-  def auth_callback(conn, _params) do
-    conn
-    |> put_flash(:error, "Invalid Instagram callback")
-    |> redirect(to: ~p"/instagram")
-  end
-  
-  # Calculates expiry datetime from seconds
-  defp get_expiry_datetime(expires_in) when is_integer(expires_in) do
-    DateTime.add(DateTime.utc_now(), expires_in, :second)
-  end
-  defp get_expiry_datetime(expires_in) when is_binary(expires_in) do
-    case Integer.parse(expires_in) do
-      {seconds, _} -> get_expiry_datetime(seconds)
-      :error -> DateTime.add(DateTime.utc_now(), 30 * 24 * 60 * 60, :second) # Default to 30 days
-    end
-  end
-  defp get_expiry_datetime(_), do: DateTime.add(DateTime.utc_now(), 30 * 24 * 60 * 60, :second)
 
-  # Validates the media upload and returns the path to the temporary file and media type
-  # Validates the media upload and returns the path to the temporary file and media type
-  defp validate_upload(%{"media" => %Plug.Upload{} = upload}) do
-    cond do
-      upload.content_type in ["image/jpeg", "image/png", "image/jpg"] ->
-        {:ok, upload.path, "image"}
-      upload.content_type in ["video/mp4", "video/quicktime", "video/mov"] ->
-        {:ok, upload.path, "video"}
-      true ->
-        {:error, "Invalid file format. Only JPEG, PNG images and MP4, MOV videos are supported."}
-    end
-  end
-  defp validate_upload(%{media: %Plug.Upload{} = upload}) do
-    cond do
-      upload.content_type in ["image/jpeg", "image/png", "image/jpg"] ->
-        {:ok, upload.path, "image"}
-      upload.content_type in ["video/mp4", "video/quicktime", "video/mov"] ->
-        {:ok, upload.path, "video"}
-      true ->
-        {:error, "Invalid file format. Only JPEG, PNG images and MP4, MOV videos are supported."}
-    end
-  end
-  defp validate_upload(%{"media" => nil}), do: {:error, "No media file uploaded"}
-  defp validate_upload(%{media: nil}), do: {:error, "No media file uploaded"}
-  defp validate_upload(_), do: {:error, "No media file uploaded or invalid format"}
-  # Parse hashtags from a comma-separated string
-  defp parse_hashtags(hashtags_string) when is_binary(hashtags_string) do
-    hashtags_string
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
-    |> Enum.filter(&(String.length(&1) > 0))
-  end
-  defp parse_hashtags(_), do: []
   
   # Fallback function for upload_media when media type is unrecognized
   defp upload_media_fallback(media_path, options) do

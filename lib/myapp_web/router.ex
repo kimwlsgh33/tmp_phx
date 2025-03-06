@@ -27,66 +27,99 @@ defmodule MyappWeb.Router do
     plug :fetch_api_user
   end
 
+  # Landing page route
   scope "/", MyappWeb do
     pipe_through :browser_without_layout
 
     get "/", LandingController, :index
   end
 
+  # Main browser routes
   scope "/", MyappWeb do
     pipe_through :browser
 
-    get "/tiktok", TiktokController, :show
-    get "/tiktok/upload", TiktokController, :upload_form
-    post "/tiktok/upload", TiktokController, :upload_video
-    get "/twitter", TwitterController, :show
-    get "/twitter/tweet", TwitterController, :tweet_form
-    post "/twitter/tweet", TwitterController, :post_tweet
-    get "/twitter/connect", TwitterController, :connect
-    get "/twitter/auth/callback", TwitterController, :auth_callback
-    get "/instagram", InstagramController, :show
-    get "/instagram/upload", InstagramController, :upload_form
-    post "/instagram/upload", InstagramController, :upload_media
-    get "/instagram/connect", InstagramController, :connect
-    get "/instagram/auth/callback", InstagramController, :auth_callback
+    # General/Test routes
     get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search
-    
-    # YouTube routes
-    get "/youtube", YoutubeController, :index
-    post "/youtube/search", YoutubeController, :search
-    
+
+    # Legal pages
     get "/privacy-policy/:version", PrivacyPolicyController, :page
     get "/terms-of-services/:version", TermsOfServicesController, :page
-    live "/counter", CounterLive
-    live "/files", FileLive
-    live "/youtube", YoutubeSearchLive
+
+    # Marketing pages
+    scope "/marketing" do
+      # Pricing routes
+      get "/pricing", PricingController, :index
+      get "/features", FeaturesController, :index
+      
+      # Company route
+      get "/company", CompanyController, :index
+    end
 
     # Documentation routes
-    get "/docs", DocsController, :index
-    get "/docs/:topic", DocsController, :show
+    scope "/docs" do
+      get "/", DocsController, :index
+      get "/:topic", DocsController, :show
+    end
 
-    # Pricing route
-    get "/pricing", PricingController, :index
-    get "/features", FeaturesController, :index
-
-    # Company route
-    get "/company", CompanyController, :index
+    # Social Media Integration
+    
+    # TikTok routes
+    scope "/tiktok" do
+      get "/", TiktokController, :show
+      get "/upload", TiktokController, :upload_form
+      post "/upload", TiktokController, :upload_video
+    end
+    
+    # Twitter routes
+    scope "/twitter" do
+      get "/", TwitterController, :show
+      get "/tweet", TwitterController, :tweet_form
+      post "/tweet", TwitterController, :post_tweet
+      get "/connect", TwitterController, :connect
+      get "/auth/callback", TwitterController, :auth_callback
+    end
+    
+    # Instagram routes
+    scope "/instagram" do
+      get "/", InstagramController, :show
+      get "/upload", InstagramController, :upload_form
+      post "/upload", InstagramController, :upload_media
+      get "/connect", InstagramController, :connect
+      get "/auth/callback", InstagramController, :auth_callback
+    end
+    
+    # YouTube routes
+    scope "/youtube" do
+      get "/", YoutubeController, :show
+      post "/search", YoutubeController, :search
+      live "/search-live", YoutubeSearchLive
+    end
+    
+    # LiveView routes
+    live "/counter", CounterLive
+    live "/files", FileLive
   end
 
   # Other scopes may use custom stacks.
+  # API routes
   scope "/api", MyappWeb do
     pipe_through :api
 
-    post "/files/upload", FileController, :upload
-    get "/files/:filename", FileController, :download
+    # File operations
+    scope "/files" do
+      post "/upload", FileController, :upload
+      get "/:filename", FileController, :download
+    end
 
-    # Thread API routes
-    post "/threads", ThreadController, :create
-    post "/threads/:thread_id/reply", ThreadController, :reply
-    get "/threads/:id", ThreadController, :show
-    delete "/threads/:id", ThreadController, :delete
+    # Thread operations
+    scope "/threads" do
+      post "/", ThreadController, :create
+      get "/:id", ThreadController, :show
+      delete "/:id", ThreadController, :delete
+      post "/:thread_id/reply", ThreadController, :reply
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
@@ -107,7 +140,9 @@ defmodule MyappWeb.Router do
   end
 
   ## Authentication routes
-
+  ## Authentication routes
+  
+  # Routes for non-authenticated users
   scope "/", MyappWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
@@ -122,6 +157,7 @@ defmodule MyappWeb.Router do
     post "/users/log_in", UserSessionController, :create
   end
 
+  # Routes requiring authentication
   scope "/", MyappWeb do
     pipe_through [:browser, :require_authenticated_user]
 
@@ -132,6 +168,7 @@ defmodule MyappWeb.Router do
     end
   end
 
+  # Routes available to all users
   scope "/", MyappWeb do
     pipe_through [:browser]
 

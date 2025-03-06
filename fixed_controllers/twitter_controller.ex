@@ -16,7 +16,9 @@ defmodule MyappWeb.TwitterController do
     handle_media_upload: 5,
     validate_media_upload: 1,
     parse_hashtags: 1,
-    get_current_user_id: 1
+    get_current_user_id: 1,
+    check_auth: 3,
+    get_expiry_datetime: 1
   ]
   
   alias Myapp.SocialMedia.Twitter
@@ -35,8 +37,8 @@ defmodule MyappWeb.TwitterController do
   """
   def show(conn, _params) do
     user_id = get_current_user_id(conn)
-    {connected, recent_tweets} = case Twitter.authenticated?(user_id) do
-      {:ok, %{authenticated: true}} ->
+    {connected, recent_tweets} = case check_auth(conn, "twitter", user_id) do
+      {:ok, status} ->
         case Twitter.get_timeline(user_id) do
           {:ok, tweets} ->
             {true, tweets}
@@ -65,8 +67,8 @@ defmodule MyappWeb.TwitterController do
   """
   def tweet_form(conn, _params) do
     user_id = get_current_user_id(conn)
-    case Twitter.authenticated?(user_id) do
-      {:ok, %{authenticated: true}} ->
+    case check_auth(conn, "twitter", user_id) do
+      {:ok, _status} ->
         conn
         |> assign(:connected, true)
         |> render(:tweet_form)
@@ -90,8 +92,8 @@ defmodule MyappWeb.TwitterController do
   """
   def post_tweet(conn, %{"tweet" => tweet_params} = _params) do
     user_id = get_current_user_id(conn)
-    case Twitter.authenticated?(user_id) do
-      {:ok, %{authenticated: true}} ->
+    case check_auth(conn, "twitter", user_id) do
+      {:ok, _status} ->
         # Extract content and set defaults
         content = tweet_params["text"] || ""
         hashtags = parse_hashtags(tweet_params["hashtags"] || "")
@@ -173,8 +175,8 @@ defmodule MyappWeb.TwitterController do
   """
   def delete_tweet(conn, %{"id" => tweet_id}) do
     user_id = get_current_user_id(conn)
-    case Twitter.authenticated?(user_id) do
-      {:ok, %{authenticated: true}} ->
+    case check_auth(conn, "twitter", user_id) do
+      {:ok, _status} ->
         case Twitter.delete_post(user_id, tweet_id) do
           {:ok, _response} ->
             conn

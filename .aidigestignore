@@ -1,0 +1,105 @@
+# Build artifacts and dependencies
+_build/
+deps/
+node_modules/
+.hex/
+.mix/
+
+# Compiled Phoenix assets
+priv/static/
+assets/node_modules/
+
+# Generated files
+tmp/
+.elixir_ls/
+.DS_Store
+erl_crash.dump
+*.ez
+*.beam
+*.plt
+
+# Log files
+logs/
+*.log
+log/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*~
+.tool-versions
+.formatter.exs
+
+# Database files
+*.sqlite3
+*.db
+*.sqlite
+*.dets
+*.mnesia
+
+# Phoenix specific
+.fetch
+.deliver/
+
+# Test coverage and reports
+cover/
+/coverage/
+.test_artifacts/
+
+# Elixir/Erlang specific
+.rebar3/
+.rebar/
+rebar3.crashdump
+.erlang.cookie
+.vagrant/
+_checkouts/
+priv/plts/
+
+# Library folders
+lib/*/priv/
+lib/*/include/
+lib/*/src/
+lib/*/bin/
+
+# Assets that don't need code inspection
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.ico
+*.svg
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.pdf
+*.zip
+*.tar
+*.gz
+*.gzip
+*.7z
+*.min.js
+*.min.css
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+.circleci/
+.travis.yml
+docker/
+Dockerfile
+.dockerignore
+.drone.yml
+
+# Backup files
+*.bak
+*.old
+*backup*
+
+# Misc
+*.secret
+*.credentials
+

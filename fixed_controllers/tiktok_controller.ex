@@ -14,7 +14,11 @@ defmodule MyappWeb.TiktokController do
     handle_auth_callback: 3,
     handle_media_upload: 5,
     validate_media_upload: 1,
-    get_current_user_id: 1
+    get_current_user_id: 1,
+    check_auth: 3,
+    parse_hashtags: 1,
+    get_expiry_datetime: 1,
+    handle_post: 5
   ]
   
   alias Myapp.SocialMedia.Tiktok
@@ -33,8 +37,8 @@ defmodule MyappWeb.TiktokController do
   """
   def show(conn, _params) do
     user_id = get_current_user_id(conn)
-    {connected, recent_videos} = case Tiktok.authenticated?(user_id) do
-      {:ok, %{authenticated: true}} ->
+    {connected, recent_videos} = case check_auth(conn, "tiktok", user_id) do
+      {:ok, _status} ->
         case Tiktok.list_videos(user_id) do
           {:ok, %{"data" => %{"videos" => videos}}} ->
             {true, videos}
@@ -63,8 +67,8 @@ defmodule MyappWeb.TiktokController do
   """
   def upload_form(conn, _params) do
     user_id = get_current_user_id(conn)
-    case Tiktok.authenticated?(user_id) do
-      {:ok, %{authenticated: true}} ->
+    case check_auth(conn, "tiktok", user_id) do
+      {:ok, _status} ->
         conn
         |> assign(:connected, true)
         |> render(:upload_form)
@@ -90,8 +94,8 @@ defmodule MyappWeb.TiktokController do
   """
   def upload_video(conn, %{"video" => video_params} = _params) do
     user_id = get_current_user_id(conn)
-    case Tiktok.authenticated?(user_id) do
-      {:ok, %{authenticated: true}} ->
+    case check_auth(conn, "tiktok", user_id) do
+      {:ok, _status} ->
         # Validate the video upload
         case validate_media_upload(video_params) do
           {:ok, video_path, media_type} ->
@@ -151,5 +155,3 @@ defmodule MyappWeb.TiktokController do
     handle_auth_callback(conn, "tiktok", params)
   end
 end
-
-

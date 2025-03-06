@@ -150,5 +150,41 @@ defmodule Myapp.SocialMediaConfig do
       _ -> false
     end
   end
+  @doc """
+  Returns both auth and API modules for a specific provider.
+  
+  This function handles both string and atom inputs for the provider name.
+  
+  ## Examples
+      
+      iex> SocialMediaConfig.get_provider_modules(:twitter)
+      {:ok, %{auth_module: Myapp.SocialAuth.Twitter, api_module: Myapp.SocialMedia.Twitter}}
+      
+      iex> SocialMediaConfig.get_provider_modules("instagram")
+      {:ok, %{auth_module: Myapp.SocialAuth.Instagram, api_module: Myapp.SocialMedia.Instagram}}
+      
+      iex> SocialMediaConfig.get_provider_modules(:unknown)
+      {:error, "Provider :unknown is not supported"}
+  """
+  def get_provider_modules(provider) when is_binary(provider) do
+    # Convert string to atom for internal functions
+    provider_atom = String.to_existing_atom(provider)
+    get_provider_modules(provider_atom)
+  rescue
+    # Handle case where string cannot be converted to an existing atom
+    ArgumentError -> {:error, "Provider #{provider} is not supported"}
+  end
+
+  def get_provider_modules(provider) when is_atom(provider) do
+    try do
+      auth_module = get_auth_module(provider)
+      api_module = get_api_module(provider)
+
+      {:ok, %{auth_module: auth_module, api_module: api_module}}
+    rescue
+      # Handle case where provider is not configured
+      e -> {:error, Exception.message(e)}
+    end
+  end
 end
 

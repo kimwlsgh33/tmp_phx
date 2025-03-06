@@ -12,8 +12,13 @@ defmodule MyappWeb.YoutubeController do
     validate_provider: 1,
     handle_connect: 3,
     handle_auth_callback: 3,
-    handle_media_upload: 4,
-    get_current_user_id: 1
+    handle_media_upload: 5,
+    validate_media_upload: 1,
+    check_auth: 3,
+    parse_hashtags: 1,
+    get_current_user_id: 1,
+    get_expiry_datetime: 1,
+    handle_post: 5
   ]
   
   alias Myapp.SocialMedia.Youtube
@@ -36,7 +41,7 @@ defmodule MyappWeb.YoutubeController do
     api_key = get_youtube_api_key(conn)
     query = Map.get(params, "query", "")
     
-    {connected, _tokens} = case Youtube.authenticated?(user_id) do
+    {connected, _tokens} = case check_auth(conn, "youtube", user_id) do
       {:ok, status} -> {true, status}
       _ -> {false, nil}
     end
@@ -104,7 +109,7 @@ defmodule MyappWeb.YoutubeController do
   """
   def upload_form(conn, _params) do
     user_id = get_current_user_id(conn)
-    case Youtube.authenticated?(user_id) do
+    case check_auth(conn, "youtube", user_id) do
       {:ok, _status} ->
         conn
         |> assign(:connected, true)
@@ -126,25 +131,34 @@ defmodule MyappWeb.YoutubeController do
   """
   def upload_video(conn, %{"video" => video_params}) do
     user_id = get_current_user_id(conn)
-    case Youtube.authenticated?(user_id) do
+    case check_auth(conn, "youtube", user_id) do
       {:ok, _status} ->
-        title = video_params["title"] || ""
-        description = video_params["description"] || ""
-        category_id = video_params["category_id"] || "22" # Default to 'People & Blogs'
-        
-        case handle_media_upload(conn, "youtube", video_params, [
-          title: title,
-          description: description,
-          category_id: category_id,
-          privacy_status: video_params["privacy_status"] || "private"
-        ]) do
-          {:ok, response} ->
-            conn
-            |> put_flash(:info, "Video successfully uploaded to YouTube")
-            |> redirect(to: ~p"/youtube")
+        # Validate the uploaded file
+        case validate_media_upload(video_params) do
+          {:ok, video_path, media_type} ->
+            title = video_params["title"] || ""
+            description = video_params["description"] || ""
+            category_id = video_params["category_id"] || "22" # Default to 'People & Blogs'
+            
+            case handle_media_upload(conn, "youtube", video_path, [
+              title: title,
+              description: description,
+              category_id: category_id,
+              privacy_status: video_params["privacy_status"] || "private"
+            ], user_id) do
+              {:ok, response} ->
+                conn
+                |> put_flash(:info, "Video successfully uploaded to YouTube")
+                |> redirect(to: ~p"/youtube")
+              {:error, reason} ->
+                conn
+                |> put_flash(:error, "Failed to upload video: #{reason}")
+                |> redirect(to: ~p"/youtube/upload")
+            end
+            
           {:error, reason} ->
             conn
-            |> put_flash(:error, "Failed to upload video: #{reason}")
+            |> put_flash(:error, "Failed to validate video: #{reason}")
             |> redirect(to: ~p"/youtube/upload")
         end
       _ ->
