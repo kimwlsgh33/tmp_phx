@@ -36,6 +36,11 @@ defmodule MyappWeb.Router do
   scope "/", MyappWeb do
     pipe_through :browser
 
+    get "/tiktok", TiktokController, :show
+    get "/tiktok/upload", TiktokController, :upload_form
+    post "/tiktok/upload", TiktokController, :upload_video
+    get "/tiktok/oauth", TiktokController, :oauth_request
+    get "/tiktok/oauth/callback", TiktokController, :oauth_callback
     get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search
@@ -48,6 +53,7 @@ defmodule MyappWeb.Router do
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
     live "/files", FileLive
+    live "/youtube", YoutubeSearchLive
 
     # Documentation routes
     get "/docs", DocsController, :index

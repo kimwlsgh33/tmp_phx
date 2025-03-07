@@ -5,13 +5,54 @@
 /* This file is for your main application CSS */
 @import "./docs.css";
 
+/* Styles from TikTok feature */
+.spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  z-index: 1000;
+  display: block;
+  /* 기본적으로 표시 */
+}
+
+.spinner path {
+  fill: none;
+  stroke: gray;
+  stroke-width: 10;
+  animation: draw 3s linear infinite;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: calc(var(--path-length) * 2);
+  }
+}
+
+#page-content {
+  transition: opacity 0.3s ease-in-out;
+  /* 부드러운 전환 효과 */
+}
+
+#page-content.hidden {
+  opacity: 0;
+}
+
 /* Animations */
 @keyframes scroll {
   0% {
     transform: translateX(0);
   }
+
   100% {
-    transform: translateX(-50%); /* Move by half of the total width */
+    transform: translateX(-50%);
+    /* Move by half of the total width */
   }
 }
 
@@ -29,6 +70,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -43,116 +85,125 @@
 #markdown-content {
   /* Basic typography */
   @apply text-gray-800 leading-relaxed;
-  
+
   /* Headings */
-  & h1, & h2, & h3, & h4, & h5, & h6 {
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
     @apply font-bold text-gray-900 mb-4 mt-6 scroll-mt-24;
   }
-  
+
   & h1 {
     @apply text-3xl border-b border-gray-200 pb-2;
   }
-  
+
   & h2 {
     @apply text-2xl border-b border-gray-200 pb-2;
   }
-  
+
   & h3 {
     @apply text-xl;
   }
-  
+
   & h4 {
     @apply text-lg;
   }
-  
+
   /* Paragraphs and spacing */
   & p {
     @apply my-4;
   }
-  
+
   /* Lists */
-  & ul, & ol {
+  & ul,
+  & ol {
     @apply my-4 pl-8;
   }
-  
+
   & ul {
     @apply list-disc;
   }
-  
+
   & ol {
     @apply list-decimal;
   }
-  
+
   & li {
     @apply mb-2;
   }
-  
+
   /* Blockquotes */
   & blockquote {
     @apply border-l-4 border-blue-500 pl-4 italic my-4 text-gray-600;
   }
-  
+
   /* Code blocks */
   & pre {
     @apply bg-gray-800 text-white p-4 rounded-lg overflow-x-auto my-4;
   }
-  
+
   & code {
     @apply bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm;
   }
-  
+
   & pre code {
     @apply bg-transparent text-white p-0;
   }
-  
+
   /* Tables */
   & table {
     @apply min-w-full divide-y divide-gray-300 my-6;
   }
-  
+
   & thead {
     @apply bg-gray-50;
   }
-  
+
   & th {
     @apply py-3.5 px-4 text-sm font-semibold text-left text-gray-900;
   }
-  
+
   & tbody {
     @apply divide-y divide-gray-200;
   }
-  
+
   & td {
     @apply py-4 px-4 text-sm text-gray-500;
   }
-  
+
   /* Links */
   & a {
     @apply text-blue-600 hover:text-blue-800 hover:underline;
   }
-  
+
   /* Horizontal rule */
   & hr {
     @apply my-8 border-t border-gray-300;
   }
-  
+
   /* Special sections */
-  & .note, & .info, & .warning, & .danger {
+  & .note,
+  & .info,
+  & .warning,
+  & .danger {
     @apply p-4 my-4 rounded-lg;
   }
-  
+
   & .note {
     @apply bg-blue-50 border-l-4 border-blue-500;
   }
-  
+
   & .info {
     @apply bg-green-50 border-l-4 border-green-500;
   }
-  
+
   & .warning {
     @apply bg-yellow-50 border-l-4 border-yellow-500;
   }
-  
+
   & .danger {
     @apply bg-red-50 border-l-4 border-red-500;
   }
