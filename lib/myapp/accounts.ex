@@ -351,6 +351,66 @@ defmodule Myapp.Accounts do
     end
   end
 
+  ## OAuth Authentication
+
+  @doc """
+  Registers a user via OAuth authentication.
+
+  This function processes a Ueberauth.Auth struct to extract relevant
+  user information and create a new user account using the OAuth
+  registration changeset.
+
+  ## Examples
+
+      iex> register_oauth_user(%Ueberauth.Auth{})
+      {:ok, %User{}}
+
+      iex> register_oauth_user(%Ueberauth.Auth{})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def register_oauth_user(%Ueberauth.Auth{} = auth) do
+    %{
+      uid: uid,
+      provider: provider,
+      info: %{email: email, image: avatar_url}
+    } = auth
+
+    # Generate a secure random password for OAuth users
+    random_password = generate_secure_password(32)
+
+    # Prepare user attributes from OAuth data
+    user_params = %{
+      email: email,
+      provider: to_string(provider),
+      provider_id: uid,
+      avatar_url: avatar_url,
+      password: random_password
+    }
+
+    # Try to find an existing user with this email
+    case get_user_by_email(email) do
+      # User exists - update their OAuth info if needed
+      %User{} = user ->
+        user
+        |> User.oauth_changeset(user_params)
+        |> Repo.update()
+
+      # User doesn't exist - create a new one
+      nil ->
+        %User{}
+        |> User.oauth_registration_changeset(user_params)
+        |> Repo.insert()
+    end
+  end
+
+  # Generates a cryptographically secure random password
+  defp generate_secure_password(length) do
+    :crypto.strong_rand_bytes(length)
+    |> Base.url_encode64(padding: false)
+    |> binary_part(0, length)
+  end
+
   ## API
 
   @doc """

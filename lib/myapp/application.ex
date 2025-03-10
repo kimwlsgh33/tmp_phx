@@ -4,9 +4,19 @@ defmodule Myapp.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   @impl true
   def start(_type, _args) do
+    # Load environment variables from .env file
+    try do
+      Dotenv.load()
+      Logger.info("Environment variables loaded from .env file")
+    rescue
+      e ->
+        Logger.warning("Failed to load .env file: #{inspect(e)}. Continuing with existing environment variables.")
+    end
+
     children = [
       MyappWeb.Telemetry,
       Myapp.Repo,

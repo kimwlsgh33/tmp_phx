@@ -41,14 +41,15 @@ defmodule MyappWeb.Router do
     post "/tiktok/upload", TiktokController, :upload_video
     get "/tiktok/oauth", TiktokController, :oauth_request
     get "/tiktok/oauth/callback", TiktokController, :oauth_callback
+
     get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search
-    
+
     # YouTube routes
     get "/youtube", YoutubeController, :index
     post "/youtube/search", YoutubeController, :search
-    
+
     get "/privacy-policy/:version", PrivacyPolicyController, :page
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
@@ -112,6 +113,16 @@ defmodule MyappWeb.Router do
     end
 
     post "/users/log_in", UserSessionController, :create
+
+    # Google OAuth login route
+  end
+
+  scope "/auth", MyappWeb do
+    pipe_through :browser
+
+    get "/:provider", GoogleController, :request
+    get "/:provider/callback", GoogleController, :callback
+    delete "/logout", GoogleController, :delete
   end
 
   scope "/", MyappWeb do
