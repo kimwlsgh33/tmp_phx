@@ -44,6 +44,7 @@ defmodule MyappWeb do
 
       import Plug.Conn
       import MyappWeb.Gettext
+      alias MyappWeb.Router.Helpers, as: Routes
 
       unquote(verified_routes())
     end

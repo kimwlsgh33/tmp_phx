@@ -6,12 +6,14 @@ import Config
 config :myapp, Myapp.GoogleOauth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
-  redirect_uri: System.get_env("GOOGLE_REDIRECT_URI") || "http://localhost:4000/google/oauth/callback",
+  redirect_uri:
+    System.get_env("GOOGLE_REDIRECT_URI") || "http://localhost:4000/google/oauth/callback",
   site: "https://accounts.google.com",
   authorize_url: "https://accounts.google.com/o/oauth2/v2/auth",
   token_url: "https://oauth2.googleapis.com/token",
   user_info_url: "https://www.googleapis.com/oauth2/v3/userinfo",
-  auth_style: :basic,  # For Google OAuth, this setting determines how credentials are passed (in header or in body)
+  # For Google OAuth, this setting determines how credentials are passed (in header or in body)
+  auth_style: :basic,
   scopes: ["email", "profile"]
 
 # You need to register your app in the Google Developer Console:
@@ -35,4 +37,3 @@ config :myapp, Myapp.GoogleOauth,
 
 # Remember to add environment-specific configuration in dev.exs, prod.exs, etc.
 # For production, consider using runtime.exs to load secrets from environment variables
-

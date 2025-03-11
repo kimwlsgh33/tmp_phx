@@ -67,7 +67,7 @@ defmodule Myapp.MixProject do
       {:earmark, "~> 1.4"},
       {:ueberauth, "~> 0.10"},
       {:ueberauth_google, "~> 0.10"},
-      {:dotenv, "~> 3.1.0"}
+      {:dotenv, "~> 3.1 "}
     ]
   end
 

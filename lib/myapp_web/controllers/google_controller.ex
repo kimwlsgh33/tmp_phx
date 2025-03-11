@@ -11,23 +11,6 @@ defmodule MyappWeb.GoogleController do
   but we render a loading template while the redirect happens.
   """
   def request(conn, _params) do
-    IO.puts("\n----------------------------------------------")
-    IO.puts("🔍 GoogleController.request/2 function called")
-    IO.puts("----------------------------------------------\n")
-    
-    client_id = System.get_env("GOOGLE_CLIENT_ID")
-    
-    if is_nil(client_id) do
-      IO.puts("⚠️  WARNING: GOOGLE_CLIENT_ID environment variable is NIL")
-      IO.puts("    Make sure the environment variable is properly set")
-      IO.puts("    Current environment variables:")
-      System.get_env() |> Enum.filter(fn {k, _} -> String.contains?(k, "GOOGLE") end) |> IO.inspect(label: "Google-related env vars")
-    else
-      IO.puts("✅ GOOGLE_CLIENT_ID environment variable is set")
-      IO.inspect(client_id, label: "🔑 Client ID value")
-    end
-    
-    IO.puts("\n----------------------------------------------\n")
     conn
   end
 

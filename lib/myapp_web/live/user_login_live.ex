@@ -126,7 +126,7 @@ defmodule MyappWeb.UserLoginLive do
 
           <div class="mt-6 grid grid-cols-1 gap-3">
             <a
-              href="/auth/google"
+              href={MyappWeb.Router.Helpers.google_path(MyappWeb.Endpoint, :request, "google")}
               class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
             >
               <svg

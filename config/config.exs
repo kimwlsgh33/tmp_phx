@@ -76,6 +76,8 @@ config :myapp, :tiktok_api,
 
 config :dotenv, env_file: ".env"
 
+# Basic Ueberauth configuration - provider-specific config moved to runtime.exs
+# Log OAuth configuration during application startup
 config :ueberauth, Ueberauth,
   providers: [
     google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
@@ -84,8 +86,5 @@ config :ueberauth, Ueberauth,
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
-
-# Import Google OAuth configuration
-import_config "google_oauth.exs"
 
 import_config "#{config_env()}.exs"

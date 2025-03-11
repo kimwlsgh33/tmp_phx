@@ -11,6 +11,7 @@ defmodule MyappWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :log_request
   end
 
   pipeline :browser_without_layout do
@@ -26,6 +27,16 @@ defmodule MyappWeb.Router do
     plug :accepts, ["json"]
     plug :fetch_api_user
   end
+
+  # ---------------------------------------------------------------------- 
+
+  def log_request(conn, _opts) do
+    IO.inspect(conn.request_path, label: "Requested Path")
+    IO.inspect(System.get_env("GOOGLE_CLIENT_ID"), label: "Client ID in Controller")
+    conn
+  end
+
+  # ----------------------------------------------------------------------
 
   scope "/", MyappWeb do
     pipe_through :browser_without_layout
@@ -54,7 +65,6 @@ defmodule MyappWeb.Router do
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
     live "/files", FileLive
-    live "/youtube", YoutubeSearchLive
 
     # Documentation routes
     get "/docs", DocsController, :index
@@ -119,7 +129,6 @@ defmodule MyappWeb.Router do
 
   scope "/auth", MyappWeb do
     pipe_through :browser
-
     get "/:provider", GoogleController, :request
     get "/:provider/callback", GoogleController, :callback
     delete "/logout", GoogleController, :delete
