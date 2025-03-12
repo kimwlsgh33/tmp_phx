@@ -11,6 +11,7 @@ defmodule MyappWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :log_request
   end
 
   pipeline :browser_without_layout do
@@ -26,6 +27,16 @@ defmodule MyappWeb.Router do
     plug :accepts, ["json"]
     plug :fetch_api_user
   end
+
+  # ---------------------------------------------------------------------- 
+
+  def log_request(conn, _opts) do
+    IO.inspect(conn.request_path, label: "Requested Path")
+    IO.inspect(System.get_env("GOOGLE_CLIENT_ID"), label: "Client ID in Controller")
+    conn
+  end
+
+  # ----------------------------------------------------------------------
 
   # Landing page route
   scope "/", MyappWeb do
@@ -94,16 +105,17 @@ defmodule MyappWeb.Router do
     end
 
     # YouTube routes
-    # YouTube routes
-    scope "/youtube" do
+    scope "/youtube", MyappWeb do
       get "/", YoutubeController, :show
       get "/connect", YoutubeController, :connect
       get "/auth/callback", YoutubeController, :auth_callback
       get "/upload", YoutubeController, :upload_form
       post "/upload", YoutubeController, :upload_video
       post "/search", YoutubeController, :search
+      get "/index", YoutubeController, :index
       live "/search-live", YoutubeSearchLive
     end
+
     # LiveView routes
     live "/counter", CounterLive
     live "/files", FileLive
@@ -161,6 +173,15 @@ defmodule MyappWeb.Router do
     end
 
     post "/users/log_in", UserSessionController, :create
+
+    # Google OAuth login route
+  end
+
+  scope "/auth", MyappWeb do
+    pipe_through :browser
+    get "/:provider", GoogleController, :request
+    get "/:provider/callback", GoogleController, :callback
+    delete "/logout", GoogleController, :delete
   end
 
   # Routes requiring authentication
