@@ -103,7 +103,7 @@ defmodule Myapp.TwitterOauth do
         {:error, :token_invalid}
       
       {:ok, %{status_code: status_code, body: body}} ->
-        Logger.warn("Twitter OAuth token validation failed: HTTP #{status_code}, #{body}")
+        Logger.warning(fn -> "Twitter OAuth token validation failed: HTTP #{status_code}, #{body}" end)
         {:error, "Token validation failed: HTTP #{status_code}"}
       
       {:error, %{reason: reason}} ->

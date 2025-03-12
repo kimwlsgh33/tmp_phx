@@ -29,19 +29,19 @@
                 Documentation
               </a>
               <a
-                href={~p"/pricing"}
+                href={~p"/marketing/pricing"}
                 class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
               >
                 Pricing
               </a>
               <a
-                href={~p"/features"}
+                href={~p"/marketing/features"}
                 class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
               >
                 Features
               </a>
               <a
-                href={~p"/company"}
+                href={~p"/marketing/company"}
                 class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
               >
                 Company
@@ -50,13 +50,13 @@
           </div>
           <div class="ml-10 space-x-4">
             <a
-              href="#"
+              href={~p"/users/log_in"}
               class="inline-block rounded-md border border-transparent bg-blue-500 py-2 px-4 text-base font-medium text-white hover:bg-blue-600 transition"
             >
               Sign in
             </a>
             <a
-              href="#"
+              href={~p"/users/register"}
               class="inline-block rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white hover:bg-blue-700 transition"
             >
               Sign up
@@ -71,19 +71,19 @@
             Documentation
           </a>
           <a
-            href={~p"/pricing"}
+            href={~p"/marketing/pricing"}
             class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
           >
             Pricing
           </a>
           <a
-            href={~p"/features"}
+            href={~p"/marketing/features"}
             class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
           >
             Features
           </a>
           <a
-            href={~p"/company"}
+            href={~p"/marketing/company"}
             class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
           >
             Company
@@ -168,9 +168,9 @@
           <div>
             <h3 class="text-white font-semibold mb-4">Products</h3>
             <ul class="space-y-2">
-              <li><a href="#" class="hover:text-white">Features</a></li>
+              <li><a href={~p"/marketing/features"} class="hover:text-white">Features</a></li>
               <li><a href="#" class="hover:text-white">Integrations</a></li>
-              <li><a href="#" class="hover:text-white">Pricing & Plans</a></li>
+              <li><a href={~p"/marketing/pricing"} class="hover:text-white">Pricing & Plans</a></li>
               <li><a href="#" class="hover:text-white">Changelog</a></li>
               <li><a href="#" class="hover:text-white">Our method</a></li>
             </ul>
@@ -180,8 +180,8 @@
           <div>
             <h3 class="text-white font-semibold mb-4">Company</h3>
             <ul class="space-y-2">
-              <li><a href={~p"/company"} class="hover:text-white">About us</a></li>
-              <li><a href={~p"/company"} class="hover:text-white">Diversity & Inclusion</a></li>
+              <li><a href={~p"/marketing/company"} class="hover:text-white">About us</a></li>
+              <li><a href={~p"/marketing/company"} class="hover:text-white">Diversity & Inclusion</a></li>
               <li><a href="#" class="hover:text-white">Blog</a></li>
               <li><a href="#" class="hover:text-white">Careers</a></li>
               <li><a href="#" class="hover:text-white">Financial statements</a></li>
@@ -194,7 +194,7 @@
               <h3 class="text-white font-semibold mb-4">Resources</h3>
               <ul class="space-y-2">
                 <li><a href="#" class="hover:text-white">Community</a></li>
-                <li><a href="#" class="hover:text-white">Terms of service</a></li>
+                <li><a href={~p"/terms-of-services/latest"} class="hover:text-white">Terms of service</a></li>
                 <li><a href="#" class="hover:text-white">Report a vulnerability</a></li>
               </ul>
             </div>
@@ -202,8 +202,8 @@
               <h3 class="text-white font-semibold mb-4">Legals</h3>
               <ul class="space-y-2">
                 <li><a href="#" class="hover:text-white">Refund policy</a></li>
-                <li><a href="#" class="hover:text-white">Terms & Conditions</a></li>
-                <li><a href="#" class="hover:text-white">Privacy policy</a></li>
+                <li><a href={~p"/terms-of-services/latest"} class="hover:text-white">Terms & Conditions</a></li>
+                <li><a href={~p"/privacy-policy/latest"} class="hover:text-white">Privacy policy</a></li>
                 <li><a href="#" class="hover:text-white">Brand Kit</a></li>
               </ul>
             </div>

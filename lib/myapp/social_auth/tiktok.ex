@@ -157,7 +157,7 @@ defmodule Myapp.SocialAuth.TikTok do
         {:ok, false}
       
       {:ok, %{status_code: status_code, body: body}} ->
-        Logger.warn("TikTok OAuth token validation failed: HTTP #{status_code}, #{body}")
+        Logger.warning(fn -> "TikTok OAuth token validation failed: HTTP #{status_code}, #{body}" end)
         {:error, "Token validation failed: HTTP #{status_code}"}
       
       {:error, %{reason: reason}} ->
@@ -208,7 +208,7 @@ defmodule Myapp.SocialAuth.TikTok do
   end
 
   @impl Myapp.SocialAuth
-  def revoke_tokens(access_token, params \\ %{}) do
+  def revoke_tokens(_access_token, params \\ %{}) do
     open_id = Map.get(params, :open_id)
     
     # TikTok doesn't provide a dedicated token revocation endpoint

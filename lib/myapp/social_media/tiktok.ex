@@ -10,6 +10,7 @@ defmodule Myapp.SocialMedia.Tiktok do
   
   alias Myapp.Tiktok
   alias Myapp.SocialMediaToken
+  alias Myapp.TiktokOauth
   
   @doc """
   Checks if the user is authenticated with TikTok.
@@ -18,279 +19,165 @@ defmodule Myapp.SocialMedia.Tiktok do
   
   ## Parameters
   
-    * `user_id` - The ID of the user to check.
+    * user_id - The ID of the user to check.
     
   ## Returns
   
-    * `{:ok, %{authenticated: true, details: details}}` - If authenticated.
-    * `{:ok, %{authenticated: false}}` - If not authenticated.
-    * `{:error, reason}` - If an error occurs.
+    * {:ok, %{authenticated: true, details: details}} - If authenticated.
+    * {:ok, %{authenticated: false}} - If not authenticated.
+    * {:error, reason} - If an error occurs.
   """
   @impl Myapp.SocialMedia
   def authenticated?(user_id) do
-    case parse_user_id(user_id) do
-      {:ok, parsed_id} ->
-        case SocialMediaToken.get_token(parsed_id, :tiktok) do
-          {:ok, token} when is_map(token) ->
-            # Use the check_credentials function to verify the token is valid
-            case Tiktok.check_credentials(access_token: token.access_token) do
-              {:ok, _} ->
-                {:ok, %{authenticated: true, details: %{expires_at: token.expires_at}}}
-              {:error, _reason} ->
-                # Token exists but is invalid, try refreshing it
-                case refresh_tokens(parsed_id) do
-                  {:ok, _refreshed_token} ->
-                    {:ok, %{authenticated: true, details: %{expires_at: token.expires_at}}}
-                  {:error, _} ->
-                    {:ok, %{authenticated: false}}
-                end
-            end
-          _ ->
-            {:ok, %{authenticated: false}}
-        end
-      {:error, _} ->
-        # If user_id can't be parsed to an integer, consider it not authenticated
+    with {:ok, parsed_user_id} <- parse_user_id(user_id),
+         {:ok, token} <- get_token(parsed_user_id) do
+      {:ok, %{authenticated: true, details: %{user_id: parsed_user_id}}}
+    else
+      {:error, :token_not_found} ->
         {:ok, %{authenticated: false}}
-    end
-  end
-
-  @doc """
-  Lists videos from the user's TikTok account.
-  
-  ## Parameters
-  
-    * `user_id` - The ID of the user whose videos to list.
-    
-  ## Returns
-  
-    * `{:ok, videos}` - If videos were retrieved successfully.
-    * `{:error, reason}` - If an error occurs.
-  """
-  @impl Myapp.SocialMedia
-  def list_videos(user_id) do
-    case parse_user_id(user_id) do
-      {:ok, parsed_id} ->
-        case SocialMediaToken.get_token(parsed_id, :tiktok) do
-          {:ok, token} when is_map(token) ->
-            Tiktok.list_videos(access_token: token.access_token)
-          {:error, reason} ->
-            {:error, reason}
-        end
-      {:error, _} ->
-        {:error, "Invalid user ID format"}
-    end
-  end
-
-  @doc """
-  Creates a post (video) on TikTok.
-  
-  ## Parameters
-  
-    * `user_id` - The ID of the user creating the post.
-    * `content` - The content (title/caption) for the video.
-    * `media_ids` - List of media IDs to attach (usually just one for TikTok).
-    * `options` - Additional options for the video.
-    
-  ## Returns
-  
-    * `{:ok, post}` - If the post was created successfully.
-    * `{:error, reason}` - If an error occurs.
-  """
-  @impl Myapp.SocialMedia
-  def create_post(user_id, content, media_ids, options \\ []) do
-    case parse_user_id(user_id) do
-      {:ok, parsed_id} ->
-        case SocialMediaToken.get_token(parsed_id, :tiktok) do
-          {:ok, token} when is_map(token) ->
-            # TikTok doesn't have a direct create_post API, since media uploads
-            # and post creation are combined through the upload process
-            {:error, "For TikTok, please use upload_media instead of create_post"}
-          {:error, reason} ->
-            {:error, reason}
-        end
-      {:error, _} ->
-        {:error, "Invalid user ID format"}
-    end
-  end
-
-  @doc """
-  Uploads a video to TikTok.
-  
-  ## Parameters
-  
-    * `user_id` - The ID of the user uploading the video.
-    * `media_path` - The path to the video file.
-    * `mime_type` - The MIME type of the video file.
-    * `options` - Additional options for the video.
-    
-  ## Returns
-  
-    * `{:ok, media_id}` - If the video was uploaded successfully.
-    * `{:error, reason}` - If an error occurs.
-  """
-  @impl Myapp.SocialMedia
-  def upload_media(user_id, media_path, mime_type, options \\ []) do
-    case parse_user_id(user_id) do
-      {:ok, parsed_id} ->
-        case SocialMediaToken.get_token(parsed_id, :tiktok) do
-          {:ok, token} when is_map(token) ->
-            # Extract options for TikTok video upload
-            tiktok_options = [
-              access_token: token.access_token,
-              title: Keyword.get(options, :title, ""),
-              privacy_level: Keyword.get(options, :privacy_level, "public"),
-              disable_comments: Keyword.get(options, :disable_comments, false),
-              disable_duet: Keyword.get(options, :disable_duet, false),
-              disable_stitch: Keyword.get(options, :disable_stitch, false)
-            ]
-            
-            # Upload the video
-            case Tiktok.upload_video(media_path, tiktok_options) do
-              {:ok, %{"data" => %{"video_id" => video_id}}} ->
-                {:ok, video_id}
-              {:error, reason} ->
-                {:error, reason}
-            end
-            
-          {:error, reason} ->
-            {:error, reason}
-        end
-      {:error, _} ->
-        {:error, "Invalid user ID format"}
-    end
-  end
-
-  @doc """
-  Deletes a video from TikTok.
-  
-  ## Parameters
-  
-    * `user_id` - The ID of the user deleting the video.
-    * `post_id` - The ID of the video to delete.
-    
-  ## Returns
-  
-    * `{:ok, result}` - If the video was deleted successfully.
-    * `{:error, reason}` - If an error occurs.
-  """
-  @impl Myapp.SocialMedia
-  def delete_post(user_id, post_id) do
-    case parse_user_id(user_id) do
-      {:ok, parsed_id} ->
-        case SocialMediaToken.get_token(parsed_id, :tiktok) do
-          {:ok, token} when is_map(token) ->
-            Tiktok.delete_video(post_id, access_token: token.access_token)
-          {:error, reason} ->
-            {:error, reason}
-        end
-      {:error, _} ->
-        {:error, "Invalid user ID format"}
-    end
-  end
-
-  @doc """
-  Retrieves the user's TikTok timeline (list of videos).
-  
-  ## Parameters
-  
-    * `user_id` - The ID of the user whose timeline to retrieve.
-    * `options` - Additional options such as pagination parameters.
-    
-  ## Returns
-  
-    * `{:ok, videos}` - If the timeline was retrieved successfully.
-    * `{:error, reason}` - If an error occurs.
-  """
-  @impl Myapp.SocialMedia
-  def get_timeline(user_id, options \\ []) do
-    case list_videos(user_id) do
-      {:ok, %{"data" => %{"videos" => videos}}} ->
-        {:ok, videos}
       {:error, reason} ->
         {:error, reason}
-      _ ->
-        {:error, "Failed to retrieve TikTok timeline"}
     end
   end
-
+  
   @doc """
-  Retrieves the user's TikTok profile.
+  Uploads media to TikTok.
   
   ## Parameters
   
-    * `user_id` - The ID of the user whose profile to retrieve.
+    * user_id - The ID of the user.
+    * media_path - Path to the media file.
+    * mime_type - MIME type of the media.
+    * options - Additional options for the upload.
     
   ## Returns
   
-    * `{:ok, profile}` - If the profile was retrieved successfully.
-    * `{:error, reason}` - If an error occurs.
+    * {:ok, media_id} - If the video was uploaded successfully.
+    * {:error, reason} - If an error occurs.
   """
   @impl Myapp.SocialMedia
-  def get_profile(user_id) do
-    case parse_user_id(user_id) do
-      {:ok, parsed_id} ->
-        case SocialMediaToken.get_token(parsed_id, :tiktok) do
-          {:ok, token} when is_map(token) ->
-            # TikTok API doesn't have a dedicated profile endpoint in this implementation
-            # Return a basic profile with authentication status
-            {:ok, %{
-              authenticated: true,
-              platform: "tiktok",
-              expires_at: token.expires_at
-            }}
-          {:error, reason} ->
-            {:error, reason}
-        end
-      {:error, _} ->
-        {:error, "Invalid user ID format"}
-    end
+  def upload_media(_user_id, _media_path, _mime_type, _options \\ []) do
+    {:error, "TikTok upload not implemented in this version"}
   end
-
+  
   @doc """
-  Refreshes the user's TikTok authentication tokens if needed.
+  Creates a post on TikTok.
+  """
+  @impl Myapp.SocialMedia
+  def create_post(_user_id, _media_id, _text, _options \\ []) do
+    {:error, "TikTok post creation not implemented in this version"}
+  end
   
-  ## Parameters
+  @doc """
+  Lists videos from TikTok.
+  """
+  def list_videos(_user_id) do
+    {:error, "TikTok video listing not implemented in this version"}
+  end
   
-    * `user_id` - The ID of the user whose tokens to refresh.
-    
-  ## Returns
+  @doc """
+  Deletes a post from TikTok.
+  """
+  @impl Myapp.SocialMedia
+  def delete_post(_user_id, _post_id) do
+    {:error, "TikTok post deletion not implemented in this version"}
+  end
   
-    * `{:ok, tokens}` - If the tokens were refreshed successfully.
-    * `{:ok, :not_needed}` - If token refresh was not needed.
-    * `{:error, reason}` - If an error occurs.
+  @doc """
+  Gets the user's TikTok profile.
+  """
+  @impl Myapp.SocialMedia
+  def get_profile(_user_id) do
+    {:error, "TikTok profile retrieval not implemented in this version"}
+  end
+  
+  @doc """
+  Gets the user's TikTok timeline.
+  """
+  @impl Myapp.SocialMedia
+  def get_timeline(_user_id, _options \\ []) do
+    {:error, "TikTok timeline retrieval not implemented in this version"}
+  end
+  
+  @doc """
+  Refreshes TikTok OAuth tokens.
   """
   @impl Myapp.SocialMedia
   def refresh_tokens(user_id) do
-    case parse_user_id(user_id) do
-      {:ok, parsed_id} ->
-        # This would typically use the TikTok API to refresh tokens
-        # For now, returning :not_needed since implementing token refresh
-        # would require specific TikTok OAuth logic
-        {:ok, :not_needed}
-      {:error, _} ->
-        {:error, "Invalid user ID format"}
+    with {:ok, parsed_user_id} <- parse_user_id(user_id),
+         {:ok, token} <- get_token(parsed_user_id),
+         {:ok, refreshed_token} <- do_refresh_token(token) do
+      {:ok, refreshed_token}
+    else
+      {:error, :token_not_found} ->
+        {:error, "No TikTok token found for user"}
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @doc """
+  Refreshes the TikTok OAuth token.
+  """
+  def do_refresh_token(token) do
+    case TiktokOauth.refresh_access_token(token.refresh_token) do
+      {:ok, %{access_token: access_token, refresh_token: refresh_token, expires_in: expires_in}} ->
+        expires_at = DateTime.add(DateTime.utc_now(), expires_in, :second)
+        
+        token_params = %{
+          access_token: access_token,
+          refresh_token: refresh_token,
+          expires_at: expires_at,
+          last_used_at: DateTime.utc_now()
+        }
+        
+        SocialMediaToken.update_token(token, token_params)
+      
+      {:error, reason} ->
+        {:error, reason}
     end
   end
   
-  # Helper function to parse user_id to integer if it's a string
-  defp parse_user_id(user_id) when is_integer(user_id), do: {:ok, user_id}
+  # Private helper functions
   defp parse_user_id(user_id) when is_binary(user_id) do
     case Integer.parse(user_id) do
-      {parsed_id, ""} -> 
-        # If the entire string is a valid integer
-        {:ok, parsed_id}
-      _ ->
-        # For special cases like "default_user", we could handle them specifically
-        # Otherwise, return an error
-        if user_id == "default_user" do
-          # You could have a default user ID for testing or for users who aren't logged in
-          # For example, using ID 0 or -1 as a special marker
-          {:ok, 0}
-        else
-          {:error, "Cannot parse user ID: #{user_id}"}
-        end
+      {id, ""} -> {:ok, id}
+      _ -> {:error, "Invalid user ID format"}
     end
   end
-  defp parse_user_id(_), do: {:error, "User ID must be a string or integer"}
-end
+  
+  defp parse_user_id(user_id) when is_integer(user_id), do: {:ok, user_id}
+  defp parse_user_id(_), do: {:error, "Invalid user ID format"}
 
+  @doc """
+  Retrieves the TikTok token for a user from the database.
+  """
+  def get_token(user_id) do
+    case SocialMediaToken.get_token_by_user_id_and_provider(user_id, "tiktok") do
+      nil -> {:error, :token_not_found}
+      token -> {:ok, token}
+    end
+  end
+
+  @doc """
+  Gets a TikTok API connection for a user.
+  """
+  def get_conn_from_user_id(user_id) do
+    with {:ok, parsed_user_id} <- parse_user_id(user_id),
+         {:ok, token} <- get_token(parsed_user_id) do
+      # Check if token is expired or about to expire
+      if SocialMediaToken.is_token_expired?(token) do
+        case refresh_tokens(parsed_user_id) do
+          {:ok, refreshed_token} ->
+            {:ok, Tiktok.client(refreshed_token.access_token)}
+          {:error, reason} ->
+            {:error, reason}
+        end
+      else
+        # Mark token as used
+        SocialMediaToken.update_token(token, %{last_used_at: DateTime.utc_now()})
+        {:ok, Tiktok.client(token.access_token)}
+      end
+    end
+  end
+end

@@ -26,6 +26,29 @@ defmodule Myapp.YoutubeOauth do
     OAuth2.Client.get_token(client(), code: code)
   end
 
+  @doc """
+  Creates an OAuth2 client with the provided access token.
+  
+  This function is useful when you already have an access token and need to
+  create a connection to the YouTube API without going through the authorization flow again.
+  
+  ## Parameters
+    - access_token: The OAuth2 access token for YouTube API
+
+  ## Returns
+    An OAuth2.Client struct configured with the access token
+  """
+  def client_with_token(access_token) do
+    client()
+    |> OAuth2.Client.put_param(:client_secret, client().client_secret)
+    |> OAuth2.Client.put_header("Authorization", "Bearer #{access_token}")
+    |> OAuth2.Client.put_header("Accept", "application/json")
+    |> Map.put(:token, %OAuth2.AccessToken{
+      access_token: access_token,
+      token_type: "Bearer"
+    })
+  end
+
   # OAuth2.Strategy implementation
   @impl OAuth2.Strategy
   def authorize_url(client, params) do

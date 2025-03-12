@@ -52,7 +52,7 @@ defmodule MyappWeb.Router do
       # Pricing routes
       get "/pricing", PricingController, :index
       get "/features", FeaturesController, :index
-      
+
       # Company route
       get "/company", CompanyController, :index
     end
@@ -64,14 +64,16 @@ defmodule MyappWeb.Router do
     end
 
     # Social Media Integration
-    
+
     # TikTok routes
     scope "/tiktok" do
       get "/", TiktokController, :show
       get "/upload", TiktokController, :upload_form
       post "/upload", TiktokController, :upload_video
+      get "/connect", TiktokController, :connect
+      get "/auth/callback", TiktokController, :auth_callback
     end
-    
+
     # Twitter routes
     scope "/twitter" do
       get "/", TwitterController, :show
@@ -79,8 +81,9 @@ defmodule MyappWeb.Router do
       post "/tweet", TwitterController, :post_tweet
       get "/connect", TwitterController, :connect
       get "/auth/callback", TwitterController, :auth_callback
+      delete "/tweet/:id", TwitterController, :delete_tweet
     end
-    
+
     # Instagram routes
     scope "/instagram" do
       get "/", InstagramController, :show
@@ -89,14 +92,18 @@ defmodule MyappWeb.Router do
       get "/connect", InstagramController, :connect
       get "/auth/callback", InstagramController, :auth_callback
     end
-    
+
+    # YouTube routes
     # YouTube routes
     scope "/youtube" do
       get "/", YoutubeController, :show
+      get "/connect", YoutubeController, :connect
+      get "/auth/callback", YoutubeController, :auth_callback
+      get "/upload", YoutubeController, :upload_form
+      post "/upload", YoutubeController, :upload_video
       post "/search", YoutubeController, :search
       live "/search-live", YoutubeSearchLive
     end
-    
     # LiveView routes
     live "/counter", CounterLive
     live "/files", FileLive
@@ -140,8 +147,7 @@ defmodule MyappWeb.Router do
   end
 
   ## Authentication routes
-  ## Authentication routes
-  
+
   # Routes for non-authenticated users
   scope "/", MyappWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]

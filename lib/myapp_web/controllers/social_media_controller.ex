@@ -42,7 +42,7 @@ defmodule MyappWeb.SocialMediaController do
   """
   def handle_connect(conn, provider, params \\ %{}) do
     with {:ok, auth_module, _} <- validate_provider(provider),
-         {:ok, auth_url} <- auth_module.authorization_url(params) do
+         {:ok, auth_url} <- auth_module.generate_auth_url(params) do
       redirect(conn, external: auth_url)
     else
       {:error, :invalid_provider} ->
@@ -68,7 +68,7 @@ defmodule MyappWeb.SocialMediaController do
   """
   def handle_auth_callback(conn, provider, params) do
     with {:ok, auth_module, _api_module} <- validate_provider(provider),
-         {:ok, tokens} <- auth_module.exchange_token(params),
+         {:ok, tokens} <- exchange_token_for_provider(auth_module, provider, params),
          {:ok, conn} <- store_tokens(conn, provider, tokens) do
       conn
       |> put_flash(:info, "Successfully connected to #{provider}")
@@ -231,6 +231,20 @@ defmodule MyappWeb.SocialMediaController do
   defp extract_media_upload(%{"media" => nil}), do: {:error, "No media file uploaded"}
   defp extract_media_upload(%{media: nil}), do: {:error, "No media file uploaded"}
   defp extract_media_upload(_), do: {:error, "No media file uploaded or invalid format"}
+  
+  @doc false
+  defp exchange_token_for_provider(auth_module, "twitter", params) do
+    # For Twitter, extract the code from params and call exchange_code_for_token
+    case Map.get(params, "code") do
+      nil -> {:error, "Missing code parameter"}
+      code -> auth_module.exchange_code_for_token(code, params)
+    end
+  end
+  
+  defp exchange_token_for_provider(auth_module, _provider, params) do
+    # For other providers, use the standard exchange_token method
+    auth_module.exchange_token(params)
+  end
   
   @doc false
   defp validate_media_format(path, content_type) do

@@ -122,7 +122,7 @@ defmodule Myapp.SocialMediaUtils do
 
       {:ok, %{status_code: 429}} ->
         # Rate limited - wait and retry
-        Logger.warn("Rate limited by API. Retrying after delay...")
+        Logger.warning(fn -> "Rate limited by API. Retrying after delay..." end)
         :timer.sleep(retry_delay)
         do_request(method, url, body, headers, retries - 1, retry_delay * 2)
 
@@ -131,7 +131,7 @@ defmodule Myapp.SocialMediaUtils do
 
       {:error, %{reason: reason}} ->
         if retries > 1 do
-          Logger.warn("HTTP request failed: #{inspect(reason)}. Retrying...")
+          Logger.warning(fn -> "HTTP request failed: #{inspect(reason)}. Retrying..." end)
           :timer.sleep(retry_delay)
           do_request(method, url, body, headers, retries - 1, retry_delay)
         else

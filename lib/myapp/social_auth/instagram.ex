@@ -7,6 +7,7 @@ defmodule Myapp.SocialAuth.Instagram do
   @behaviour Myapp.SocialAuth
 
   require Logger
+  alias Myapp.SocialMediaToken
 
   @impl Myapp.SocialAuth
   def generate_auth_url(params \\ %{}) do
@@ -125,7 +126,7 @@ defmodule Myapp.SocialAuth.Instagram do
         {:ok, false}
       
       {:ok, %{status_code: status_code, body: body}} ->
-        Logger.warn("Instagram OAuth token validation failed: HTTP #{status_code}, #{body}")
+        Logger.warning(fn -> "Instagram OAuth token validation failed: HTTP #{status_code}, #{body}" end)
         {:error, "Token validation failed: HTTP #{status_code}"}
       
       {:error, %{reason: reason}} ->
@@ -136,54 +137,109 @@ defmodule Myapp.SocialAuth.Instagram do
 
   @impl Myapp.SocialAuth
   def store_tokens(user_id, tokens, _params \\ %{}) do
-    # This is a placeholder implementation.
-    # In a real application, you would:
-    # 1. Encrypt sensitive tokens
-    # 2. Store tokens in a database
-    # 3. Associate them with the user_id
+    # Convert user_id to integer if it's a binary
+    user_id = if is_binary(user_id), do: String.to_integer(user_id), else: user_id
     
-    try do
-      # Example implementation using ETS for demonstration purposes.
-      # In a real app, you would use your database of choice.
-      :ets.insert(:instagram_tokens, {user_id, tokens})
-      :ok
-    rescue
-      e ->
-        Logger.error("Failed to store Instagram tokens: #{inspect(e)}")
+    # Prepare token data for SocialMediaToken
+    token_info = %{
+      access_token: tokens["access_token"],
+      refresh_token: tokens["refresh_token"],
+      expires_at: case tokens["expires_in"] do
+        nil -> nil
+        expires_in -> Myapp.SocialMediaToken.calculate_expiry(expires_in)
+      end,
+      metadata: %{
+        token_type: tokens["token_type"] || "bearer"
+      }
+    }
+    
+    case SocialMediaToken.store_token(user_id, :instagram, token_info) do
+      {:ok, _} -> :ok
+      {:error, reason} ->
+        Logger.error("Failed to store Instagram tokens: #{inspect(reason)}")
         {:error, "Failed to store tokens"}
     end
   end
 
   @impl Myapp.SocialAuth
   def get_tokens(user_id, _params \\ %{}) do
-    # This is a placeholder implementation.
-    # In a real application, you would:
-    # 1. Fetch tokens from database
-    # 2. Decrypt sensitive tokens
-    # 3. Return them in a standardized format
+    # Convert user_id to integer if it's a binary
+    user_id = if is_binary(user_id), do: String.to_integer(user_id), else: user_id
     
-    try do
-      # Example implementation using ETS for demonstration purposes
-      case :ets.lookup(:instagram_tokens, user_id) do
-        [{^user_id, tokens}] -> {:ok, tokens}
-        [] -> {:error, :not_found}
-      end
-    rescue
-      e ->
-        Logger.error("Failed to retrieve Instagram tokens: #{inspect(e)}")
+    # Get the access token
+    case SocialMediaToken.get_token(user_id, :instagram, :access) do
+      {:ok, access_token} ->
+        # Try to get the refresh token if available
+        refresh_token = case SocialMediaToken.get_token(user_id, :instagram, :refresh) do
+          {:ok, token} -> token
+          _ -> nil
+        end
+        
+        # Check if the token is valid
+        is_valid = case SocialMediaToken.valid_token?(user_id, :instagram) do
+          {:ok, valid} -> valid
+          _ -> false
+        end
+        
+        if is_valid do
+          {:ok, %{
+            "access_token" => access_token,
+            "refresh_token" => refresh_token,
+            "token_type" => "bearer"
+          }}
+        else
+          # If token is not valid, try to refresh it
+          case SocialMediaToken.refresh_token(user_id, :instagram) do
+            {:ok, _} ->
+              # Get the new access token after refresh
+              case SocialMediaToken.get_token(user_id, :instagram, :access) do
+                {:ok, new_access_token} ->
+                  {:ok, %{
+                    "access_token" => new_access_token,
+                    "refresh_token" => refresh_token,
+                    "token_type" => "bearer"
+                  }}
+                error -> error
+              end
+            
+            {:error, _reason} ->
+              # Return the possibly expired token with a warning
+              Logger.warning("Using potentially expired Instagram token for user #{user_id}")
+              {:ok, %{
+                "access_token" => access_token,
+                "refresh_token" => refresh_token,
+                "token_type" => "bearer"
+              }}
+          end
+        end
+      
+      {:error, :token_not_found} ->
+        {:error, :not_found}
+      
+      {:error, reason} ->
+        Logger.error("Failed to retrieve Instagram tokens: #{inspect(reason)}")
         {:error, "Failed to retrieve tokens"}
     end
   end
 
   @impl Myapp.SocialAuth
-  def revoke_tokens(_access_token, _params \\ %{}) do
+  def revoke_tokens(user_id, _params \\ %{}) do
     # Instagram's API doesn't provide a straightforward way to revoke tokens
-    # However, we can implement this as a placeholder for API consistency
-    # In a real application, you might want to delete the tokens from your database
-    # or mark them as revoked
+    # However, we can delete the token from our database
     
-    Logger.warn("Instagram API doesn't support direct token revocation. Tokens will expire naturally.")
-    :ok
+    # Convert user_id to integer if it's a binary
+    user_id = if is_binary(user_id), do: String.to_integer(user_id), else: user_id
+    
+    # Delete the token from our database
+    case SocialMediaToken.delete_token(user_id, :instagram) do
+      :ok ->
+        Logger.info("Removed Instagram token for user #{user_id}")
+        :ok
+      
+      {:error, _reason} ->
+        Logger.warning(fn -> "Failed to remove Instagram token for user #{user_id}, but Instagram API doesn't support direct token revocation anyway. Tokens will expire naturally." end)
+        :ok  # Return :ok even if delete failed since Instagram doesn't support revocation
+    end
   end
 
   @impl Myapp.SocialAuth

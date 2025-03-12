@@ -11,6 +11,7 @@ defmodule Myapp.SocialMedia.Twitter do
   require Logger
   alias Myapp.Twitter
   alias Myapp.TwitterOauth
+  alias Myapp.SocialMediaToken
   
   @doc """
   Checks if the user is authenticated with Twitter.
@@ -65,7 +66,7 @@ defmodule Myapp.SocialMedia.Twitter do
     * `{:error, reason}` - If an error occurs.
   """
   @impl Myapp.SocialMedia
-  def create_post(user_id, content, media_ids, options \\ []) do
+  def create_post(user_id, content, media_ids, _options \\ []) do
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
       if media_ids && length(media_ids) > 0 do
         Twitter.post_tweet_with_media(conn, content, media_ids)
@@ -91,7 +92,7 @@ defmodule Myapp.SocialMedia.Twitter do
     * `{:error, reason}` - If an error occurs.
   """
   @impl Myapp.SocialMedia
-  def upload_media(user_id, media_path, mime_type, options \\ []) do
+  def upload_media(user_id, media_path, mime_type, _options \\ []) do
     with {:ok, conn} <- get_conn_from_user_id(user_id),
          {:ok, media_binary} <- File.read(media_path) do
       Twitter.upload_media(conn, media_binary, mime_type)
@@ -219,25 +220,32 @@ defmodule Myapp.SocialMedia.Twitter do
   # In a real application, this would likely retrieve tokens from a database
   # and construct a conn-like structure for the Twitter module to use
   defp get_conn_from_user_id(user_id) do
-    # This is a simplification - in a real application, you would:
-    # 1. Retrieve user's Twitter credentials from database based on user_id
-    # 2. Create a mock conn or credential structure that Twitter module can use
-    
-    # Simplified implementation that assumes a token store exists
-    case Myapp.TokenStore.get_twitter_tokens(user_id) do
-      {:ok, tokens} ->
-        # Create a mock conn with session data that TwitterOauth can use
-        {:ok, %{
-          private: %{
-            plug_session: %{
-              "twitter_access_token" => tokens.access_token,
-              "twitter_refresh_token" => tokens.refresh_token
-            }
+    # Get the access token from the database
+    with {:ok, access_token} <- SocialMediaToken.get_token(user_id, :twitter, :access),
+         {:ok, refresh_token} <- get_refresh_token(user_id) do
+      # Create a mock conn with session data that TwitterOauth can use
+      {:ok, %{
+        private: %{
+          plug_session: %{
+            "twitter_access_token" => access_token,
+            "twitter_refresh_token" => refresh_token
           }
-        }}
-      
+        }
+      }}
+    else
+      {:error, :token_not_found} ->
+        {:error, :authentication_required}
       {:error, reason} ->
         {:error, reason}
+    end
+  end
+
+  # Helper function to safely get refresh token (might not exist)
+  defp get_refresh_token(user_id) do
+    case SocialMediaToken.get_token(user_id, :twitter, :refresh) do
+      {:ok, refresh_token} -> {:ok, refresh_token}
+      {:error, :refresh_token_not_available} -> {:ok, nil} # Make it non-fatal if refresh token is missing
+      {:error, reason} -> {:error, reason}
     end
     
     # For testing during implementation, you might return a mock:

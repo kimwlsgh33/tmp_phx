@@ -1,0 +1,78 @@
+<div class="mx-auto max-w-3xl p-6 bg-white rounded-lg shadow-md">
+  <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Upload Video to YouTube</h1>
+
+  <.form :let={f} for={%{}} action={~p"/youtube/upload"} method="post" multipart={true} class="space-y-6">
+    <div class="space-y-2">
+      <.label for="video_title">Title</.label>
+      <.input type="text" field={f[:video][:title]} id="video_title" placeholder="Enter video title" required class="w-full" />
+    </div>
+
+    <div class="space-y-2">
+      <.label for="video_description">Description</.label>
+      <.input type="textarea" field={f[:video][:description]} id="video_description" placeholder="Enter video description" class="w-full h-32" />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-2">
+        <.label for="video_category">Category</.label>
+        <.input type="select" field={f[:video][:category_id]} id="video_category" class="w-full">
+          <option value="1">Film & Animation</option>
+          <option value="2">Autos & Vehicles</option>
+          <option value="10">Music</option>
+          <option value="15">Pets & Animals</option>
+          <option value="17">Sports</option>
+          <option value="18">Short Movies</option>
+          <option value="19">Travel & Events</option>
+          <option value="20">Gaming</option>
+          <option value="21">Videoblogging</option>
+          <option value="22" selected>People & Blogs</option>
+          <option value="23">Comedy</option>
+          <option value="24">Entertainment</option>
+          <option value="25">News & Politics</option>
+          <option value="26">Howto & Style</option>
+          <option value="27">Education</option>
+          <option value="28">Science & Technology</option>
+          <option value="29">Nonprofits & Activism</option>
+        </.input>
+      </div>
+
+      <div class="space-y-2">
+        <.label for="video_privacy">Privacy Setting</.label>
+        <.input type="select" field={f[:video][:privacy_status]} id="video_privacy" class="w-full">
+          <option value="private" selected>Private</option>
+          <option value="unlisted">Unlisted</option>
+          <option value="public">Public</option>
+        </.input>
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <.label for="video_file">Video File</.label>
+      <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <.input type="file" field={f[:video][:file]} id="video_file" accept="video/*" required class="w-full" />
+        <p class="mt-2 text-sm text-gray-500">
+          Supported formats: MP4, MOV, AVI, etc. Maximum file size: 128MB
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between">
+      <a href={~p"/youtube"} class="inline-block px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+        Cancel
+      </a>
+      <button type="submit" class="inline-block px-6 py-3 bg-red-600 text-white font-medium rounded hover:bg-red-700 transition-colors">
+        Upload to YouTube
+      </button>
+    </div>
+  </.form>
+
+  <div class="mt-8 text-sm text-gray-500">
+    <p class="mb-2">Please note:</p>
+    <ul class="list-disc list-inside space-y-1">
+      <li>Your video will be uploaded to your connected YouTube account</li>
+      <li>Upload times may vary depending on your internet connection and video size</li>
+      <li>You must comply with YouTube's Terms of Service and Community Guidelines</li>
+    </ul>
+  </div>
+</div>
+
