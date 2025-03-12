@@ -28,7 +28,7 @@ defmodule MyappWeb.Router do
     plug :fetch_api_user
   end
 
-  # ---------------------------------------------------------------------- 
+  # ----------------------------------------------------------------------
 
   def log_request(conn, _opts) do
     IO.inspect(conn.request_path, label: "Requested Path")
@@ -50,9 +50,7 @@ defmodule MyappWeb.Router do
     pipe_through :browser
 
     # General/Test routes
-    get "/test/landing", PageController, :home
-    get "/test", TestController, :page
-    post "/test/search", TestController, :search
+    get "/test/dashboard", TestController, :dashboard
 
     # Legal pages
     get "/privacy-policy/:version", PrivacyPolicyController, :page
@@ -105,20 +103,20 @@ defmodule MyappWeb.Router do
     end
 
     # YouTube routes
-    scope "/youtube", MyappWeb do
+    scope "/youtube" do
       get "/", YoutubeController, :show
       get "/connect", YoutubeController, :connect
       get "/auth/callback", YoutubeController, :auth_callback
       get "/upload", YoutubeController, :upload_form
       post "/upload", YoutubeController, :upload_video
       post "/search", YoutubeController, :search
-      get "/index", YoutubeController, :index
       live "/search-live", YoutubeSearchLive
     end
 
     # LiveView routes
     live "/counter", CounterLive
     live "/files", FileLive
+    live "/search", SearchLive
   end
 
   # Other scopes may use custom stacks.

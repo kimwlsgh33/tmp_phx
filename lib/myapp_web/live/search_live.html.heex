@@ -1,0 +1,135 @@
+<div class="search-container">
+  <h1>Live Search Example</h1>
+  
+  <div class="search-form">
+    <form phx-change="search" phx-submit="search">
+      <div class="input-group">
+        <input 
+          type="text" 
+          name="query" 
+          value={@query} 
+          placeholder="Search..."
+          class="search-input"
+          autocomplete="off"
+          phx-debounce={@debounce_ms}
+        />
+        
+        <div class="spinner-container">
+          <%= if @loading do %>
+            <div class="spinner"></div>
+          <% end %>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="search-results">
+    <%= if @loading and @results == [] do %>
+      <div class="loading-message">
+        Searching...
+      </div>
+    <% else %>
+      <%= if @query != "" and @results == [] do %>
+        <div class="no-results">
+          No results found for "<%= @query %>"
+        </div>
+      <% end %>
+      
+      <%= if @results != [] do %>
+        <h2>Results for "<%= @query %>"</h2>
+        <ul class="results-list">
+          <%= for result <- @results do %>
+            <li class="result-item" id={"result-#{result.id}"}>
+              <h3 class="result-title"><%= result.title %></h3>
+              <p class="result-description"><%= result.description %></p>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<style>
+  .search-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .search-form {
+    margin-bottom: 20px;
+  }
+  
+  .input-group {
+    display: flex;
+    position: relative;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .spinner-container {
+    position: absolute;
+    right: 12px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .results-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .result-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .result-item:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .result-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #2c3e50;
+  }
+  
+  .result-description {
+    margin: 0;
+    color: #7f8c8d;
+  }
+  
+  .loading-message, .no-results {
+    padding: 20px;
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+  }
+</style>
+

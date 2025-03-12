@@ -1,87 +1,97 @@
 # Project Directory Tree
 
-This document provides a more detailed view of the file structure in a tree-like format.
+This document provides a detailed view of the project's file structure in a tree-like format.
 
 ## Main Directory Structure
 
 ```
 .
-├── assets/                    # Frontend assets
-│   ├── css/                   # Stylesheets
-│   ├── js/                    # JavaScript files
-│   │   └── hooks/             # LiveView hooks
-│   └── vendor/                # Third-party assets
+├── assets/                     # Frontend assets
+│   ├── css/                    # Stylesheets
+│   │   └── app.css
+│   ├── js/                     # JavaScript files
+│   │   ├── app.js
+│   │   └── hooks/              # LiveView hooks
+│   └── tailwind.config.js      # Tailwind configuration
 │
-├── lib/                       # Main application code
-│   ├── myapp/                 # Core application logic
-│   │   ├── accounts/          # User accounts and authentication
-│   │   │   ├── user.ex
-│   │   │   ├── user_notifier.ex
-│   │   │   └── user_token.ex
-│   │   ├── social_auth/       # Social media authentication
-│   │   │   ├── instagram.ex
-│   │   │   ├── tiktok.ex
-│   │   │   ├── twitter.ex
-│   │   │   └── youtube.ex
-│   │   ├── social_media/      # Social media integration
-│   │   │   ├── tiktok.ex
-│   │   │   ├── twitter.ex
-│   │   │   └── youtube.ex
-│   │   └── workers/           # Background workers
-│   │
-│   └── myapp_web/             # Web interface
-│       ├── channels/          # WebSocket channels
-│       │   ├── chat_channel.ex
-│       │   ├── user_socket.ex
-│       │   └── youtube_channel.ex
-│       ├── components/        # UI components
+├── config/                     # Application configuration
+│   ├── config.exs
+│   ├── dev.exs
+│   ├── prod.exs
+│   ├── runtime.exs
+│   └── test.exs
+│
+├── lib/                        # Main application code
+│   ├── tmp_phx/                # Core application logic
+│   │   ├── application.ex
+│   │   ├── mailer.ex
+│   │   └── repo.ex
+│   └── tmp_phx_web/            # Web interface
+│       ├── components/         # UI components
 │       │   ├── core_components.ex
-│       │   ├── docs/          # Documentation components
-│       │   └── layouts/       # Page layouts
-│       ├── controllers/       # HTTP controllers
-│       │   ├── company_controller.ex
-│       │   ├── docs_controller.ex
-│       │   ├── instagram_controller.ex
-│       │   ├── tiktok_controller.ex
-│       │   ├── twitter_controller.ex
-│       │   ├── user_session_controller.ex
-│       │   └── youtube_controller.ex
-│       └── live/              # LiveView modules
-│           ├── counter_live/
-│           ├── file_live/
-│           ├── user_confirmation_live.ex
-│           ├── user_login_live.ex
-│           └── youtube_search_live.ex
+│       │   └── layouts/        # Page layouts
+│       │       ├── app.html.heex
+│       │       └── root.html.heex
+│       ├── controllers/        # HTTP controllers
+│       │   ├── error_html.ex
+│       │   ├── error_json.ex
+│       │   ├── page_controller.ex
+│       │   └── page_html/
+│       │       └── home.html.heex
+│       ├── endpoint.ex
+│       ├── gettext.ex
+│       ├── router.ex
+│       └── telemetry.ex
 │
-├── priv/                      # Private application data
-│   └── repo/                  # Database related
-│       └── migrations/        # Database migrations
+├── priv/                       # Private application data
+│   ├── gettext/                # Internationalization
+│   │   └── en/
+│   │       └── LC_MESSAGES/
+│   │           ├── default.po
+│   │           └── errors.po
+│   ├── repo/                   # Database related
+│   │   └── migrations/         # Database migrations
+│   └── static/                 # Static assets
+│       ├── assets/
+│       │   ├── app.css
+│       │   └── app.js
+│       ├── favicon.ico
+│       ├── images/
+│       │   └── phoenix.png
+│       └── robots.txt
 │
-└── test/                      # Test files
-    ├── myapp/                 # Core application tests
-    │   └── accounts_test.exs
-    └── myapp_web/             # Web interface tests
-        ├── controllers/
-        ├── live/              # LiveView tests
-        └── user_auth_test.exs
+├── test/                       # Test files
+│   ├── support/                # Test support modules
+│   │   ├── conn_case.ex
+│   │   ├── data_case.ex
+│   │   └── fixtures/
+│   ├── tmp_phx/                # Core application tests
+│   └── tmp_phx_web/            # Web interface tests
+│       ├── controllers/
+│       │   └── page_controller_test.exs
+│       └── error_html_test.exs
+│
+└── towarp/                     # Project documentation
+    └── directory_tree.md
 ```
 
 ## Key Files
 
-### Core Configuration Files
+### Root Configuration Files
+- `.formatter.exs` - Code formatter configuration
+- `.gitignore` - Git ignore patterns
 - `mix.exs` - Project dependencies and configuration
-- `lib/myapp/application.ex` - Application supervision tree
-- `lib/myapp_web/endpoint.ex` - Web endpoint configuration
-- `lib/myapp_web/router.ex` - HTTP routing
+- `mix.lock` - Locked dependency versions
 
-### Authentication
-- `lib/myapp/accounts/user.ex` - User schema
-- `lib/myapp_web/user_auth.ex` - Authentication plug
+### Core Configuration Files
+- `config/config.exs` - Base configuration
+- `config/dev.exs` - Development environment configuration
+- `config/prod.exs` - Production environment configuration
+- `lib/tmp_phx/application.ex` - Application supervision tree
+- `lib/tmp_phx_web/endpoint.ex` - Web endpoint configuration
+- `lib/tmp_phx_web/router.ex` - HTTP routing
 
-### Social Media Integration
-- `lib/myapp/social_auth/` - OAuth authentication for social platforms
-- `lib/myapp/social_media/` - API integrations for social platforms
-
-### Key Web Components
-- `lib/myapp_web/components/layouts/` - Page layouts
-- `lib/myapp_web/components/core_components.ex` - Reusable UI components
+### Web Components
+- `lib/tmp_phx_web/components/layouts/` - Page layouts
+- `lib/tmp_phx_web/components/core_components.ex` - Reusable UI components
+- `lib/tmp_phx_web/controllers/page_controller.ex` - Main page controller
