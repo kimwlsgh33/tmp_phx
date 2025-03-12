@@ -26,9 +26,8 @@ defmodule MyappWeb.GoogleController do
     case Accounts.register_oauth_user(auth) do
       {:ok, user} ->
         conn
-        |> UserAuth.log_in_user(user)
         |> put_flash(:info, "Google로 성공적으로 로그인했습니다.")
-        |> redirect(to: "/")
+        |> UserAuth.log_in_user(user)
 
       {:error, :invalid_data} ->
         conn
@@ -38,6 +37,12 @@ defmodule MyappWeb.GoogleController do
       {:error, :account_creation_failed} ->
         conn
         |> put_flash(:error, "계정 생성 중 오류가 발생했습니다. 다시 시도해 주세요.")
+        |> redirect(to: ~p"/users/log_in")
+
+      {:error, changeset} when is_struct(changeset, Ecto.Changeset) ->
+        errors = format_changeset_errors(changeset)
+        conn
+        |> put_flash(:error, "로그인 실패: #{errors}")
         |> redirect(to: ~p"/users/log_in")
 
       {:error, reason} ->
@@ -79,4 +84,15 @@ defmodule MyappWeb.GoogleController do
   end
 
   defp extract_error_message(_), do: "알 수 없는 오류"
+
+  # Helper to format changeset errors for display
+  defp format_changeset_errors(changeset) do
+    Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+      Regex.replace(~r"%{(\w+)}", msg, fn _, key ->
+        opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+      end)
+    end)
+    |> Enum.map(fn {key, value} -> "#{key}: #{Enum.join(value, ", ")}" end)
+    |> Enum.join("; ")
+  end
 end
