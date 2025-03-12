@@ -11,6 +11,7 @@ defmodule MyappWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :log_request
   end
 
   pipeline :browser_without_layout do
@@ -27,6 +28,16 @@ defmodule MyappWeb.Router do
     plug :fetch_api_user
   end
 
+  # ---------------------------------------------------------------------- 
+
+  def log_request(conn, _opts) do
+    IO.inspect(conn.request_path, label: "Requested Path")
+    IO.inspect(System.get_env("GOOGLE_CLIENT_ID"), label: "Client ID in Controller")
+    conn
+  end
+
+  # ----------------------------------------------------------------------
+
   scope "/", MyappWeb do
     pipe_through :browser_without_layout
 
@@ -39,29 +50,33 @@ defmodule MyappWeb.Router do
     get "/tiktok", TiktokController, :show
     get "/tiktok/upload", TiktokController, :upload_form
     post "/tiktok/upload", TiktokController, :upload_video
+    get "/tiktok/oauth", TiktokController, :oauth_request
+    get "/tiktok/oauth/callback", TiktokController, :oauth_callback
+
     get "/twitter", TwitterController, :show
     get "/twitter/tweet", TwitterController, :tweet_form
     post "/twitter/tweet", TwitterController, :post_tweet
     get "/twitter/connect", TwitterController, :connect
     get "/twitter/auth/callback", TwitterController, :auth_callback
+
     get "/instagram", InstagramController, :show
     get "/instagram/upload", InstagramController, :upload_form
     post "/instagram/upload", InstagramController, :upload_media
     get "/instagram/connect", InstagramController, :connect
     get "/instagram/auth/callback", InstagramController, :auth_callback
+
     get "/test/landing", PageController, :home
     get "/test", TestController, :page
     post "/test/search", TestController, :search
-    
+
     # YouTube routes
     get "/youtube", YoutubeController, :index
     post "/youtube/search", YoutubeController, :search
-    
+
     get "/privacy-policy/:version", PrivacyPolicyController, :page
     get "/terms-of-services/:version", TermsOfServicesController, :page
     live "/counter", CounterLive
     live "/files", FileLive
-    live "/youtube", YoutubeSearchLive
 
     # Documentation routes
     get "/docs", DocsController, :index
@@ -120,6 +135,15 @@ defmodule MyappWeb.Router do
     end
 
     post "/users/log_in", UserSessionController, :create
+
+    # Google OAuth login route
+  end
+
+  scope "/auth", MyappWeb do
+    pipe_through :browser
+    get "/:provider", GoogleController, :request
+    get "/:provider/callback", GoogleController, :callback
+    delete "/logout", GoogleController, :delete
   end
 
   scope "/", MyappWeb do

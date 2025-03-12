@@ -17,7 +17,9 @@
         "changes": "Initial release"
       }
     ],
-    "availableLanguages": ["ko"],
+    "availableLanguages": [
+      "ko"
+    ],
     "accessibility": {
       "role": "document",
       "lang": "ko-KR",
@@ -28,7 +30,12 @@
       }
     },
     "formatting": {
-      "supported": ["text", "list", "link", "heading"],
+      "supported": [
+        "text",
+        "list",
+        "link",
+        "heading"
+      ],
       "schema": "https://schema.org/PrivacyPolicy"
     }
   },
@@ -350,13 +357,13 @@
                   "text": "1. 개인정보 관리책임자",
                   "subItems": [
                     {
-                      "text": "이름: 홍길동"
+                      "text": "이름: 최재록"
                     },
                     {
                       "text": "직위: 개인정보보호 책임자"
                     },
                     {
-                      "text": "연락처: privacy@ingrey.com"
+                      "text": "연락처: isgreen316@ingrey.com"
                     }
                   ]
                 },

@@ -49,18 +49,33 @@
             </div>
           </div>
           <div class="ml-10 space-x-4">
-            <a
-              href="#"
-              class="inline-block rounded-md border border-transparent bg-blue-500 py-2 px-4 text-base font-medium text-white hover:bg-blue-600 transition"
-            >
-              Sign in
-            </a>
-            <a
-              href="#"
-              class="inline-block rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white hover:bg-blue-700 transition"
-            >
-              Sign up
-            </a>
+            <%= if assigns[:current_user] do %>
+              <div class="flex items-center">
+                <span class="text-sm font-medium text-gray-700 mr-4">
+                  <%= @current_user.email %>
+                </span>
+                <.link
+                  href={~p"/users/log_out"}
+                  method="delete"
+                  class="inline-block rounded-md border border-transparent bg-red-500 py-2 px-4 text-base font-medium text-white hover:bg-red-600 transition"
+                >
+                  Log out
+                </.link>
+              </div>
+            <% else %>
+              <.link
+                href={~p"/users/log_in"}
+                class="inline-block rounded-md border border-transparent bg-blue-500 py-2 px-4 text-base font-medium text-white hover:bg-blue-600 transition"
+              >
+                Sign in
+              </.link>
+              <.link
+                href={~p"/users/register"}
+                class="inline-block rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white hover:bg-blue-700 transition"
+              >
+                Sign up
+              </.link>
+            <% end %>
           </div>
         </div>
         <div class="flex flex-wrap justify-center space-x-6 py-4 lg:hidden">
@@ -91,6 +106,8 @@
         </div>
       </nav>
     </header>
+    
+    <.flash_group flash={@flash} />
     
 <!-- loading spinner -->
     <!-- <div id="global-spinner" class="spinner justify-center items-center"> -->

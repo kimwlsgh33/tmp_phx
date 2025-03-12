@@ -64,7 +64,10 @@ defmodule Myapp.MixProject do
       {:google_api_you_tube, "~> 0.53.0"},
       {:oauth2, "~> 2.1"},
       {:httpoison, "~> 2.0"},
-      {:earmark, "~> 1.4"}
+      {:earmark, "~> 1.4"},
+      {:ueberauth, "~> 0.10"},
+      {:ueberauth_google, "~> 0.10"},
+      {:dotenv, "~> 3.1 "}
     ]
   end
 

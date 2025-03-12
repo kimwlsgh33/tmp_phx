@@ -87,6 +87,19 @@ config :myapp, :twitter_api,
   api_secret: System.get_env("TWITTER_API_SECRET"),
   redirect_uri: System.get_env("TWITTER_REDIRECT_URI")
 
+config :dotenv, env_file: ".env"
+
+# Basic Ueberauth configuration - provider-specific config moved to runtime.exs
+# Log OAuth configuration during application startup
+config :ueberauth, Ueberauth,
+  providers: [
+    google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: System.get_env("GOOGLE_CLIENT_ID"),
+  client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

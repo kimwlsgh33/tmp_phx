@@ -8,6 +8,9 @@ defmodule Myapp.Accounts.User do
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    field :provider, :string
+    field :provider_id, :string
+    field :avatar_url, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -37,7 +40,7 @@ defmodule Myapp.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :provider, :provider_id, :avatar_url])
     |> validate_email(opts)
     |> validate_password(opts)
   end
@@ -156,4 +159,35 @@ defmodule Myapp.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
+
+  @doc """
+  A user changeset for registration via OAuth providers.
+  
+  This changeset handles registration with OAuth providers like Google,
+  where the provider handles authentication and we just need to store 
+  provider-specific information.
+  """
+  def oauth_registration_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email, :provider, :provider_id, :avatar_url, :password])
+    |> validate_required([:email, :provider, :provider_id])
+    |> validate_email([])
+    |> validate_password([])
+    |> unique_constraint(:provider_id, name: "users_provider_provider_id_index")
+  end
+
+  @doc """
+  A user changeset for updating OAuth information.
+
+  This changeset is used when a user logs in via an OAuth provider and
+  we need to update their provider information (like a new avatar URL
+  or a token refresh).
+  """
+  def oauth_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:provider, :provider_id, :avatar_url])
+    |> validate_required([:provider, :provider_id])
+    |> unique_constraint(:provider_id, name: "users_provider_provider_id_index")
+  end
 end
+

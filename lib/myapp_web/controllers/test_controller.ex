@@ -38,7 +38,7 @@ defmodule MyappWeb.TestController do
       true ->
         # Both API key and query are present
         case Youtube.search_videos(query, api_key: api_key) do
-          {:ok, %{videos: videos}} ->
+          {:ok, videos} ->
             video_details = get_first_video_details(videos, api_key)
 
             render(conn, :test,

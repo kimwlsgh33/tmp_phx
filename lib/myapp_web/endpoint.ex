@@ -10,6 +10,9 @@ defmodule MyappWeb.Endpoint do
     signing_salt: "DG6ud072",
     same_site: "Lax"
   ]
+  
+  # Function to expose session options to other modules
+  def session_options, do: @session_options
 
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],

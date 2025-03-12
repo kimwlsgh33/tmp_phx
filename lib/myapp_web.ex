@@ -21,7 +21,7 @@ defmodule MyappWeb do
 
   def router do
     quote do
-      use Phoenix.Router, helpers: false
+      use Phoenix.Router
 
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
@@ -44,6 +44,7 @@ defmodule MyappWeb do
 
       import Plug.Conn
       import MyappWeb.Gettext
+      alias MyappWeb.Router.Helpers, as: Routes
 
       unquote(verified_routes())
     end
@@ -83,6 +84,7 @@ defmodule MyappWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
+      alias MyappWeb.Router.Helpers, as: Routes
       # Core UI components and translation
       import MyappWeb.CoreComponents
       import MyappWeb.DocsComponents
