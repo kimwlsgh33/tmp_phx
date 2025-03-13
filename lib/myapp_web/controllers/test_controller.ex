@@ -1,6 +1,5 @@
 defmodule MyappWeb.TestController do
   use MyappWeb, :controller
-  alias Myapp.Youtube
 
   def dashboard(conn, _params) do
     # Example data to pass to the template

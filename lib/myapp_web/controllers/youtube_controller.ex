@@ -9,18 +9,15 @@ defmodule MyappWeb.YoutubeController do
   use MyappWeb, :controller
   
   import MyappWeb.SocialMediaController, only: [
-    validate_provider: 1,
     handle_connect: 3,
     handle_auth_callback: 3,
     handle_media_upload: 5,
     validate_media_upload: 1,
     check_auth: 3,
-    parse_hashtags: 1,
     get_current_user_id: 1
   ]
   
   alias Myapp.SocialMedia.Youtube
-  alias Myapp.SocialAuth.Youtube, as: YoutubeAuth
 
   @doc """
   Renders the YouTube page.
@@ -133,7 +130,7 @@ defmodule MyappWeb.YoutubeController do
       {:ok, _status} ->
         # Validate the uploaded file
         case validate_media_upload(video_params) do
-          {:ok, video_path, media_type} ->
+          {:ok, video_path, _media_type} ->
             title = video_params["title"] || ""
             description = video_params["description"] || ""
             category_id = video_params["category_id"] || "22" # Default to 'People & Blogs'
@@ -144,7 +141,7 @@ defmodule MyappWeb.YoutubeController do
               category_id: category_id,
               privacy_status: video_params["privacy_status"] || "private"
             ], user_id) do
-              {:ok, response} ->
+              {:ok, _response} ->
                 conn
                 |> put_flash(:info, "Video successfully uploaded to YouTube")
                 |> redirect(to: ~p"/youtube")

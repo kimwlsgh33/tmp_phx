@@ -9,7 +9,6 @@ defmodule Myapp.SocialAuth.YouTube do
   """
   @behaviour Myapp.SocialAuth
   
-  alias OAuth2.Client
   
   @doc """
   Returns the provider name as an atom.

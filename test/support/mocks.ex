@@ -1,3 +1,8 @@
+Mox.defmock(Myapp.MockThreads, for: Myapp.Threads)
+
+# Set up the application environment to use the mock module in tests
+Application.put_env(:myapp, :threads_module, Myapp.MockThreads)
+
 defmodule Myapp.Mocks do
   @moduledoc """
   This module contains mock definitions for external APIs and services

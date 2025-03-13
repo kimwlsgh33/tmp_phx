@@ -9,7 +9,6 @@ defmodule MyappWeb.TiktokController do
   use MyappWeb, :controller
   
   alias Myapp.Tiktok
-  alias Myapp.TiktokOauth
   alias Myapp.SocialMedia.Tiktok, as: SocialTiktok
   alias Myapp.Accounts.SocialMediaToken
   # No need to import to_form since we're passing the changeset directly
@@ -237,7 +236,7 @@ defmodule MyappWeb.TiktokController do
         |> put_flash(:error, "TikTok authentication failed: #{error_message}")
         |> redirect(to: ~p"/tiktok")
         
-      error ->
+      _error ->
         conn
         |> put_flash(:error, "An unexpected error occurred during TikTok authentication")
         |> redirect(to: ~p"/tiktok")

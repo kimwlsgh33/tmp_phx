@@ -5,7 +5,6 @@ defmodule Myapp.SocialMediaUtils do
   """
 
   require Logger
-  alias Myapp.SocialMediaConfig
 
   @doc """
   Validates file types for social media uploads.

@@ -1,6 +1,5 @@
 defmodule MyappWeb.SearchLive do
   use MyappWeb, :live_view
-  alias Phoenix.LiveView.JS
 
   @debounce_ms 300
 
@@ -45,7 +44,7 @@ defmodule MyappWeb.SearchLive do
   end
 
   @impl true
-  def handle_info({:search, query, search_id}, %{assigns: %{search_id: current_id}} = socket)
+  def handle_info({:search, _query, search_id}, %{assigns: %{search_id: current_id}} = socket)
       when search_id != current_id do
     # This search was superseded by a newer one, ignore it
     {:noreply, socket}

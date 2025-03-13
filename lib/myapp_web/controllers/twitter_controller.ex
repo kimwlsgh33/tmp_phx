@@ -9,7 +9,6 @@ defmodule MyappWeb.TwitterController do
   use MyappWeb, :controller
   
   import MyappWeb.SocialMediaController, only: [
-    validate_provider: 1,
     handle_connect: 3,
     handle_auth_callback: 3,
     handle_post: 5,
@@ -17,12 +16,10 @@ defmodule MyappWeb.TwitterController do
     validate_media_upload: 1,
     parse_hashtags: 1,
     get_current_user_id: 1,
-    check_auth: 3,
-    get_expiry_datetime: 1
+    check_auth: 3
   ]
   
   alias Myapp.SocialMedia.Twitter
-  alias Myapp.SocialAuth.Twitter, as: TwitterAuth
 
   @doc """
   Renders the Twitter page.
@@ -38,7 +35,7 @@ defmodule MyappWeb.TwitterController do
   def show(conn, _params) do
     user_id = get_current_user_id(conn)
     {connected, recent_tweets} = case check_auth(conn, "twitter", user_id) do
-      {:ok, status} ->
+      {:ok, _status} ->
         case Twitter.get_timeline(user_id) do
           {:ok, tweets} ->
             {true, tweets}

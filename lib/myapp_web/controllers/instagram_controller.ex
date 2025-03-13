@@ -9,20 +9,16 @@ defmodule MyappWeb.InstagramController do
   use MyappWeb, :controller
   
   import MyappWeb.SocialMediaController, only: [
-    validate_provider: 1,
     handle_connect: 3,
     handle_auth_callback: 3,
-    handle_post: 5,
     handle_media_upload: 5,
     validate_media_upload: 1,
     parse_hashtags: 1,
-    get_expiry_datetime: 1,
     get_current_user_id: 1,
     check_auth: 3
   ]
   
   alias Myapp.SocialMedia.Instagram
-  alias Myapp.SocialAuth.Instagram, as: InstagramAuth
   
   # Define a struct for Instagram uploads for form handling
   defmodule UploadForm do
@@ -215,10 +211,5 @@ defmodule MyappWeb.InstagramController do
   end
   
 
-  
-  # Fallback function for upload_media when media type is unrecognized
-  defp upload_media_fallback(media_path, options) do
-    {:error, "Unsupported media type: #{options[:media_type]}"}
-  end
   
 end
