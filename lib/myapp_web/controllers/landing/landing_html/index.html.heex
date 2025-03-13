@@ -418,7 +418,7 @@
             </div>
           </div>
           <div class="card youtube">
-            <div class="front" data-route="/test">
+            <div class="front" data-route="/youtube">
               <img src="/images/youtube.png" alt="YouTube" loading="lazy" />
             </div>
             <div class="back">
@@ -536,11 +536,17 @@
             front.addEventListener('click', () => {
               const route = front.getAttribute('data-route');
               if (route) {
-                window.location.href = route; // 경로로 이동
-              }
-            });
+                       // Check if user is logged in before navigating
+                const isLoggedIn = document.body.getAttribute('data-logged-in') === 'true';
+                if (isLoggedIn) {
+                  window.location.href = route; // Navigate to the route if logged in
+                } else {
+                  window.location.href = '/users/log_in'; // Redirect to login page if not logged in
+                }
+            };
           });
-        }
+        });
+      }
       }
 
       const mainContent1 = document.querySelector('.main-content-1');
