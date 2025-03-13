@@ -7,6 +7,8 @@ defmodule Myapp.SocialAuth.Twitter do
   @behaviour Myapp.SocialAuth
 
   require Logger
+  alias Myapp.HttpClient
+  alias Myapp.Accounts.SocialMediaToken
 
   @impl Myapp.SocialAuth
   def generate_auth_url(params \\ %{}) do
@@ -27,7 +29,7 @@ defmodule Myapp.SocialAuth.Twitter do
     rescue
       e ->
         Logger.error("Failed to generate Twitter auth URL: #{inspect(e)}")
-        {:error, "Failed to generate authorization URL"}
+        {:error, {:auth_url_generation, "Failed to generate authorization URL"}}
     end
   end
 
@@ -35,7 +37,7 @@ defmodule Myapp.SocialAuth.Twitter do
   def exchange_code_for_token(code, _params \\ %{}) do
     url = "https://api.twitter.com/2/oauth2/token"
     
-    form_data = [
+    body = [
       client_id: api_key(),
       client_secret: api_secret(),
       grant_type: "authorization_code",
@@ -43,21 +45,22 @@ defmodule Myapp.SocialAuth.Twitter do
       redirect_uri: redirect_uri()
     ]
 
-    headers = [
-      {"Content-Type", "application/x-www-form-urlencoded"}
-    ]
+    headers = [{"Content-Type", "application/x-www-form-urlencoded"}]
 
-    case HTTPoison.post(url, URI.encode_query(form_data), headers) do
+    case HttpClient.post(url, headers: headers, body: body) do
       {:ok, %{status_code: 200, body: body}} ->
-        {:ok, Jason.decode!(body)}
+        case Jason.decode(body) do
+          {:ok, token_data} -> {:ok, token_data}
+          {:error, _} -> {:error, {:token_parse, "Failed to parse token response"}}
+        end
       
       {:ok, %{status_code: status_code, body: body}} ->
         Logger.error("Twitter OAuth token exchange failed: HTTP #{status_code}, #{body}")
-        {:error, "Failed to exchange code for token: HTTP #{status_code}"}
+        {:error, {:token_exchange, "Failed to exchange code for token: HTTP #{status_code}"}}
       
       {:error, %{reason: reason}} ->
         Logger.error("Twitter OAuth token exchange error: #{inspect(reason)}")
-        {:error, "Error communicating with Twitter API: #{inspect(reason)}"}
+        {:error, {:network, "Error communicating with Twitter API"}}
     end
   end
 
@@ -65,40 +68,38 @@ defmodule Myapp.SocialAuth.Twitter do
   def refresh_token(refresh_token, _params \\ %{}) do
     url = "https://api.twitter.com/2/oauth2/token"
     
-    form_data = [
+    body = [
       client_id: api_key(),
       client_secret: api_secret(),
       grant_type: "refresh_token",
       refresh_token: refresh_token
     ]
 
-    headers = [
-      {"Content-Type", "application/x-www-form-urlencoded"}
-    ]
+    headers = [{"Content-Type", "application/x-www-form-urlencoded"}]
 
-    case HTTPoison.post(url, URI.encode_query(form_data), headers) do
+    case HttpClient.post(url, headers: headers, body: body) do
       {:ok, %{status_code: 200, body: body}} ->
-        {:ok, Jason.decode!(body)}
+        case Jason.decode(body) do
+          {:ok, token_data} -> {:ok, token_data}
+          {:error, _} -> {:error, {:token_parse, "Failed to parse token response"}}
+        end
       
       {:ok, %{status_code: status_code, body: body}} ->
         Logger.error("Twitter OAuth token refresh failed: HTTP #{status_code}, #{body}")
-        {:error, "Failed to refresh token: HTTP #{status_code}"}
+        {:error, {:token_refresh, "Failed to refresh token: HTTP #{status_code}"}}
       
       {:error, %{reason: reason}} ->
         Logger.error("Twitter OAuth token refresh error: #{inspect(reason)}")
-        {:error, "Error communicating with Twitter API: #{inspect(reason)}"}
+        {:error, {:network, "Error communicating with Twitter API"}}
     end
   end
 
   @impl Myapp.SocialAuth
   def validate_token(access_token, _params \\ %{}) do
     url = "https://api.twitter.com/2/users/me"
-    
-    headers = [
-      {"Authorization", "Bearer #{access_token}"}
-    ]
+    headers = [{"Authorization", "Bearer #{access_token}"}]
 
-    case HTTPoison.get(url, headers) do
+    case HttpClient.get(url, headers: headers) do
       {:ok, %{status_code: 200}} ->
         {:ok, true}
       
@@ -107,52 +108,35 @@ defmodule Myapp.SocialAuth.Twitter do
       
       {:ok, %{status_code: status_code, body: body}} ->
         Logger.warning(fn -> "Twitter OAuth token validation failed: HTTP #{status_code}, #{body}" end)
-        {:error, "Token validation failed: HTTP #{status_code}"}
+        {:error, {:validation, "Token validation failed: HTTP #{status_code}"}}
       
       {:error, %{reason: reason}} ->
         Logger.error("Twitter OAuth token validation error: #{inspect(reason)}")
-        {:error, "Error communicating with Twitter API: #{inspect(reason)}"}
+        {:error, {:network, "Error communicating with Twitter API"}}
     end
   end
 
   @impl Myapp.SocialAuth
   def store_tokens(user_id, tokens, _params \\ %{}) do
-    # This is a placeholder implementation.
-    # In a real application, you would:
-    # 1. Encrypt sensitive tokens
-    # 2. Store tokens in a database
-    # 3. Associate them with the user_id
-    
-    try do
-      # Example implementation using ETS for demonstration purposes.
-      # In a real app, you would use your database of choice.
-      :ets.insert(:twitter_tokens, {user_id, tokens})
-      :ok
-    rescue
-      e ->
-        Logger.error("Failed to store Twitter tokens: #{inspect(e)}")
-        {:error, "Failed to store tokens"}
+    case SocialMediaToken.store_tokens(user_id, :twitter, tokens) do
+      {:ok, _token} -> :ok
+      {:error, changeset} ->
+        Logger.error("Failed to store Twitter tokens: #{inspect(changeset.errors)}")
+        {:error, {:storage, "Failed to store tokens"}}
     end
   end
 
   @impl Myapp.SocialAuth
   def get_tokens(user_id, _params \\ %{}) do
-    # This is a placeholder implementation.
-    # In a real application, you would:
-    # 1. Fetch tokens from database
-    # 2. Decrypt sensitive tokens
-    # 3. Return them in a standardized format
-    
-    try do
-      # Example implementation using ETS for demonstration purposes
-      case :ets.lookup(:twitter_tokens, user_id) do
-        [{^user_id, tokens}] -> {:ok, tokens}
-        [] -> {:error, :not_found}
-      end
-    rescue
-      e ->
-        Logger.error("Failed to retrieve Twitter tokens: #{inspect(e)}")
-        {:error, "Failed to retrieve tokens"}
+    case SocialMediaToken.get_active_tokens(user_id, :twitter) do
+      {:ok, token} -> 
+        {:ok, %{
+          "access_token" => token.access_token_text,
+          "refresh_token" => token.refresh_token_text,
+          "scope" => token.scope,
+          "expires_at" => token.expires_at
+        }}
+      {:error, _} = error -> error
     end
   end
 
@@ -160,33 +144,32 @@ defmodule Myapp.SocialAuth.Twitter do
   def revoke_tokens(access_token, _params \\ %{}) do
     url = "https://api.twitter.com/2/oauth2/revoke"
     
-    form_data = [
+    body = [
       client_id: api_key(),
       client_secret: api_secret(),
       token: access_token,
       token_type_hint: "access_token"
     ]
 
-    headers = [
-      {"Content-Type", "application/x-www-form-urlencoded"}
-    ]
+    headers = [{"Content-Type", "application/x-www-form-urlencoded"}]
 
-    case HTTPoison.post(url, URI.encode_query(form_data), headers) do
+    case HttpClient.post(url, headers: headers, body: body) do
       {:ok, %{status_code: 200}} ->
         :ok
       
       {:ok, %{status_code: status_code, body: body}} ->
         Logger.error("Twitter OAuth token revocation failed: HTTP #{status_code}, #{body}")
-        {:error, "Failed to revoke token: HTTP #{status_code}"}
+        {:error, {:revocation, "Failed to revoke token: HTTP #{status_code}"}}
       
       {:error, %{reason: reason}} ->
         Logger.error("Twitter OAuth token revocation error: #{inspect(reason)}")
-        {:error, "Error communicating with Twitter API: #{inspect(reason)}"}
+        {:error, {:network, "Error communicating with Twitter API"}}
     end
   end
 
   @impl Myapp.SocialAuth
   def get_provider_config do
+    # TODO: Move configuration retrieval to SocialMediaConfig module
     %{
       api_key: api_key(),
       api_secret: api_secret(),
@@ -213,17 +196,15 @@ defmodule Myapp.SocialAuth.Twitter do
     |> String.replace("=", "")
   end
 
-  # Get the API key from configuration
+  # TODO: Move these config getters to SocialMediaConfig module
   defp api_key do
     Application.get_env(:myapp, :twitter_api)[:api_key]
   end
 
-  # Get the API secret from configuration
   defp api_secret do
     Application.get_env(:myapp, :twitter_api)[:api_secret]
   end
 
-  # Get the redirect URI from configuration
   defp redirect_uri do
     Application.get_env(:myapp, :twitter_api)[:redirect_uri]
   end

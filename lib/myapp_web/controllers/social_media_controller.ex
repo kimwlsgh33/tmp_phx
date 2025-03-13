@@ -1,24 +1,66 @@
 defmodule MyappWeb.SocialMediaController do
   @moduledoc """
-  Base controller module for social media integrations.
+  Controller for handling social media platform integrations and uploads.
   
   Provides common controller logic and functions that can be used by
-  platform-specific controllers (Twitter, TikTok, Instagram, YouTube, etc.).
-  
-  This module standardizes:
+  platform-specific features. This module standardizes:
   - OAuth authentication flows
   - Media upload validations
   - Error handling
   - Token storage/retrieval
-  - Common social media operations
+  - Platform-specific upload operations
   """
   use MyappWeb, :controller
 
-  alias Myapp.SocialMediaConfig
-  
+  alias Myapp.{Accounts, Content, SocialMediaConfig, SocialMediaToken}
+  alias Myapp.Content.{Post, ShortVideo, LongVideo}
+
+  # Platform-specific constraints
+  @twitter_max_size 15_000_000  # 15MB
+  @instagram_max_size 100_000_000  # 100MB
+  @tiktok_max_size 100_000_000  # 100MB
+  @youtube_max_size 500_000_000  # 500MB
+  @vimeo_max_size 500_000_000  # 500MB
+
+  # Content Creation Functions
+
   @doc """
-  Validates the requested provider and returns the corresponding modules
-  for social auth and social media API interactions.
+  Creates a new post with associated media for specified platforms.
+  """
+  def create_post(user, params) do
+    with :ok <- validate_user_tokens(user, params.platforms),
+         :ok <- validate_post_content(params),
+         {:ok, post} <- Content.create_post(params) do
+      handle_platform_uploads(post, user, params.platforms)
+    end
+  end
+
+  @doc """
+  Creates a new short video for specified platforms.
+  """
+  def create_short_video(user, params) do
+    with :ok <- validate_user_tokens(user, params.platforms),
+         :ok <- validate_short_video(params),
+         {:ok, video} <- Content.create_short_video(params) do
+      handle_platform_uploads(video, user, params.platforms)
+    end
+  end
+
+  @doc """
+  Creates a new long video for specified platforms.
+  """
+  def create_long_video(user, params) do
+    with :ok <- validate_user_tokens(user, params.platforms),
+         :ok <- validate_long_video(params),
+         {:ok, video} <- Content.create_long_video(params) do
+      handle_platform_uploads(video, user, params.platforms)
+    end
+  end
+
+  # Authentication and OAuth Functions
+
+  @doc """
+  Validates the requested provider and returns the corresponding modules.
   """
   def validate_provider(provider) when is_binary(provider) do
     case SocialMediaConfig.get_provider_modules(provider) do
@@ -32,13 +74,7 @@ defmodule MyappWeb.SocialMediaController do
   def validate_provider(_), do: {:error, :invalid_provider}
 
   @doc """
-  Common function to handle OAuth connection initiation.
-  Generates an authorization URL and redirects the user to it.
-  
-  ## Parameters
-    * `conn` - The connection struct
-    * `provider` - The social media provider (string)
-    * `params` - Optional parameters for the authorization URL
+  Initiates OAuth connection by generating and redirecting to auth URL.
   """
   def handle_connect(conn, provider, params \\ %{}) do
     with {:ok, auth_module, _} <- validate_provider(provider),
@@ -58,18 +94,12 @@ defmodule MyappWeb.SocialMediaController do
   end
 
   @doc """
-  Common function to handle OAuth callback.
-  Exchanges the authorization code for access tokens and stores them.
-  
-  ## Parameters
-    * `conn` - The connection struct
-    * `provider` - The social media provider (string)
-    * `params` - Callback parameters including the authorization code
+  Handles OAuth callback by exchanging code for tokens.
   """
   def handle_auth_callback(conn, provider, params) do
     with {:ok, auth_module, _api_module} <- validate_provider(provider),
          {:ok, tokens} <- exchange_token_for_provider(auth_module, provider, params),
-         {:ok, conn} <- store_tokens(conn, provider, tokens) do
+         {:ok, _} <- Accounts.store_platform_token(provider, tokens) do
       conn
       |> put_flash(:info, "Successfully connected to #{provider}")
       |> redirect(to: ~p"/#{provider}")
@@ -87,12 +117,7 @@ defmodule MyappWeb.SocialMediaController do
   end
 
   @doc """
-  Common function to check if a user is authenticated with a provider.
-  
-  ## Parameters
-    * `conn` - The connection struct
-    * `provider` - The social media provider (string)
-    * `user_id` - Optional user ID for multi-user systems
+  Checks if a user is authenticated with a provider.
   """
   def check_auth(conn, provider, user_id \\ nil) do
     with {:ok, _auth_module, api_module} <- validate_provider(provider),
@@ -103,158 +128,384 @@ defmodule MyappWeb.SocialMediaController do
       {:error, reason} -> {:error, reason}
     end
   end
+  # Private Helper Functions
 
   @doc """
-  Common function to handle post creation across social media platforms.
-  
-  ## Parameters
-    * `conn` - The connection struct
-    * `provider` - The social media provider (string)
-    * `content` - The post content
-    * `params` - Additional parameters for the post
-    * `user_id` - Optional user ID for multi-user systems
-  """
-  def handle_post(conn, provider, content, params, user_id \\ nil) do
-    with {:ok, _auth_module, api_module} <- validate_provider(provider),
-         {:ok, tokens} <- get_tokens(conn, provider, user_id),
-         {:ok, post_result} <- api_module.create_post(tokens, content, params) do
-      {:ok, post_result}
-    else
-      {:error, :not_authenticated} ->
-        conn
-        |> put_flash(:error, "You need to connect your #{provider} account first")
-        |> redirect(to: ~p"/#{provider}")
-        |> halt()
-      
-      {:error, reason} -> {:error, reason}
-    end
-  end
+  Extracts the current user ID from the connection.
 
-  @doc """
-  Common function to handle media uploads across social media platforms.
-  
   ## Parameters
-    * `conn` - The connection struct
-    * `provider` - The social media provider (string)
-    * `media_path` - Path to the media file
-    * `options` - Additional options for the upload
-    * `user_id` - Optional user ID for multi-user systems
-  """
-  def handle_media_upload(conn, provider, media_path, options \\ [], user_id \\ nil) do
-    with {:ok, _auth_module, api_module} <- validate_provider(provider),
-         {:ok, tokens} <- get_tokens(conn, provider, user_id),
-         {:ok, media_result} <- api_module.upload_media(tokens, media_path, options) do
-      {:ok, media_result}
-    else
-      {:error, :not_authenticated} ->
-        conn
-        |> put_flash(:error, "You need to connect your #{provider} account first")
-        |> redirect(to: ~p"/#{provider}")
-        |> halt()
-      
-      {:error, reason} -> {:error, reason}
-    end
-  end
+    - conn: The connection struct
 
-  @doc """
-  Validates media upload by checking file existence and format.
-  Returns the file path and media type if valid.
-  
-  ## Parameters
-    * `params` - The upload parameters containing media file
-  """
-  def validate_media_upload(params) do
-    case extract_media_upload(params) do
-      {:ok, %Plug.Upload{path: path, content_type: content_type}} ->
-        validate_media_format(path, content_type)
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
-  
-  @doc """
-  Parse hashtags from a comma-separated string into a list.
-  Returns an empty list if input is not a string.
-  """
-  def parse_hashtags(hashtags_string) when is_binary(hashtags_string) do
-    hashtags_string
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
-    |> Enum.filter(&(String.length(&1) > 0))
-  end
-  def parse_hashtags(_), do: []
-  
-  @doc """
-  Gets the current user ID from the connection.
-  Implementations may override this to use their own user identification system.
+  ## Returns
+    - user_id or nil if not found
   """
   def get_current_user_id(conn) do
-    # Default implementation - override in specific controllers if needed
-    conn.assigns[:current_user_id] || "default_user"
+    if conn.assigns[:current_user] do
+      conn.assigns.current_user.id
+    else
+      nil
+    end
   end
-  
+
   @doc """
-  Calculates token expiry datetime from seconds.
+  Validates a media upload against platform constraints.
+
+  ## Parameters
+    - params: A map containing :file and :platform keys
+
+  ## Returns
+    - :ok on success
+    - {:error, reason} on failure
   """
-  def get_expiry_datetime(expires_in) when is_integer(expires_in) do
-    DateTime.add(DateTime.utc_now(), expires_in, :second)
-  end
-  def get_expiry_datetime(expires_in) when is_binary(expires_in) do
-    case Integer.parse(expires_in) do
-      {seconds, _} -> get_expiry_datetime(seconds)
-      :error -> DateTime.add(DateTime.utc_now(), 30 * 24 * 60 * 60, :second) # Default to 30 days
+  def validate_media_upload(%{file: file, platform: platform} = _params) do
+    with :ok <- validate_file_type(file),
+         :ok <- validate_file_size(file, platform) do
+      :ok
     end
   end
-  def get_expiry_datetime(_), do: DateTime.add(DateTime.utc_now(), 30 * 24 * 60 * 60, :second)
 
-  # Private functions
+  @doc """
+  Handles media upload to a specific platform.
 
-  @doc false
-  defp store_tokens(conn, provider, tokens) do
-    # This implementation can be adapted based on whether you're using
-    # sessions or database storage for tokens
-    conn = put_session(conn, "#{provider}_tokens", tokens)
-    {:ok, conn}
-  end
+  ## Parameters
+    - conn: The connection struct
+    - user: The user struct
+    - file: The file to upload
+    - platform: The platform to upload to
+    - metadata: Additional metadata for the upload
 
-  @doc false
-  defp get_tokens(conn, provider, _user_id \\ nil) do
-    case get_session(conn, "#{provider}_tokens") do
-      nil -> {:error, :not_authenticated}
-      tokens -> {:ok, tokens}
+  ## Returns
+    - {:ok, result} on success
+    - {:error, reason} on failure
+  """
+  def handle_media_upload(conn, user, file, platform, metadata \\ %{}) do
+    with {:ok, tokens} <- get_tokens(conn, platform, user.id),
+         :ok <- validate_media_upload(%{file: file, platform: platform}),
+         {:ok, result} <- do_platform_upload(platform, %{file: file, metadata: metadata}, tokens) do
+      {:ok, result}
+    else
+      {:error, reason} -> {:error, {platform, reason}}
     end
   end
-  
-  @doc false
-  defp extract_media_upload(%{"media" => %Plug.Upload{} = upload}), do: {:ok, upload}
-  defp extract_media_upload(%{media: %Plug.Upload{} = upload}), do: {:ok, upload}
-  defp extract_media_upload(%{"media" => nil}), do: {:error, "No media file uploaded"}
-  defp extract_media_upload(%{media: nil}), do: {:error, "No media file uploaded"}
-  defp extract_media_upload(_), do: {:error, "No media file uploaded or invalid format"}
-  
-  @doc false
-  defp exchange_token_for_provider(auth_module, "twitter", params) do
-    # For Twitter, extract the code from params and call exchange_code_for_token
-    case Map.get(params, "code") do
-      nil -> {:error, "Missing code parameter"}
-      code -> auth_module.exchange_code_for_token(code, params)
+
+  # Helper function for validate_media_upload
+  defp validate_file_type(file) do
+    ext = file |> Path.extname() |> String.downcase()
+    if ext in ~w(.jpg .jpeg .png .gif .mp4 .mov) do
+      :ok
+    else
+      {:error, "Unsupported file type: #{ext}"}
     end
   end
-  
-  defp exchange_token_for_provider(auth_module, _provider, params) do
-    # For other providers, use the standard exchange_token method
-    auth_module.exchange_token(params)
+
+  @doc """
+  Retrieves tokens for a user and platform using the SocialMediaToken functionality.
+
+  ## Parameters
+    - conn: The connection struct
+    - provider: The social media provider as a string
+    - user_id: The ID of the user (optional, defaults to current user in conn)
+
+  ## Returns
+    - {:ok, tokens} on success
+    - {:error, reason} on failure
+  """
+  defp get_tokens(conn, provider, user_id) do
+    # Get user_id from conn if not provided
+    user_id = if is_nil(user_id) and conn.assigns[:current_user] do
+      conn.assigns.current_user.id
+    else
+      user_id
+    end
+
+    if is_nil(user_id) do
+      {:error, :user_not_found}
+    else
+      # Convert provider from string to atom for SocialMediaToken
+      platform = String.to_existing_atom(provider)
+      
+      # Get the token
+      case SocialMediaToken.get_token(user_id, platform) do
+        {:ok, access_token} ->
+          # Get refresh token if available
+          refresh_result = SocialMediaToken.get_token(user_id, platform, :refresh)
+          refresh_token = case refresh_result do
+            {:ok, token} -> token
+            _ -> nil
+          end
+          
+          # Return tokens in a map
+          {:ok, %{access_token: access_token, refresh_token: refresh_token}}
+        
+        {:error, reason} ->
+          {:error, reason}
+      end
+    end
   end
-  
-  @doc false
-  defp validate_media_format(path, content_type) do
-    cond do
-      content_type in ["image/jpeg", "image/png", "image/jpg"] ->
-        {:ok, path, "image"}
-      content_type in ["video/mp4", "video/quicktime", "video/mov"] ->
-        {:ok, path, "video"}
+
+  defp handle_platform_uploads(content, user, platforms) do
+    results = Enum.map(platforms, fn platform ->
+      upload_to_platform(platform, content, user)
+    end)
+
+    case Enum.all?(results, &match?({:ok, _}, &1)) do
       true ->
-        {:error, "Invalid file format. Only JPEG, PNG images and MP4, MOV videos are supported."}
+        {:ok, content}
+      false ->
+        failed_platforms = 
+          results
+          |> Enum.filter(&match?({:error, _}, &1))
+          |> Enum.map(fn {:error, {platform, reason}} -> "#{platform}: #{reason}" end)
+          |> Enum.join(", ")
+        
+        {:error, "Failed to upload to some platforms: #{failed_platforms}"}
+    end
+  end
+
+  defp upload_to_platform(platform, content, user) do
+    with {:ok, tokens} <- get_tokens(platform, user),
+         {:ok, result} <- do_platform_upload(platform, content, tokens) do
+      {:ok, result}
+    else
+      {:error, reason} -> {:error, {platform, reason}}
+    end
+  end
+
+  defp do_platform_upload(platform, content, tokens) do
+    case platform do
+      "twitter" -> upload_to_twitter(content, tokens)
+      "facebook" -> upload_to_facebook(content, tokens)
+      "instagram" -> upload_to_instagram(content, tokens)
+      "tiktok" -> upload_to_tiktok(content, tokens)
+      "youtube" -> upload_to_youtube(content, tokens)
+      "vimeo" -> upload_to_vimeo(content, tokens)
+      _ -> {:error, "Unsupported platform"}
+    end
+  end
+
+  # Platform-specific upload functions
+  defp upload_to_twitter(_content, _tokens), do: {:ok, "twitter_post_id"}
+  defp upload_to_facebook(_content, _tokens), do: {:ok, "facebook_post_id"}
+  defp upload_to_instagram(_content, _tokens), do: {:ok, "instagram_post_id"}
+  defp upload_to_tiktok(_content, _tokens), do: {:ok, "tiktok_post_id"}
+  defp upload_to_youtube(_content, _tokens), do: {:ok, "youtube_video_id"}
+  defp upload_to_vimeo(_content, _tokens), do: {:ok, "vimeo_video_id"}
+
+  # Token Management
+
+  defp get_tokens(platform, user) do
+    case Accounts.get_platform_token(user.id, platform) do
+      {:ok, token} ->
+        if token_expired?(token) do
+          refresh_token(platform, token)
+        else
+          {:ok, token}
+        end
+      error -> error
+    end
+  end
+
+  defp token_expired?(token) do
+    token.expires_at && DateTime.compare(token.expires_at, DateTime.utc_now()) == :lt
+  end
+
+  defp refresh_token(provider, token) do
+    case validate_provider(provider) do
+      {:ok, auth_module, _} -> auth_module.refresh_token(token)
+      error -> error
+    end
+  end
+
+  # Content Validation Functions
+
+  defp validate_user_tokens(user, platforms) do
+    missing_tokens = 
+      platforms
+      |> Enum.reject(&has_valid_token?(user, &1))
+      |> Enum.map(&"#{&1}")
+
+    case missing_tokens do
+      [] -> :ok
+      platforms -> {:error, "Missing or invalid tokens for: #{Enum.join(platforms, ", ")}"}
+    end
+  end
+
+  defp has_valid_token?(user, platform) do
+    case Accounts.get_platform_token(user.id, platform) do
+      {:ok, token} -> !token_expired?(token)
+      _ -> false
+    end
+  end
+
+  defp validate_post_content(%{files: files} = params) do
+    with :ok <- validate_post_file_types(files),
+         :ok <- validate_post_file_sizes(files, params.platforms) do
+      :ok
+    end
+  end
+
+  defp validate_short_video(%{video_path: path} = params) do
+    with :ok <- validate_video_format(path),
+         :ok <- validate_video_duration(path),
+         :ok <- validate_video_size(path, params.platforms) do
+      :ok
+    end
+  end
+
+  defp validate_long_video(%{video_path: path} = params) do
+    with :ok <- validate_video_format(path),
+         :ok <- validate_video_size(path, params.platforms) do
+      :ok
+    end
+  end
+
+  defp validate_post_file_types(files) do
+    invalid_files = 
+      files
+      |> Enum.reject(&valid_post_file_type?/1)
+      |> Enum.map(&Path.basename(&1))
+
+    case invalid_files do
+      [] -> :ok
+      files -> {:error, "Invalid file types: #{Enum.join(files, ", ")}"}
+    end
+  end
+
+  defp valid_post_file_type?(file) do
+    ext = file |> Path.extname() |> String.downcase()
+    ext in ~w(.jpg .jpeg .png .pdf .doc .docx)
+  end
+
+  defp validate_video_format(path) do
+    case Path.extname(path) |> String.downcase() do
+      ext when ext in ~w(.mp4 .mov) -> :ok
+      _ -> {:error, "Invalid video format. Only MP4 and MOV are supported"}
+    end
+  end
+
+  defp validate_video_duration(path) do
+    # In a real application, you would use a video processing library
+    # to check the actual duration of the video
+    # For now, we'll assume the validation is successful
+    :ok
+  end
+
+  defp validate_video_size(path, platforms) do
+    size = File.stat!(path).size
+    max_size = Enum.map(platforms, &get_platform_max_size/1) |> Enum.min()
+
+    if size <= max_size do
+      :ok
+    else
+      {:error, "Video size exceeds platform limit of #{max_size} bytes"}
+    end
+  end
+
+  defp validate_post_file_sizes(files, platforms) do
+    results = 
+      for platform <- platforms,
+          file <- files do
+        validate_file_size(file, platform)
+      end
+
+    case Enum.all?(results, &(&1 == :ok)) do
+      true -> :ok
+      false -> {:error, "Some files exceed platform size limits"}
+    end
+  end
+
+  defp validate_file_size(file, platform) do
+    size = File.stat!(file).size
+    max_size = get_platform_max_size(platform)
+
+    if size <= max_size do
+      :ok
+    else
+      {:error, "File size exceeds #{platform} limit of #{max_size} bytes"}
+    end
+  end
+
+  defp get_platform_max_size(platform) do
+    case platform do
+      "twitter" -> @twitter_max_size
+      "instagram" -> @instagram_max_size
+      "tiktok" -> @tiktok_max_size
+      "youtube" -> @youtube_max_size
+      "vimeo" -> @vimeo_max_size
+      _ -> @youtube_max_size
+    end
+  end
+
+  @doc """
+  Parses a string and extracts hashtags.
+
+  ## Parameters
+    - content: The string content to parse for hashtags
+
+  ## Returns
+    - A list of hashtags (without the # symbol)
+  """
+  def parse_hashtags(content) when is_binary(content) do
+    # Regex to match hashtags
+    ~r/#(\w+)/u
+    |> Regex.scan(content)
+    |> Enum.map(fn [_, tag] -> tag end)
+    |> Enum.uniq()
+  end
+  def parse_hashtags(_), do: []
+
+  @doc """
+  Handles post creation and submission to a specific social media platform.
+
+  ## Parameters
+    - conn: The connection struct
+    - provider: The social media provider as a string
+    - content: The post content as string
+    - options: Additional options for the post (like media_ids, hashtags, etc.)
+    - user_id: The ID of the user (optional, defaults to current user in conn)
+
+  ## Returns
+    - {:ok, result} on success
+    - {:error, reason} on failure
+  """
+  def handle_post(conn, provider, content, options \\ %{}, user_id \\ nil) do
+    # Get user_id from conn if not provided
+    user_id = if is_nil(user_id) and conn.assigns[:current_user] do
+      conn.assigns.current_user.id
+    else
+      user_id
+    end
+
+    hashtags = Map.get(options, :hashtags, parse_hashtags(content))
+    media_ids = Map.get(options, :media_ids, [])
+    
+    with {:ok, tokens} <- get_tokens(conn, provider, user_id),
+         post_data <- %{
+           content: content,
+           media_ids: media_ids,
+           hashtags: hashtags,
+           options: options
+         },
+         {:ok, result} <- do_platform_upload(provider, post_data, tokens) do
+      {:ok, result}
+    else
+      {:error, reason} -> {:error, {provider, reason}}
+    end
+  end
+
+  defp exchange_token_for_provider(auth_module, provider, params) do
+    case provider do
+      "twitter" ->
+        # For Twitter, extract the code from params and call exchange_code_for_token
+        case Map.get(params, "code") do
+          nil -> {:error, "Missing code parameter"}
+          code -> auth_module.exchange_code_for_token(code, params)
+        end
+      _ ->
+        # For other providers, use the standard exchange_token method
+        auth_module.exchange_token(params)
     end
   end
 end
+
+

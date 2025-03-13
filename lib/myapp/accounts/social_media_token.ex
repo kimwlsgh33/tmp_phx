@@ -2,58 +2,196 @@ defmodule Myapp.Accounts.SocialMediaToken do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
+  alias Myapp.Repo
+  alias Myapp.Accounts.{User, SocialMediaToken}
 
-  alias Myapp.Accounts.User
-
+  @providers [:twitter, :tiktok, :instagram, :youtube, :thread]
+  @token_lifetime 24 * 60 * 60 # 24 hours in seconds
+  @refresh_token_lifetime 30 * 24 * 60 * 60 # 30 days in seconds
   @encryption_key_salt "social_media_token_encryption"
-  @token_max_age 86400 * 30 # 30 days in seconds
 
   schema "social_media_tokens" do
+    belongs_to :user, User
+    field :provider, Ecto.Enum, values: @providers
     field :access_token, :binary
     field :refresh_token, :binary
+    field :token_type, :string
+    field :scope, :string
     field :expires_at, :utc_datetime
-    field :platform, :string
+    field :refresh_token_expires_at, :utc_datetime
+    field :provider_user_id, :string
     field :metadata, :map, default: %{}
+    field :revoked_at, :utc_datetime
     field :last_used_at, :utc_datetime
 
-    # Virtual fields for changeset
+    # Virtual fields for token encryption
     field :access_token_text, :string, virtual: true
     field :refresh_token_text, :string, virtual: true
-
-    belongs_to :user, User
 
     timestamps()
   end
 
-  @doc """
-  Creates a changeset for the social media token.
-  """
+  @required_fields [:user_id, :provider]
+  @optional_fields [
+    :token_type, :scope, :expires_at, :refresh_token_expires_at,
+    :provider_user_id, :metadata, :revoked_at, :last_used_at
+  ]
+  @virtual_fields [:access_token_text, :refresh_token_text]
+
   def changeset(token, attrs) do
     token
-    |> cast(attrs, [:access_token_text, :refresh_token_text, :expires_at, :platform, :metadata, :last_used_at, :user_id])
-    |> validate_required([:access_token_text, :platform, :user_id])
-    |> validate_inclusion(:platform, ["twitter", "instagram", "youtube", "tiktok"])
+    |> cast(attrs, @required_fields ++ @optional_fields ++ @virtual_fields)
+    |> validate_required(@required_fields ++ [:access_token_text])
+    |> validate_inclusion(:provider, @providers)
     |> foreign_key_constraint(:user_id)
-    |> unique_constraint([:user_id, :platform], message: "Token for this platform already exists")
+    |> unique_constraint([:user_id, :provider, :provider_user_id],
+      name: :active_social_tokens_index,
+      message: "active token already exists for this provider"
+    )
     |> encrypt_tokens()
   end
 
-  @doc """
-  Updates a changeset for an existing token.
-  """
   def update_changeset(token, attrs) do
     token
-    |> cast(attrs, [:access_token_text, :refresh_token_text, :expires_at, :metadata, :last_used_at])
+    |> cast(attrs, @optional_fields ++ @virtual_fields)
     |> encrypt_tokens()
   end
 
   @doc """
-  Gets token by user_id and platform.
+  Stores social media tokens for a user.
+  Automatically calculates expiration times if not provided.
   """
-  def get_by_user_and_platform(user_id, platform) do
-    from(t in __MODULE__,
-      where: t.user_id == ^user_id and t.platform == ^platform
+  def store_tokens(user_id, provider, token_data, opts \\ []) do
+    now = DateTime.utc_now()
+    expires_in = token_data["expires_in"] || opts[:expires_in] || @token_lifetime
+    refresh_expires_in = token_data["refresh_expires_in"] ||
+      opts[:refresh_expires_in] || @refresh_token_lifetime
+
+    attrs = %{
+      user_id: user_id,
+      provider: provider,
+      access_token_text: token_data["access_token"],
+      refresh_token_text: token_data["refresh_token"],
+      token_type: token_data["token_type"] || "Bearer",
+      scope: token_data["scope"],
+      expires_at: DateTime.add(now, expires_in, :second),
+      refresh_token_expires_at:
+        if token_data["refresh_token"] do
+          DateTime.add(now, refresh_expires_in, :second)
+        else
+          nil
+        end,
+      provider_user_id: token_data["open_id"] || token_data["provider_user_id"],
+      metadata: Map.drop(token_data, [
+        "access_token", "refresh_token", "token_type",
+        "scope", "expires_in", "refresh_expires_in",
+        "open_id", "provider_user_id"
+      ]),
+      last_used_at: now
+    }
+
+    # Revoke any existing active tokens for this user/provider combination
+    revoke_active_tokens(user_id, provider)
+
+    %SocialMediaToken{}
+    |> changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Retrieves active tokens for a user and provider.
+  Automatically decrypts tokens when found.
+  """
+  def get_active_tokens(user_id, provider) do
+    now = DateTime.utc_now()
+
+    query =
+      from t in SocialMediaToken,
+        where: t.user_id == ^user_id and
+              t.provider == ^provider and
+              is_nil(t.revoked_at) and
+              (is_nil(t.expires_at) or t.expires_at > ^now),
+        order_by: [desc: :inserted_at],
+        limit: 1
+
+    case Repo.one(query) do
+      nil -> 
+        {:error, {:not_found, "No active tokens found"}}
+      token -> 
+        with {:ok, access_token} <- decrypt_access_token(token),
+             {:ok, refresh_token} <- decrypt_refresh_token(token) do
+          {:ok, %{token |
+            access_token_text: access_token,
+            refresh_token_text: refresh_token
+          }}
+        else
+          {:error, reason} -> {:error, {:decrypt, reason}}
+        end
+    end
+  end
+
+  @doc """
+  Revokes all active tokens for a user and provider.
+  """
+  def revoke_active_tokens(user_id, provider) do
+    now = DateTime.utc_now()
+
+    query =
+      from t in SocialMediaToken,
+        where: t.user_id == ^user_id and
+              t.provider == ^provider and
+              is_nil(t.revoked_at)
+
+    Repo.update_all(query,
+      set: [revoked_at: now, updated_at: now]
     )
+
+    :ok
+  end
+
+  @doc """
+  Updates a token with new token data (e.g., after refresh).
+  """
+  def update_token(token, token_data, opts \\ []) do
+    now = DateTime.utc_now()
+    expires_in = token_data["expires_in"] || opts[:expires_in] || @token_lifetime
+
+    attrs = %{
+      access_token_text: token_data["access_token"],
+      refresh_token_text: token_data["refresh_token"] || token.refresh_token_text,
+      expires_at: DateTime.add(now, expires_in, :second),
+      last_used_at: now,
+      metadata: Map.merge(token.metadata || %{}, Map.drop(token_data, [
+        "access_token", "refresh_token", "expires_in"
+      ]))
+    }
+
+    token
+    |> update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Checks if a token needs to be refreshed based on its expiration time.
+  Returns true if the token will expire within the next hour.
+  """
+  def needs_refresh?(token) do
+    now = DateTime.utc_now()
+    refresh_threshold = DateTime.add(now, 3600, :second)
+
+    not is_nil(token.expires_at) and
+      DateTime.compare(token.expires_at, refresh_threshold) in [:lt, :eq]
+  end
+
+  @doc """
+  Checks if a refresh token is still valid.
+  """
+  def refresh_token_valid?(token) do
+    now = DateTime.utc_now()
+
+    not is_nil(token.refresh_token) and
+      (is_nil(token.refresh_token_expires_at) or
+       DateTime.compare(token.refresh_token_expires_at, now) == :gt)
   end
 
   @doc """
@@ -62,14 +200,13 @@ defmodule Myapp.Accounts.SocialMediaToken do
   def find_expiring_tokens(buffer_in_seconds \\ 3600) do
     buffer = DateTime.add(DateTime.utc_now(), buffer_in_seconds, :second)
     
-    from(t in __MODULE__,
-      where: not is_nil(t.expires_at) and t.expires_at <= ^buffer
+    from(t in SocialMediaToken,
+      where: not is_nil(t.expires_at) and t.expires_at <= ^buffer and
+            is_nil(t.revoked_at)
     )
   end
 
-  @doc """
-  Encrypts access and refresh tokens.
-  """
+  # Token encryption/decryption functions
   defp encrypt_tokens(changeset) do
     if access_token = get_change(changeset, :access_token_text) do
       encrypted = encrypt_token(access_token)
@@ -89,53 +226,28 @@ defmodule Myapp.Accounts.SocialMediaToken do
     end
   end
 
-  @doc """
-  Decrypts the access token from the database.
-  """
-  def decrypt_access_token(%__MODULE__{access_token: encrypted}) when not is_nil(encrypted) do
-    decrypt_token(encrypted)
-  end
-  def decrypt_access_token(_), do: {:error, :no_token}
-
-  @doc """
-  Decrypts the refresh token from the database.
-  """
-  def decrypt_refresh_token(%__MODULE__{refresh_token: encrypted}) when not is_nil(encrypted) do
-    decrypt_token(encrypted)
-  end
-  def decrypt_refresh_token(_), do: {:error, :no_token}
-
-  # Private utility functions for token encryption/decryption
   defp encrypt_token(token) do
     Phoenix.Token.sign(Myapp.Endpoint, @encryption_key_salt, token)
     |> :erlang.term_to_binary()
   end
 
+  def decrypt_access_token(%__MODULE__{access_token: encrypted}) when not is_nil(encrypted) do
+    decrypt_token(encrypted)
+  end
+  def decrypt_access_token(_), do: {:error, :no_token}
+
+  def decrypt_refresh_token(%__MODULE__{refresh_token: encrypted}) when not is_nil(encrypted) do
+    decrypt_token(encrypted)
+  end
+  def decrypt_refresh_token(_), do: {:error, :no_token}
+
   defp decrypt_token(encrypted) do
     try do
       binary = :erlang.binary_to_term(encrypted)
-      case Phoenix.Token.verify(Myapp.Endpoint, @encryption_key_salt, binary, max_age: @token_max_age) do
-        {:ok, token} -> {:ok, token}
-        {:error, reason} -> {:error, reason}
-      end
+      Phoenix.Token.verify(Myapp.Endpoint, @encryption_key_salt, binary, max_age: @refresh_token_lifetime)
     rescue
       _ -> {:error, :invalid_token}
     end
-  end
-
-  @doc """
-  Validates if a token is still valid (not expired).
-  """
-  def valid?(%__MODULE__{expires_at: nil}), do: true
-  def valid?(%__MODULE__{expires_at: expires_at}) do
-    DateTime.compare(expires_at, DateTime.utc_now()) == :gt
-  end
-
-  @doc """
-  Updates the last_used_at timestamp for tracking purposes.
-  """
-  def mark_as_used(token) do
-    change(token, %{last_used_at: DateTime.utc_now()})
   end
 end
 

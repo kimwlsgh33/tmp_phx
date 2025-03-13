@@ -498,4 +498,106 @@ defmodule Myapp.Tiktok do
         {:error, message}
     end
   end
+
+  @doc """
+  Fetches the user profile for the authenticated user.
+
+  ## Parameters
+    * `opts` - Optional parameters:
+        * `:access_token` - TikTok access token
+
+  ## Returns
+    * `{:ok, profile_data}` - Successfully retrieved profile
+    * `{:error, reason}` - Retrieval failed
+  """
+  def get_profile(opts \\ []) do
+    case validate_access_token(opts) do
+      {:ok, access_token} ->
+        url = "#{@base_url}/user/info/"
+        
+        headers = [
+          {"Authorization", "Bearer #{access_token}"},
+          {"Content-Type", "application/json"}
+        ]
+        
+        case HTTPoison.get(url, headers) do
+          {:ok, %HTTPoison.Response{status_code: status_code, body: body}} when status_code in 200..299 ->
+            case Jason.decode(body) do
+              {:ok, %{"data" => profile_data}} -> {:ok, profile_data}
+              {:error, _} -> {:error, "Failed to parse TikTok response"}
+            end
+          
+          {:ok, %HTTPoison.Response{status_code: 401}} ->
+            {:error, "Invalid access token"}
+          
+          {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+            Logger.error("TikTok API error: Status #{status_code}, Body: #{body}")
+            {:error, "TikTok API error: #{status_code}"}
+          
+          {:error, %HTTPoison.Error{reason: reason}} ->
+            Logger.error("TikTok API connection error: #{inspect(reason)}")
+            {:error, "Failed to connect to TikTok API"}
+        end
+        
+      {:error, message} ->
+        {:error, message}
+    end
+  end
+
+  @doc """
+  Fetches the user's timeline/video list.
+
+  ## Parameters
+    * `opts` - Optional parameters:
+        * `:access_token` - TikTok access token
+        * `:cursor` - Pagination cursor (default: "0")
+        * `:max_count` - Maximum number of posts to return (default: 20)
+
+  ## Returns
+    * `{:ok, %{posts: videos, next_page_token: next_cursor}}` - Successfully retrieved timeline
+    * `{:error, reason}` - Retrieval failed
+  """
+  def get_timeline(opts \\ []) do
+    case validate_access_token(opts) do
+      {:ok, access_token} ->
+        cursor = Keyword.get(opts, :cursor, "0")
+        max_count = Keyword.get(opts, :max_count, 20)
+        
+        url = "#{@base_url}/video/list/"
+        
+        headers = [
+          {"Authorization", "Bearer #{access_token}"},
+          {"Content-Type", "application/json"}
+        ]
+        
+        params = %{
+          cursor: cursor,
+          max_count: max_count
+        }
+        
+        case HTTPoison.get("#{url}?#{URI.encode_query(params)}", headers) do
+          {:ok, %HTTPoison.Response{status_code: status_code, body: body}} when status_code in 200..299 ->
+            case Jason.decode(body) do
+              {:ok, %{"data" => %{"videos" => videos, "cursor" => next_cursor}}} ->
+                {:ok, %{posts: videos, next_page_token: next_cursor}}
+              {:error, _} ->
+                {:error, "Failed to parse TikTok response"}
+            end
+          
+          {:ok, %HTTPoison.Response{status_code: 401}} ->
+            {:error, "Invalid access token"}
+          
+          {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+            Logger.error("TikTok API error: Status #{status_code}, Body: #{body}")
+            {:error, "TikTok API error: #{status_code}"}
+          
+          {:error, %HTTPoison.Error{reason: reason}} ->
+            Logger.error("TikTok API connection error: #{inspect(reason)}")
+            {:error, "Failed to connect to TikTok API"}
+        end
+        
+      {:error, message} ->
+        {:error, message}
+    end
+  end
 end

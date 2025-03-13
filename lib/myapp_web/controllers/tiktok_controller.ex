@@ -54,7 +54,7 @@ defmodule MyappWeb.TiktokController do
     user_id = get_current_user_id(conn)
     {connected, recent_videos} = case check_auth(conn, "tiktok", user_id) do
       {:ok, _status} ->
-        case Tiktok.list_videos(user_id) do
+        case SocialTiktok.list_videos(user_id) do
           {:ok, %{"data" => %{"videos" => videos}}} ->
             {true, videos}
           _ ->
@@ -81,7 +81,7 @@ defmodule MyappWeb.TiktokController do
     * `connected` - Boolean indicating whether the user is connected to TikTok
   """
   def upload_form(conn, _params) do
-    case Tiktok.validate_access_token([]) do
+    case SocialTiktok.authenticated?(get_current_user_id(conn)) do
       {:ok, _access_token} ->
         # Create a new changeset for the upload form
         changeset = VideoUploadForm.changeset(%VideoUploadForm{})
@@ -111,7 +111,7 @@ defmodule MyappWeb.TiktokController do
     * `description` - Description for the video
   """
   def upload_video(conn, %{"video_upload_form" => video_params}) do
-    case Tiktok.validate_access_token([]) do
+    case SocialTiktok.authenticated?(get_current_user_id(conn)) do
       {:ok, _access_token} ->
         changeset = VideoUploadForm.changeset(%VideoUploadForm{}, video_params)
 
@@ -129,7 +129,7 @@ defmodule MyappWeb.TiktokController do
                    disable_stitch: video_params["disable_stitch"] == "true",
                    disable_duet: video_params["disable_duet"] == "true"
                  ],
-                 {:ok, response} <- Tiktok.upload_video(video_path, options) do
+                 {:ok, response} <- SocialTiktok.upload_media(get_current_user_id(conn), video_path, "video/mp4", options) do
               {:ok, response}
             else
               {:error, reason} -> {:error, reason}
