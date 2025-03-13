@@ -11,7 +11,6 @@ defmodule MyappWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
-    plug :log_request
   end
 
   pipeline :browser_without_layout do
@@ -29,6 +28,7 @@ defmodule MyappWeb.Router do
   end
 
   # ----------------------------------------------------------------------
+  # Helper functions
 
   def log_request(conn, _opts) do
     IO.inspect(conn.request_path, label: "Requested Path")
@@ -37,6 +37,7 @@ defmodule MyappWeb.Router do
   end
 
   # ----------------------------------------------------------------------
+  # Routes
 
   # Landing page route
   scope "/", MyappWeb do

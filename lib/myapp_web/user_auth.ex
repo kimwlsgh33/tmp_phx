@@ -223,9 +223,15 @@ defmodule MyappWeb.UserAuth do
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")
   end
-
   defp maybe_store_return_to(%{method: "GET"} = conn) do
-    put_session(conn, :user_return_to, current_path(conn))
+    # Check for return_to query parameter first, then use current path as fallback
+    return_to = 
+      case conn.query_params do
+        %{"return_to" => path} when is_binary(path) and path != "" -> path
+        _ -> current_path(conn)
+      end
+    
+    put_session(conn, :user_return_to, return_to)
   end
 
   defp maybe_store_return_to(conn), do: conn
