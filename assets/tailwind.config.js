@@ -23,6 +23,7 @@ module.exports = {
         'button-glow': 'button-glow 1.5s ease-in-out infinite',
         'button-shine': 'button-shine 8s ease-in-out infinite',
         'logo-scroll': 'logo-scroll 30s linear infinite',
+        'bounce-slow': 'bounce-slow 3s infinite',
       },
       keyframes: {
         gradient: {
@@ -56,6 +57,10 @@ module.exports = {
         'logo-scroll': {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-100%)' },
+        },
+        'bounce-slow': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' }
         },
       },
       backgroundSize: {

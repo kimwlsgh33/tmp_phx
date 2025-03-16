@@ -1,4 +1,4 @@
-defmodule MyappWeb.LandingController do
+defmodule MyappWeb.Landing.LandingController do
   use MyappWeb, :controller
 
   def index(conn, _params) do

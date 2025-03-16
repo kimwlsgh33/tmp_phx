@@ -42,7 +42,7 @@ defmodule MyappWeb.Router do
   scope "/", MyappWeb do
     pipe_through :browser_without_layout
 
-    get "/", LandingController, :index
+    get "/", Landing.LandingController, :index
   end
 
   # Main browser routes
@@ -50,67 +50,26 @@ defmodule MyappWeb.Router do
     pipe_through :browser
 
     # General/Test routes
-    get "/test/dashboard", TestController, :dashboard
+    get "/test/dashboard", Test.TestController, :dashboard
 
     # Legal pages
-    get "/privacy-policy/:version", PrivacyPolicyController, :page
-    get "/terms-of-services/:version", TermsOfServicesController, :page
+    get "/privacy-policy/:version", Legal.PrivacyPolicyController, :page
+    get "/terms-of-services/:version", Legal.TermsOfServicesController, :page
 
     # Marketing pages
     scope "/marketing" do
       # Pricing routes
-      get "/pricing", PricingController, :index
-      get "/features", FeaturesController, :index
+      get "/pricing", Landing.PricingController, :index
+      get "/features", Landing.FeaturesController, :index
 
       # Company route
-      get "/company", CompanyController, :index
+      get "/company", Landing.CompanyController, :index
     end
 
     # Documentation routes
     scope "/docs" do
       get "/", DocsController, :index
       get "/:topic", DocsController, :show
-    end
-
-    # Social Media Integration
-
-    # TikTok routes
-    scope "/tiktok" do
-      get "/", TiktokController, :show
-      get "/upload", TiktokController, :upload_form
-      post "/upload", TiktokController, :upload_video
-      get "/connect", TiktokController, :connect
-      get "/auth/callback", TiktokController, :auth_callback
-    end
-
-    # Twitter routes
-    scope "/twitter" do
-      get "/", TwitterController, :show
-      get "/tweet", TwitterController, :tweet_form
-      post "/tweet", TwitterController, :post_tweet
-      get "/connect", TwitterController, :connect
-      get "/auth/callback", TwitterController, :auth_callback
-      delete "/tweet/:id", TwitterController, :delete_tweet
-    end
-
-    # Instagram routes
-    scope "/instagram" do
-      get "/", InstagramController, :show
-      get "/upload", InstagramController, :upload_form
-      post "/upload", InstagramController, :upload_media
-      get "/connect", InstagramController, :connect
-      get "/auth/callback", InstagramController, :auth_callback
-    end
-
-    # YouTube routes
-    scope "/youtube" do
-      get "/", YoutubeController, :show
-      get "/connect", YoutubeController, :connect
-      get "/auth/callback", YoutubeController, :auth_callback
-      get "/upload", YoutubeController, :upload_form
-      post "/upload", YoutubeController, :upload_video
-      post "/search", YoutubeController, :search
-      live "/search-live", YoutubeSearchLive
     end
 
     # LiveView routes
@@ -141,10 +100,10 @@ defmodule MyappWeb.Router do
 
     # Thread operations
     scope "/threads" do
-      post "/", ThreadController, :create
-      get "/:id", ThreadController, :show
-      delete "/:id", ThreadController, :delete
-      post "/:thread_id/reply", ThreadController, :reply
+      post "/", Social.ThreadController, :create
+      get "/:id", Social.ThreadController, :show
+      delete "/:id", Social.ThreadController, :delete
+      post "/:thread_id/reply", Social.ThreadController, :reply
     end
   end
 
@@ -186,9 +145,9 @@ defmodule MyappWeb.Router do
 
   scope "/auth", MyappWeb do
     pipe_through :browser
-    get "/:provider", GoogleController, :request
-    get "/:provider/callback", GoogleController, :callback
-    delete "/logout", GoogleController, :delete
+    get "/:provider", Social.GoogleController, :request
+    get "/:provider/callback", Social.GoogleController, :callback
+    delete "/logout", Social.GoogleController, :delete
   end
 
   # Routes requiring authentication

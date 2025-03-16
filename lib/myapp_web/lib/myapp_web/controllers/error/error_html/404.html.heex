@@ -1,0 +1,406 @@
+<.flash_group flash={@flash} />
+<div class="error-container">
+  <div class="error-content">
+    <div class="error-emoji" role="img" aria-label="Magnifying glass emoji">🔍</div>
+    <h1 class="error-code">404</h1>
+    <h2 class="error-title">Page Not Found</h2>
+    <p class="error-message">
+      Oops! The page you're looking for seems to have gone on an adventure without us.
+    </p>
+    <div class="error-actions">
+      <.link navigate="/" class="error-button error-button-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="error-button-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+        </svg>
+        Return Home
+      </.link>
+    </div>
+  </div>
+</div>
+</div>
+
+<style>
+  .error-container {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e0e5ed 100%);
+    padding: 1rem;
+  }
+
+  .error-content {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 32rem;
+    width: 100%;
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .error-emoji {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    animation: bounce 2s infinite;
+  }
+
+  .error-code {
+    font-size: 6rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1;
+    animation: slideDown 0.5s ease-out;
+  }
+
+  .error-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 1rem 0;
+    animation: slideDown 0.5s ease-out 0.2s both;
+  }
+
+  .error-message {
+    color: #4b5563;
+    font-size: 1.125rem;
+    margin: 1.5rem 0;
+    line-height: 1.6;
+    animation: slideDown 0.5s ease-out 0.4s both;
+  }
+
+  .error-button {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    animation: slideUp 0.5s ease-out 0.6s both;
+    gap: 0.5rem;
+  }
+
+  .error-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .error-button-icon {
+    display: inline-flex;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px); }
+    60% { transform: translateY(-10px); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .error-content {
+      padding: 2rem;
+    }
+
+    .error-code {
+      font-size: 4rem;
+    }
+    
+    .error-title {
+      font-size: 1.5rem;
+    }
+    
+    .error-message {
+      font-size: 1rem;
+    }
+    
+    .error-button {
+      padding: 0.5rem 1.5rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>
+      </h1>
+      
+      <h2 class="text-2xl font-bold text-gray-700 mb-4 animate-slideDown" style="animation-delay: 100ms">
+        Page Not Found
+      </h2>
+      
+      <div class="bg-indigo-50 rounded-xl p-4 mb-8 border border-indigo-100 animate-slideUp" style="animation-delay: 200ms">
+        <div class="flex items-center gap-3 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          <p class="text-indigo-700 font-medium text-left">Page Not Found</p>
+        </div>
+        <p class="text-gray-600 text-left">
+          We've looked everywhere, but the page you're looking for seems to have wandered off.
+          It might have been moved, deleted, or never existed at all.
+        </p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fadeIn" style="animation-delay: 300ms">
+        <.link 
+          navigate="/" 
+          class="group flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-indigo-100 transform hover:-translate-y-0.5"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:animate-bounce-short" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+          Return Home
+        </.link>
+        
+        <.link 
+          navigate="/search" 
+          class="group flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-medium transition-all duration-300 hover:bg-gray-50 hover:shadow-md transform hover:-translate-y-0.5"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 group-hover:rotate-15 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+          </svg>
+          Search Site
+        </.link>
+      </div>
+    </div>
+    
+    <div class="bg-indigo-50/50 px-8 py-4 border-t border-indigo-100">
+      <p class="text-sm text-gray-500 text-center">
+        Need help? <.link navigate="/contact" class="text-indigo-600 hover:text-indigo-800 transition-colors">Contact Support</.link>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes bounce-short {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  .animate-slideDown {
+    animation: slideDown 0.6s ease-out forwards;
+  }
+  
+  .animate-slideUp {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  .group-hover\:animate-bounce-short:hover {
+    animation: bounce-short 0.6s ease-in-out infinite;
+  }
+  
+  .group-hover\:rotate-15:hover {
+    transform: rotate(15deg);
+  }
+</style>
+      </h1>
+      
+      <h2 class="text-2xl font-bold text-gray-700 mb-4 animate-slideDown" style="animation-delay: 100ms">
+        Page Not Found
+      </h2>
+      
+      <div class="bg-indigo-50 rounded-xl p-4 mb-8 border border-indigo-100 animate-slideUp" style="animation-delay: 200ms">
+        <p class="text-gray-600">
+          We've looked everywhere, but the page you're looking for seems to have gone on an adventure.
+          It might have been moved, deleted, or never existed at all.
+        </p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fadeIn" style="animation-delay: 300ms">
+        <.link 
+          navigate="/" 
+          class="group flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-indigo-100 transform hover:-translate-y-0.5"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:animate-bounce-short" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+          Return Home
+        </.link>
+        
+        <.link 
+          navigate="/search" 
+          class="group flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-medium transition-all duration-300 hover:bg-gray-50 hover:shadow-md transform hover:-translate-y-0.5"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 group-hover:rotate-15 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+          </svg>
+          Search Site
+        </.link>
+      </div>
+    </div>
+    
+    <div class="bg-indigo-50/50 px-8 py-4 border-t border-indigo-100">
+      <p class="text-sm text-gray-500 text-center">
+        Need help? <.link navigate="/contact" class="text-indigo-600 hover:text-indigo-700 font-medium">Contact Support</.link>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes bounce-short {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  .animate-slideDown {
+    animation: slideDown 0.6s ease-out forwards;
+  }
+  
+  .animate-slideUp {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  .group-hover\:animate-bounce-short:hover {
+    animation: bounce-short 0.6s ease-in-out infinite;
+  }
+  
+  .group-hover\:rotate-15:hover {
+    transform: rotate(15deg);
+  }
+</style>
+      <div class="bg-slate-50 border border-slate-100 rounded-lg p-4 mb-8 animate-slideUp">
+        <p class="text-slate-600">
+          We've looked everywhere, but the page you're looking for seems to have wandered off. 
+          It might have been moved, deleted, or never existed at all.
+        </p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <.link 
+          navigate="/" 
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium transition-all hover:from-indigo-600 hover:to-purple-700 hover:scale-105 shadow-md hover:shadow-lg"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+          Return Home
+        </.link>
+        
+        <.link 
+          navigate="/search" 
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white border border-slate-200 text-slate-700 font-medium transition-all hover:bg-slate-50 hover:scale-105 shadow-sm hover:shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+          </svg>
+          Search
+        </.link>
+      </div>
+    </div>
+    
+    <div class="bg-slate-50 px-8 py-4 border-t border-slate-100">
+      <p class="text-sm text-slate-500 text-center">
+        Need help? Contact our <.link navigate="/support" class="text-indigo-600 hover:text-indigo-800 font-medium">support team</.link>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .animate-slideUp {
+    animation: slideUp 0.8s ease-out 0.3s both;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+</style>
