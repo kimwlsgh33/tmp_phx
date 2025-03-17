@@ -29,7 +29,8 @@ let csrfToken = document
   .getAttribute("content");
 let Hooks = {
   ThemeToggle,
-  DocsNavigation
+  DocsNavigation,
+  ...ProfileModalHooks,
 };
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

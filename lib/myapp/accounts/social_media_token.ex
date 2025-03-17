@@ -4,7 +4,6 @@ defmodule Myapp.Accounts.SocialMediaToken do
   import Ecto.Query
 
   alias Myapp.Accounts.User
-  alias Phoenix.Token
 
   @encryption_key_salt "social_media_token_encryption"
   @token_max_age 86400 * 30 # 30 days in seconds

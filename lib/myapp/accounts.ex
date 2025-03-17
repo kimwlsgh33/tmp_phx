@@ -376,6 +376,10 @@ defmodule Myapp.Accounts do
       info: %{email: email, image: avatar_url}
     } = auth
 
+    # Add debug logging
+    require Logger
+    Logger.debug("OAuth User Data - Email: #{email}, Provider: #{provider}, Avatar URL: #{avatar_url}")
+
     # Generate a secure random password for OAuth users
     random_password = generate_secure_password(32)
 
@@ -387,17 +391,21 @@ defmodule Myapp.Accounts do
       avatar_url: avatar_url,
       password: random_password
     }
+    
+    Logger.debug("User params being saved: #{inspect(user_params)}")
 
     # Try to find an existing user with this email
     case get_user_by_email(email) do
       # User exists - update their OAuth info if needed
       %User{} = user ->
+        Logger.debug("Updating existing user with OAuth info")
         user
         |> User.oauth_changeset(user_params)
         |> Repo.update()
 
       # User doesn't exist - create a new one
       nil ->
+        Logger.debug("Creating new user with OAuth info")
         %User{}
         |> User.oauth_registration_changeset(user_params)
         |> Repo.insert()

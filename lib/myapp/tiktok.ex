@@ -148,7 +148,7 @@ defmodule Myapp.Tiktok do
     total_size = byte_size(video_data)
     
     # Split the video into chunks and upload each
-    Enum.reduce_while(0..(div(total_size - 1, chunk_size)), {:ok, 0}, fn chunk_index, {:ok, offset} ->
+    Enum.reduce_while(0..(div(total_size - 1, chunk_size)), {:ok, 0}, fn chunk_index, {:ok, _offset} ->
       chunk_start = chunk_index * chunk_size
       chunk_end = min(chunk_start + chunk_size, total_size)
       chunk = binary_part(video_data, chunk_start, chunk_end - chunk_start)
@@ -174,7 +174,7 @@ defmodule Myapp.Tiktok do
     * `:ok` - Chunk uploaded successfully
     * `{:error, reason}` - Chunk upload failed
   """
-  def upload_chunk(upload_id, chunk_data, chunk_index, chunk_start, chunk_end, total_size, access_token) do
+  def upload_chunk(upload_id, chunk_data, _chunk_index, chunk_start, chunk_end, total_size, access_token) do
     url = "#{@base_url}/video/upload/#{upload_id}/"
     
     headers = [

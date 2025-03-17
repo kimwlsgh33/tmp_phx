@@ -202,7 +202,7 @@ defmodule MyappWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="mt-10 space-y-8 bg-black">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -232,7 +232,7 @@ defmodule MyappWeb.CoreComponents do
       type={@type}
       class={[
         "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "text-sm font-semibold leading-6 text-gray-400 active:text-white/80",
         @class
       ]}
       {@rest}
@@ -377,8 +377,9 @@ defmodule MyappWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
+          "mt-2 block w-full rounded-lg bg-zinc-900 text-gray-200 focus:ring-0 sm:text-sm sm:leading-6",
+          "placeholder-gray-400 border-gray-400",
+          @errors == [] && "border-gray-400 focus:border-[#FD4F00]",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -396,7 +397,7 @@ defmodule MyappWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6 text-gray-300">
       {render_slot(@inner_block)}
     </label>
     """
@@ -611,8 +612,14 @@ defmodule MyappWeb.CoreComponents do
   """
   attr :is_connected, :boolean, required: true, doc: "whether the user is connected to TikTok"
   attr :class, :string, default: nil, doc: "additional CSS classes"
-  attr :connect_path, :string, default: "/tiktok/oauth/connect", doc: "path to the connect endpoint"
-  attr :disconnect_path, :string, default: "/tiktok/oauth/disconnect", doc: "path to the disconnect endpoint"
+
+  attr :connect_path, :string,
+    default: "/tiktok/oauth/connect",
+    doc: "path to the connect endpoint"
+
+  attr :disconnect_path, :string,
+    default: "/tiktok/oauth/disconnect",
+    doc: "path to the disconnect endpoint"
 
   def tiktok_oauth_status(assigns) do
     ~H"""
@@ -622,7 +629,8 @@ defmodule MyappWeb.CoreComponents do
           "w-3 h-3 rounded-full mr-2",
           @is_connected && "bg-green-500",
           !@is_connected && "bg-red-500"
-        ]}></div>
+        ]}>
+        </div>
         <span class="font-medium">
           <%= if @is_connected do %>
             <span class="text-green-600">Connected to TikTok</span>

@@ -3,31 +3,23 @@ defmodule MyappWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-black">
+      <div class="max-w-md w-full space-y-8 bg-black p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
         <div class="text-center">
           <!-- App Logo/Icon -->
-          <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-[#FD4F00]/10 mb-6">
-            <svg
-              class="h-10 w-10 text-[#FD4F00]"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-              />
-            </svg>
+          <div class="mx-auto h-32 w-32 flex items-center justify-center mb-8">
+            <img
+              src="/images/logos/ingrey.svg"
+              alt="CreatorSync Logo"
+              class="w-24 h-30"
+              loading="lazy"
+            />
           </div>
 
           <.header class="text-center">
-            <span class="text-2xl font-bold text-gray-900">Log in to your account</span>
+            <span class="text-2xl font-bold text-gray-400">Log in to your account</span>
             <:subtitle>
-              <p class="mt-2 text-sm text-gray-600">
+              <p class="mt-2 text-sm text-gray-400">
                 Don't have an account?
                 <.link
                   navigate={~p"/users/register"}
@@ -35,7 +27,6 @@ defmodule MyappWeb.UserLoginLive do
                 >
                   Sign up
                 </.link>
-                for an account now.
               </p>
             </:subtitle>
           </.header>
@@ -52,19 +43,17 @@ defmodule MyappWeb.UserLoginLive do
             <.input
               field={@form[:email]}
               type="email"
-              label="Email"
-              placeholder="your@email.com"
+              placeholder="username or email"
               autocomplete="email"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-[#FD4F00] focus:border-[#FD4F00]"
+              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 "
               required
             />
             <.input
               field={@form[:password]}
               type="password"
-              label="Password"
-              placeholder="••••••••"
+              placeholder="password"
               autocomplete="current-password"
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-[#FD4F00] focus:border-[#FD4F00]"
+              class="appearance-none relative block w-full px-3 py-2 border border-gray-300  "
               required
             />
           </div>
@@ -91,24 +80,10 @@ defmodule MyappWeb.UserLoginLive do
           <:actions>
             <.button
               phx-disable-with="Logging in..."
-              class="w-full py-3 px-4 rounded-md font-medium text-white bg-zinc-900 hover:bg-zinc-700 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FD4F00]"
+              class="w-full py-2 px-3 rounded-md font-medium text-gray-400 bg-zinc-900 border border-white hover:bg-zinc-800 transition-all duration-200 transform hover:scale-[1.02]  "
             >
               <span class="flex items-center justify-center">
                 <span>Log in</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 ml-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
               </span>
             </.button>
           </:actions>
@@ -117,17 +92,17 @@ defmodule MyappWeb.UserLoginLive do
         <div class="mt-6">
           <div class="relative">
             <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300"></div>
+              <div class="w-full border-t border-zinc-800"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500">Or continue with</span>
+              <span class="px-5 bg-black text-gray-600">Or </span>
             </div>
           </div>
 
           <div class="mt-6 grid grid-cols-1 gap-3">
             <a
               href={MyappWeb.Router.Helpers.google_path(MyappWeb.Endpoint, :request, "google")}
-              class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+              class="w-full inline-flex justify-center py-2 px-3 border border-gray-300 rounded-md shadow-sm bg-zinc-900 text-sm font-medium text-gray-400 hover:bg-zinc-800 transition-colors duration-200"
             >
               <svg
                 class="h-5 w-5 mr-2"

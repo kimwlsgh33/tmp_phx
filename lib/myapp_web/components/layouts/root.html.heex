@@ -8,75 +8,135 @@
       {assigns[:page_title] || "ingrey"}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
+    </script>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
-  <body class="min-h-full flex flex-col" data-logged-in={if assigns[:current_user], do: "true", else: "false"}>
+  <body
+    class="min-h-full flex flex-col"
+    data-logged-in={if assigns[:current_user], do: "true", else: "false"}
+  >
     <!-- Navigation -->
-    <header class="bg-white shadow-sm z-10">
+    <header class="bg-black z-1">
       <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
-        <div class="flex w-full items-center justify-between border-b border-gray-200 py-6 lg:border-none">
+        <div class="flex w-full items-center justify-between border-b border-gray-200 py-3 lg:border-none">
           <div class="flex items-center">
             <a href={~p"/"} class="flex items-center">
               <img src="/images/logos/ingrey.svg" alt="CreatorSync Logo" loading="lazy" />
-              <span class="text-xl font-bold text-gray-900">ingrey</span>
+              <span class="text-xl font-bold text-gray-400">ingrey</span>
             </a>
-            <div class="ml-10 hidden space-x-8 lg:block">
+          </div>
+          <div class="flex items-center">
+            <div class="hidden space-x-8 lg:block">
               <a
                 href={~p"/docs"}
-                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+                class="text-base font-medium text-white hover:text-gray-400 transition"
               >
                 Documentation
               </a>
               <a
                 href={~p"/marketing/pricing"}
-                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+                class="text-base font-medium text-white hover:text-gray-400 transition"
               >
                 Pricing
               </a>
               <a
                 href={~p"/marketing/features"}
-                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+                class="text-base font-medium text-white hover:text-gray-400 transition"
               >
                 Features
               </a>
               <a
                 href={~p"/marketing/company"}
-                class="text-base font-medium text-gray-700 hover:text-blue-600 transition"
+                class="text-base font-medium text-white hover:text-gray-400 transition"
               >
                 Company
               </a>
             </div>
-          </div>
-          <div class="ml-10 space-x-4">
-            <%= if assigns[:current_user] do %>
-              <div class="flex items-center">
-                <span class="text-sm font-medium text-gray-700 mr-4">
-                  <%= @current_user.email %>
-                </span>
-                <.link
-                  href={~p"/users/log_out"}
-                  method="delete"
-                  class="inline-block rounded-md border border-transparent bg-red-500 py-2 px-4 text-base font-medium text-white hover:bg-red-600 transition"
+            <div class="hidden lg:block h-5 w-px bg-gray-400 mx-4"></div>
+            <div class="space-x-4">
+              <%= if assigns[:current_user] do %>
+              <div x-data="{ open: false }" class="relative flex items-center">
+                <button
+                  type="button"
+                  class="relative flex items-center gap-2 rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+                  id="user-menu-button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  @click="open = !open"
+                  @keydown.escape.window="open = false"
+                  @click.outside="open = false"
                 >
-                  Log out
-                </.link>
+                  <%= if @current_user.avatar_url do %>
+                    <img
+                      class="h-8 w-8 rounded-full"
+                      src={@current_user.avatar_url}
+                      alt="Profile picture"
+                    />
+                  <% else %>
+                    <div class="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
+                      {String.first(@current_user.email)}
+                    </div>
+                  <% end %>
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+                
+<!-- Profile Dropdown Menu -->
+                <div
+                  x-show="open"
+                  x-transition:enter="transition ease-out duration-100"
+                  x-transition:enter-start="transform opacity-0 scale-95"
+                  x-transition:enter-end="transform opacity-100 scale-100"
+                  x-transition:leave="transition ease-in duration-75"
+                  x-transition:leave-start="transform opacity-100 scale-100"
+                  x-transition:leave-end="transform opacity-0 scale-95"
+                  class="absolute right-0 top-full mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu-button"
+                  tabindex="-1"
+                  style="display: none;"
+                >
+                  <a
+                    href={~p"/users/profile"}
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                  >
+                    Your Profile
+                  </a>
+                  <.link
+                    href={~p"/users/log_out"}
+                    method="delete"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                  >
+                    Sign Out
+                  </.link>
+                </div>
               </div>
             <% else %>
               <.link
                 href={~p"/users/log_in"}
-                class="inline-block rounded-md border border-transparent bg-blue-500 py-2 px-4 text-base font-medium text-white hover:bg-blue-600 transition"
+                class="inline-block border border-transparent py-2 text-base font-medium text-white hover:text-gray-300 transition"
               >
                 Sign in
               </.link>
-              <.link
-                href={~p"/users/register"}
-                class="inline-block rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white hover:bg-blue-700 transition"
-              >
-                Sign up
-              </.link>
             <% end %>
           </div>
+        </div>
         </div>
         <div class="flex flex-wrap justify-center space-x-6 py-4 lg:hidden">
           <a
@@ -104,9 +164,9 @@
             Company
           </a>
         </div>
-      </nav>
+        </nav>
     </header>
-    
+
     <.flash_group flash={@flash} />
     
 <!-- loading spinner -->
@@ -187,7 +247,9 @@
             <ul class="space-y-2">
               <li><a href={~p"/marketing/features"} class="hover:text-white">Features</a></li>
               <li><a href="#" class="hover:text-white">Integrations</a></li>
-              <li><a href={~p"/marketing/pricing"} class="hover:text-white">Pricing & Plans</a></li>
+              <li>
+                <a href={~p"/marketing/pricing"} class="hover:text-white">Pricing & Plans</a>
+              </li>
               <li><a href="#" class="hover:text-white">Changelog</a></li>
               <li><a href="#" class="hover:text-white">Our method</a></li>
             </ul>
@@ -198,7 +260,11 @@
             <h3 class="text-white font-semibold mb-4">Company</h3>
             <ul class="space-y-2">
               <li><a href={~p"/marketing/company"} class="hover:text-white">About us</a></li>
-              <li><a href={~p"/marketing/company"} class="hover:text-white">Diversity & Inclusion</a></li>
+              <li>
+                <a href={~p"/marketing/company"} class="hover:text-white">
+                  Diversity & Inclusion
+                </a>
+              </li>
               <li><a href="#" class="hover:text-white">Blog</a></li>
               <li><a href="#" class="hover:text-white">Careers</a></li>
               <li><a href="#" class="hover:text-white">Financial statements</a></li>
@@ -211,7 +277,11 @@
               <h3 class="text-white font-semibold mb-4">Resources</h3>
               <ul class="space-y-2">
                 <li><a href="#" class="hover:text-white">Community</a></li>
-                <li><a href={~p"/terms-of-services/latest"} class="hover:text-white">Terms of service</a></li>
+                <li>
+                  <a href={~p"/terms-of-services/latest"} class="hover:text-white">
+                    Terms of service
+                  </a>
+                </li>
                 <li><a href="#" class="hover:text-white">Report a vulnerability</a></li>
               </ul>
             </div>
@@ -219,8 +289,14 @@
               <h3 class="text-white font-semibold mb-4">Legals</h3>
               <ul class="space-y-2">
                 <li><a href="#" class="hover:text-white">Refund policy</a></li>
-                <li><a href={~p"/terms-of-services/latest"} class="hover:text-white">Terms & Conditions</a></li>
-                <li><a href={~p"/privacy-policy/latest"} class="hover:text-white">Privacy policy</a></li>
+                <li>
+                  <a href={~p"/terms-of-services/latest"} class="hover:text-white">
+                    Terms & Conditions
+                  </a>
+                </li>
+                <li>
+                  <a href={~p"/privacy-policy/latest"} class="hover:text-white">Privacy policy</a>
+                </li>
                 <li><a href="#" class="hover:text-white">Brand Kit</a></li>
               </ul>
             </div>
