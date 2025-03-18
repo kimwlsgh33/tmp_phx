@@ -72,7 +72,7 @@ defmodule Myapp.Accounts.User do
       changeset
       # Hashing could be done with `Ecto.Changeset.prepare_changes/2`, but that
       # would keep the database transaction open longer and hurt performance.
-      |> put_change(:hashed_password, Argon2.hash_pwd_salt(password))
+      |> put_change(:hashed_password, :crypto.hash(:sha256, password) |> Base.encode16(case: :lower))
       |> delete_change(:password)
     else
       changeset
@@ -134,16 +134,18 @@ defmodule Myapp.Accounts.User do
   @doc """
   Verifies the password.
 
-  If there is no user or the user doesn't have a password, we call
-  `Argon2.no_user_verify/0` to avoid timing attacks.
+  If there is no user or the user doesn't have a password, we perform a
+  dummy hash operation to maintain consistent timing.
   """
   def valid_password?(%Myapp.Accounts.User{hashed_password: hashed_password}, password)
       when is_binary(hashed_password) and byte_size(password) > 0 do
-    Argon2.verify_pass(password, hashed_password)
+    password_hash = :crypto.hash(:sha256, password) |> Base.encode16(case: :lower)
+    Plug.Crypto.secure_compare(password_hash, hashed_password)
   end
 
   def valid_password?(_, _) do
-    Argon2.no_user_verify()
+    # Perform a dummy hash to prevent timing attacks
+    :crypto.hash(:sha256, "dummy_password")
     false
   end
 
