@@ -18,18 +18,18 @@ defmodule Myapp.Accounts.UserNotifier do
   end
 
   @doc """
-  Deliver instructions to confirm account.
+  Deliver instructions to confirm account with a confirmation code.
   """
-  def deliver_confirmation_instructions(user, url) do
+  def deliver_confirmation_instructions(user, confirmation_code) do
     deliver(user.email, "Confirmation instructions", """
 
     ==============================
 
     Hi #{user.email},
 
-    You can confirm your account by visiting the URL below:
+    You can confirm your account by entering the confirmation code below:
 
-    #{url}
+    #{confirmation_code}
 
     If you didn't create an account with us, please ignore this.
 

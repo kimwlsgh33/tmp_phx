@@ -11,6 +11,7 @@ defmodule Myapp.Accounts.User do
     field :provider, :string
     field :provider_id, :string
     field :avatar_url, :string
+    field :confirmation_code, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -40,7 +41,7 @@ defmodule Myapp.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :provider, :provider_id, :avatar_url])
+    |> cast(attrs, [:email, :password, :provider, :provider_id, :avatar_url, :confirmation_code])
     |> validate_email(opts)
     |> validate_password(opts)
   end
@@ -126,9 +127,11 @@ defmodule Myapp.Accounts.User do
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
-  def confirm_changeset(user) do
+  def confirm_changeset(user, attrs \\ %{}) do
     now = DateTime.utc_now() |> DateTime.truncate(:second)
-    change(user, confirmed_at: now)
+    user
+    |> cast(attrs, [:confirmation_code])
+    |> change(confirmed_at: now)
   end
 
   @doc """
@@ -189,5 +192,50 @@ defmodule Myapp.Accounts.User do
     |> validate_required([:provider, :provider_id])
     |> unique_constraint(:provider_id, name: "users_provider_provider_id_index")
   end
-end
 
+  @doc """
+  A changeset for generating a confirmation code for a user.
+  
+  This generates a random 6-letter uppercase confirmation code that will be sent 
+  to the user's email address for verification.
+  
+  ## Options
+  
+    * `:generate_code` - When true, generates a new random 6-letter code.
+      Defaults to `true`.
+  """
+  def confirmation_code_changeset(user, attrs \\ %{}, opts \\ []) do
+    generate_code = Keyword.get(opts, :generate_code, true)
+    
+    changeset = cast(user, attrs, [:confirmation_code])
+    
+    if generate_code do
+      # Generate a random 6-letter uppercase confirmation code
+      code = :crypto.strong_rand_bytes(6)
+             |> Base.encode32(padding: false)
+             |> binary_part(0, 6)
+             |> String.upcase()
+      
+      put_change(changeset, :confirmation_code, code)
+    else
+      changeset
+      |> validate_required([:confirmation_code])
+      |> validate_length(:confirmation_code, is: 6)
+      |> validate_format(:confirmation_code, ~r/^[A-Z0-9]{6}$/, 
+          message: "must be 6 uppercase letters or numbers")
+    end
+  end
+
+  @doc """
+  Validates if the provided confirmation code matches the stored one.
+  
+  Returns `{:ok, changeset}` if the code matches, or `{:error, changeset}` otherwise.
+  """
+  def validate_confirmation_code(user, code) do
+    if user.confirmation_code == String.upcase(code) do
+      {:ok, confirm_changeset(user)}
+    else
+      {:error, add_error(change(user), :confirmation_code, "is invalid")}
+    end
+  end
+end

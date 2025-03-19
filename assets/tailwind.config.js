@@ -25,6 +25,7 @@ module.exports = {
         'button-shine': 'button-shine 8s ease-in-out infinite',
         'logo-scroll': 'logo-scroll 30s linear infinite',
         'slide-in-right': 'slideInRight 0.3s ease-out forwards',
+      },
       keyframes: {
         gradient: {
           '0%, 100%': {

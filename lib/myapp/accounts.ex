@@ -256,15 +256,28 @@ defmodule Myapp.Accounts do
       {:error, :already_confirmed}
 
   """
-  def deliver_user_confirmation_instructions(%User{} = user, confirmation_url_fun)
-      when is_function(confirmation_url_fun, 1) do
+  def deliver_user_confirmation_instructions(%User{} = user, _confirmation_url_fun \\ nil) do
     if user.confirmed_at do
       {:error, :already_confirmed}
     else
-      {encoded_token, user_token} = UserToken.build_email_token(user, "confirm")
-      Repo.insert!(user_token)
-      UserNotifier.deliver_confirmation_instructions(user, confirmation_url_fun.(encoded_token))
+      # Generate a 6-letter confirmation code
+      confirmation_code = generate_confirmation_code()
+      
+      # Update the user with the confirmation code
+      {:ok, updated_user} =
+        user
+        |> User.confirmation_code_changeset(%{confirmation_code: confirmation_code})
+        |> Repo.update()
+      
+      # Send the confirmation code via email
+      UserNotifier.deliver_confirmation_instructions(updated_user, confirmation_code)
     end
+  end
+  
+  # Generates a random 6-letter confirmation code
+  defp generate_confirmation_code do
+    # Generate 6 random uppercase letters
+    for _ <- 1..6, into: "", do: <<Enum.random(?A..?Z)>>
   end
 
   @doc """
@@ -273,19 +286,30 @@ defmodule Myapp.Accounts do
   If the token matches, the user account is marked as confirmed
   and the token is deleted.
   """
-  def confirm_user(token) do
-    with {:ok, query} <- UserToken.verify_email_token_query(token, "confirm"),
-         %User{} = user <- Repo.one(query),
-         {:ok, %{user: user}} <- Repo.transaction(confirm_user_multi(user)) do
-      {:ok, user}
-    else
-      _ -> :error
+  def confirm_user(email, confirmation_code) when is_binary(email) and is_binary(confirmation_code) do
+    # First check if a user with this email exists
+    case Repo.get_by(User, email: email) do
+      nil -> 
+        {:error, :user_not_found}
+        
+      %User{confirmed_at: confirmed_at} when not is_nil(confirmed_at) ->
+        {:error, :already_confirmed}
+        
+      user ->
+        # Now verify the confirmation code
+        if user.confirmation_code == confirmation_code do
+          {:ok, %{user: confirmed_user}} = Repo.transaction(confirm_user_multi(user))
+          {:ok, confirmed_user}
+        else
+          {:error, :invalid_code}
+        end
     end
   end
 
   defp confirm_user_multi(user) do
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:user, User.confirm_changeset(user))
+    |> Ecto.Multi.update(:user, User.confirm_changeset(user, %{confirmation_code: nil}))
+    # We still delete any existing confirmation tokens for backward compatibility
     |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, ["confirm"]))
   end
 
