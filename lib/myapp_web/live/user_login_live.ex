@@ -80,7 +80,7 @@ defmodule MyappWeb.UserLoginLive do
           <:actions>
             <.button
               phx-disable-with="Logging in..."
-              class="w-full py-2 px-3 rounded-md font-medium text-gray-400 bg-zinc-900 border border-white hover:bg-zinc-800 transition-all duration-200 transform hover:scale-[1.02]  "
+              class="w-full py-2 px-3 rounded-md font-medium  border border-gray-300 hover:bg-zinc-800 transition-all duration-200 transform hover:scale-[1.02]  "
             >
               <span class="flex items-center justify-center">
                 <span>Log in</span>
@@ -95,7 +95,7 @@ defmodule MyappWeb.UserLoginLive do
               <div class="w-full border-t border-zinc-800"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-5 bg-black text-gray-600">Or </span>
+              <span class="px-5 bg-black text-gray-400">Or </span>
             </div>
           </div>
 

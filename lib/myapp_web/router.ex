@@ -118,7 +118,6 @@ defmodule MyappWeb.Router do
     live "/counter", CounterLive
     live "/files", FileLive
     live "/search", SearchLive
-
     # Replace the three separate upload routes with a single consolidated route
     live "/upload", UploadLive
 

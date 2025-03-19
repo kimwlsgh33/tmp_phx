@@ -21,9 +21,10 @@ module.exports = {
         'gradient-background': 'gradient 15s ease infinite',
         'grid-flow': 'grid-flow 20s linear infinite',
         'button-glow': 'button-glow 1.5s ease-in-out infinite',
+        'button-glow': 'button-glow 1.5s ease-in-out infinite',
         'button-shine': 'button-shine 8s ease-in-out infinite',
         'logo-scroll': 'logo-scroll 30s linear infinite',
-      },
+        'slide-in-right': 'slideInRight 0.3s ease-out forwards',
       keyframes: {
         gradient: {
           '0%, 100%': {
