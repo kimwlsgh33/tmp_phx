@@ -58,10 +58,9 @@ defmodule Myapp.Accounts.User do
     changeset
     |> validate_required([:password])
     |> validate_length(:password, min: 12, max: 72)
-    # Examples of additional password validation:
-    # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
-    # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
-    # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
+    |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
+    |> validate_format(:password, ~r/[0-9]/, message: "at least one number")
+    |> validate_format(:password, ~r/[!@#$%^&*_]/, message: "at least one special character")
     |> maybe_hash_password(opts)
   end
 
@@ -129,6 +128,7 @@ defmodule Myapp.Accounts.User do
   """
   def confirm_changeset(user, attrs \\ %{}) do
     now = DateTime.utc_now() |> DateTime.truncate(:second)
+
     user
     |> cast(attrs, [:confirmation_code])
     |> change(confirmed_at: now)
@@ -165,7 +165,7 @@ defmodule Myapp.Accounts.User do
 
   @doc """
   A user changeset for registration via OAuth providers.
-  
+
   This changeset handles registration with OAuth providers like Google,
   where the provider handles authentication and we just need to store 
   provider-specific information.
@@ -195,40 +195,42 @@ defmodule Myapp.Accounts.User do
 
   @doc """
   A changeset for generating a confirmation code for a user.
-  
+
   This generates a random 6-letter uppercase confirmation code that will be sent 
   to the user's email address for verification.
-  
+
   ## Options
-  
+
     * `:generate_code` - When true, generates a new random 6-letter code.
       Defaults to `true`.
   """
   def confirmation_code_changeset(user, attrs \\ %{}, opts \\ []) do
     generate_code = Keyword.get(opts, :generate_code, true)
-    
+
     changeset = cast(user, attrs, [:confirmation_code])
-    
+
     if generate_code do
       # Generate a random 6-letter uppercase confirmation code
-      code = :crypto.strong_rand_bytes(6)
-             |> Base.encode32(padding: false)
-             |> binary_part(0, 6)
-             |> String.upcase()
-      
+      code =
+        :crypto.strong_rand_bytes(6)
+        |> Base.encode32(padding: false)
+        |> binary_part(0, 6)
+        |> String.upcase()
+
       put_change(changeset, :confirmation_code, code)
     else
       changeset
       |> validate_required([:confirmation_code])
       |> validate_length(:confirmation_code, is: 6)
-      |> validate_format(:confirmation_code, ~r/^[A-Z0-9]{6}$/, 
-          message: "must be 6 uppercase letters or numbers")
+      |> validate_format(:confirmation_code, ~r/^[A-Z0-9]{6}$/,
+        message: "must be 6 uppercase letters or numbers"
+      )
     end
   end
 
   @doc """
   Validates if the provided confirmation code matches the stored one.
-  
+
   Returns `{:ok, changeset}` if the code matches, or `{:error, changeset}` otherwise.
   """
   def validate_confirmation_code(user, code) do
