@@ -201,6 +201,10 @@ defmodule MyappWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
     end
+    
+    # Routes for linked accounts
+    post "/users/link_account", UserSessionController, :link_account
+    get "/users/switch_account/:linked_user_id", UserSessionController, :switch_account
   end
 
   # Routes available to all users

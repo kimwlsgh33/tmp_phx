@@ -6,7 +6,7 @@ defmodule Myapp.Accounts do
   import Ecto.Query, warn: false
   alias Myapp.Repo
 
-  alias Myapp.Accounts.{User, UserToken, UserNotifier}
+  alias Myapp.Accounts.{User, UserToken, UserNotifier, LinkedAccount}
 
   ## Database getters
 
@@ -467,6 +467,163 @@ defmodule Myapp.Accounts do
       {:ok, user}
     else
       _ -> :error
+    end
+  end
+
+  ## Linked Accounts
+
+  @doc """
+  Links a secondary account to a primary user account.
+
+  ## Examples
+
+      iex> link_account(primary_user, linked_user)
+      {:ok, %LinkedAccount{}}
+
+      iex> link_account(primary_user, same_user)
+      {:error, %Ecto.Changeset{}}
+  """
+  def link_account(%User{} = primary_user, %User{} = linked_user, attrs \\ %{}) do
+    # Prevent linking to self
+    if primary_user.id == linked_user.id do
+      changeset = LinkedAccount.changeset(%LinkedAccount{}, %{})
+      {:error, Ecto.Changeset.add_error(changeset, :linked_user_id, "cannot link to the same account")}
+    else
+      # Check if the link already exists
+      case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user.id) do
+        %LinkedAccount{} = existing_link ->
+          {:ok, existing_link}
+        nil ->
+          %LinkedAccount{}
+          |> LinkedAccount.changeset(Map.merge(attrs, %{
+              primary_user_id: primary_user.id,
+              linked_user_id: linked_user.id
+            }))
+          |> Repo.insert()
+      end
+    end
+  end
+
+  @doc """
+  Lists all linked accounts for a given user.
+
+  ## Examples
+
+      iex> list_linked_accounts(user)
+      [%{user: %User{}, name: "Work Account"}, ...]
+  """
+  def list_linked_accounts(%User{} = user) do
+    query = from la in LinkedAccount,
+            where: la.primary_user_id == ^user.id and la.linked_user_id != ^user.id,
+            join: u in User, on: la.linked_user_id == u.id,
+            select: %{
+              id: la.id,
+              user: u,
+              name: la.name
+            }
+            
+    Repo.all(query)
+  end
+
+  @doc """
+  Removes a link between accounts.
+
+  ## Examples
+
+      iex> unlink_account(primary_user, linked_user_id)
+      {:ok, %LinkedAccount{}}
+
+      iex> unlink_account(primary_user, non_existent_id)
+      {:error, :not_found}
+  """
+  def unlink_account(%User{} = primary_user, linked_user_id) do
+    case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user_id) do
+      nil ->
+        {:error, :not_found}
+      link ->
+        Repo.delete(link)
+    end
+  end
+
+  @doc """
+  Switches the current session to use a linked account.
+  Returns the session token for the linked account if successful.
+
+  ## Examples
+
+      iex> switch_to_linked_account(current_user, linked_user_id)
+      {:ok, "new_session_token", %User{}}
+
+      iex> switch_to_linked_account(current_user, non_linked_id)
+      {:error, :not_linked}
+  """
+  def switch_to_linked_account(%User{} = current_user, linked_user_id) do
+    # First verify that this is a valid link
+    case Repo.get_by(LinkedAccount, primary_user_id: current_user.id, linked_user_id: linked_user_id) do
+      nil ->
+        {:error, :not_linked}
+      _link ->
+        # Get the linked user
+        linked_user = Repo.get(User, linked_user_id)
+        
+        case linked_user do
+          nil ->
+            {:error, :user_not_found}
+          linked_user ->
+            # Create a complete graph of linked accounts
+            
+            # 1. Get all accounts linked to the current user
+            current_user_links_query = from la in LinkedAccount,
+                                      where: la.primary_user_id == ^current_user.id,
+                                      select: la.linked_user_id
+            current_user_linked_ids = Repo.all(current_user_links_query)
+            
+            # 2. Get all accounts linked to the target user
+            linked_user_links_query = from la in LinkedAccount,
+                                     where: la.primary_user_id == ^linked_user_id,
+                                     select: la.linked_user_id
+            linked_user_linked_ids = Repo.all(linked_user_links_query)
+            
+            # 3. Add the current user and target user to their respective groups
+            group1 = [current_user.id | current_user_linked_ids]
+            group2 = [linked_user_id | linked_user_linked_ids]
+            
+            # 4. Create links between all accounts in both groups
+            for id1 <- group1, id2 <- group2 do
+              # Skip self-links
+              if id1 != id2 do
+                # Check if link already exists
+                case Repo.get_by(LinkedAccount, primary_user_id: id1, linked_user_id: id2) do
+                  nil ->
+                    # Create new link
+                    %LinkedAccount{}
+                    |> LinkedAccount.changeset(%{
+                      primary_user_id: id1,
+                      linked_user_id: id2
+                    })
+                    |> Repo.insert()
+                  _existing -> :ok
+                end
+                
+                # Create reciprocal link if needed
+                case Repo.get_by(LinkedAccount, primary_user_id: id2, linked_user_id: id1) do
+                  nil ->
+                    # Create new reciprocal link
+                    %LinkedAccount{}
+                    |> LinkedAccount.changeset(%{
+                      primary_user_id: id2,
+                      linked_user_id: id1
+                    })
+                    |> Repo.insert()
+                  _existing -> :ok
+                end
+              end
+            end
+            
+            # Generate a new session token for the linked user
+            token = generate_user_session_token(linked_user)
+            {:ok, token, linked_user}
+        end
     end
   end
 end

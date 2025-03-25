@@ -160,57 +160,70 @@
                         <h3 class="text-white text-sm font-medium mb-3">Linked Accounts</h3>
                         
 <!-- Linked Accounts List - Show when accounts exist -->
-                        <div class="mb-3" x-data="{ hasLinkedAccounts: false }">
+                        <% has_linked_accounts =
+                          length(Myapp.Accounts.list_linked_accounts(@current_user)) > 0 %>
+                        <div class="mb-3" x-data={"{ hasLinkedAccounts: #{has_linked_accounts} }"}>
                           <div x-show="hasLinkedAccounts">
                             <div class="space-y-2 max-h-40 overflow-y-auto">
-                              <!-- Example of linked account item (this would be generated in a loop) -->
-                              <div class="flex items-center justify-between p-2 rounded hover:bg-zinc-800 dark:hover:bg-black transition-colors group">
-                                <div class="flex items-center">
-                                  <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white mr-3">
-                                    <span class="text-sm font-bold">J</span>
+                              <%= for linked_account <- Myapp.Accounts.list_linked_accounts(@current_user) do %>
+                                <div class="flex items-center justify-between p-2 rounded hover:bg-zinc-800 dark:hover:bg-black transition-colors group">
+                                  <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white mr-3">
+                                      <span class="text-sm font-bold">
+                                        {String.first(linked_account.user.email)}
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <span class="text-sm text-white">
+                                        {linked_account.user.email}
+                                      </span>
+                                      <%= if linked_account.name do %>
+                                        <div class="text-xs text-gray-400">
+                                          {linked_account.name}
+                                        </div>
+                                      <% end %>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <span class="text-sm text-white">john.doe@example.com</span>
-                                    <div class="text-xs text-gray-400">Personal</div>
+                                  <div class="flex space-x-1">
+                                    <a
+                                      href={~p"/users/switch_account/#{linked_account.user.id}"}
+                                      class="p-1 text-gray-400 hover:text-white transition-colors"
+                                      title="Switch to this account"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-4 w-4"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                      >
+                                        <path
+                                          fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"
+                                        />
+                                      </svg>
+                                    </a>
+                                    <!-- Could add unlink functionality here in the future -->
+                                    <button
+                                      class="p-1 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                      title="Remove account"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-4 w-4"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                      >
+                                        <path
+                                          fill-rule="evenodd"
+                                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                          clip-rule="evenodd"
+                                        />
+                                      </svg>
+                                    </button>
                                   </div>
                                 </div>
-                                <div class="flex space-x-1">
-                                  <button
-                                    class="p-1 text-gray-400 hover:text-white transition-colors"
-                                    title="Switch to this account"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      class="h-4 w-4"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                    >
-                                      <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                      />
-                                    </svg>
-                                  </button>
-                                  <button
-                                    class="p-1 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                                    title="Remove account"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      class="h-4 w-4"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                    >
-                                      <path
-                                        fill-rule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"
-                                      />
-                                    </svg>
-                                  </button>
-                                </div>
-                              </div>
+                              <% end %>
                             </div>
 
                             <div class="mt-3">
@@ -242,25 +255,45 @@
                       
 <!-- Add Account Button -->
                       <!-- Add Account Button with Modal -->
+                      <% linked_accounts_count =
+                        length(Myapp.Accounts.list_linked_accounts(@current_user)) %>
                       <div x-data="{ showLoginForm: false }">
-                        <button
-                          @click="showLoginForm = true"
-                          class="mt-2 flex items-center justify-center w-full py-2 px-3 bg-zinc-800 dark:bg-black hover:bg-zinc-700 text-white rounded text-sm transition-colors"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4 mr-2"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
+                        <%= if linked_accounts_count < 2 do %>
+                          <button
+                            @click="showLoginForm = true"
+                            class="mt-2 flex items-center justify-center w-full py-2 px-3 bg-zinc-800 dark:bg-black hover:bg-zinc-700 text-white rounded text-sm transition-colors"
                           >
-                            <path
-                              fill-rule="evenodd"
-                              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                          Add Another Account
-                        </button>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-4 w-4 mr-2"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                            Add Another Account
+                          </button>
+                        <% else %>
+                          <div class="mt-2 flex items-center justify-center w-full py-2 px-3 bg-zinc-700 dark:bg-zinc-800 text-gray-400 rounded text-sm cursor-not-allowed">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-4 w-4 mr-2"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                            Maximum of 3 linked accounts reached
+                          </div>
+                        <% end %>
                         
 <!-- Login Form Modal (hidden by default) -->
                         <div
@@ -295,8 +328,15 @@
                                 </svg>
                               </button>
                             </div>
-
-                            <form class="space-y-4">
+                            <.form
+                              :let={f}
+                              for={%{}}
+                              as={:user}
+                              action={~p"/users/link_account"}
+                              method="post"
+                              class="space-y-4"
+                            >
+                              <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
                               <div>
                                 <label
                                   for="email"
@@ -307,8 +347,9 @@
                                 <input
                                   type="email"
                                   id="email"
-                                  name="email"
+                                  name="user[email]"
                                   class="w-full px-3 py-2 border border-zinc-700 bg-zinc-800 dark:bg-black rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                  required
                                 />
                               </div>
                               <div>
@@ -321,8 +362,9 @@
                                 <input
                                   type="password"
                                   id="password"
-                                  name="password"
+                                  name="user[password]"
                                   class="w-full px-3 py-2 border border-zinc-700 bg-zinc-800 dark:bg-black rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                  required
                                 />
                               </div>
                               <div>
@@ -333,7 +375,7 @@
                                   Sign In & Link Account
                                 </button>
                               </div>
-                            </form>
+                            </.form>
 
                             <div class="mt-4 text-center">
                               <p class="text-sm text-gray-400">
