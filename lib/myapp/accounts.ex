@@ -6,7 +6,7 @@ defmodule Myapp.Accounts do
   import Ecto.Query, warn: false
   alias Myapp.Repo
 
-  alias Myapp.Accounts.{User, UserToken, UserNotifier}
+  alias Myapp.Accounts.{User, UserToken, UserNotifier, LinkedAccount}
 
   ## Database getters
 
@@ -256,15 +256,28 @@ defmodule Myapp.Accounts do
       {:error, :already_confirmed}
 
   """
-  def deliver_user_confirmation_instructions(%User{} = user, confirmation_url_fun)
-      when is_function(confirmation_url_fun, 1) do
+  def deliver_user_confirmation_instructions(%User{} = user, _confirmation_url_fun \\ nil) do
     if user.confirmed_at do
       {:error, :already_confirmed}
     else
-      {encoded_token, user_token} = UserToken.build_email_token(user, "confirm")
-      Repo.insert!(user_token)
-      UserNotifier.deliver_confirmation_instructions(user, confirmation_url_fun.(encoded_token))
+      # Generate a 6-letter confirmation code
+      confirmation_code = generate_confirmation_code()
+      
+      # Update the user with the confirmation code
+      {:ok, updated_user} =
+        user
+        |> User.confirmation_code_changeset(%{confirmation_code: confirmation_code})
+        |> Repo.update()
+      
+      # Send the confirmation code via email
+      UserNotifier.deliver_confirmation_instructions(updated_user, confirmation_code)
     end
+  end
+  
+  # Generates a random 6-letter confirmation code
+  defp generate_confirmation_code do
+    # Generate 6 random uppercase letters
+    for _ <- 1..6, into: "", do: <<Enum.random(?A..?Z)>>
   end
 
   @doc """
@@ -273,19 +286,30 @@ defmodule Myapp.Accounts do
   If the token matches, the user account is marked as confirmed
   and the token is deleted.
   """
-  def confirm_user(token) do
-    with {:ok, query} <- UserToken.verify_email_token_query(token, "confirm"),
-         %User{} = user <- Repo.one(query),
-         {:ok, %{user: user}} <- Repo.transaction(confirm_user_multi(user)) do
-      {:ok, user}
-    else
-      _ -> :error
+  def confirm_user(email, confirmation_code) when is_binary(email) and is_binary(confirmation_code) do
+    # First check if a user with this email exists
+    case Repo.get_by(User, email: email) do
+      nil -> 
+        {:error, :user_not_found}
+        
+      %User{confirmed_at: confirmed_at} when not is_nil(confirmed_at) ->
+        {:error, :already_confirmed}
+        
+      user ->
+        # Now verify the confirmation code
+        if user.confirmation_code == confirmation_code do
+          {:ok, %{user: confirmed_user}} = Repo.transaction(confirm_user_multi(user))
+          {:ok, confirmed_user}
+        else
+          {:error, :invalid_code}
+        end
     end
   end
 
   defp confirm_user_multi(user) do
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:user, User.confirm_changeset(user))
+    |> Ecto.Multi.update(:user, User.confirm_changeset(user, %{confirmation_code: nil}))
+    # We still delete any existing confirmation tokens for backward compatibility
     |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, ["confirm"]))
   end
 
@@ -376,6 +400,10 @@ defmodule Myapp.Accounts do
       info: %{email: email, image: avatar_url}
     } = auth
 
+    # Add debug logging
+    require Logger
+    Logger.debug("OAuth User Data - Email: #{email}, Provider: #{provider}, Avatar URL: #{avatar_url}")
+
     # Generate a secure random password for OAuth users
     random_password = generate_secure_password(32)
 
@@ -387,17 +415,21 @@ defmodule Myapp.Accounts do
       avatar_url: avatar_url,
       password: random_password
     }
+    
+    Logger.debug("User params being saved: #{inspect(user_params)}")
 
     # Try to find an existing user with this email
     case get_user_by_email(email) do
       # User exists - update their OAuth info if needed
       %User{} = user ->
+        Logger.debug("Updating existing user with OAuth info")
         user
         |> User.oauth_changeset(user_params)
         |> Repo.update()
 
       # User doesn't exist - create a new one
       nil ->
+        Logger.debug("Creating new user with OAuth info")
         %User{}
         |> User.oauth_registration_changeset(user_params)
         |> Repo.insert()
@@ -435,6 +467,163 @@ defmodule Myapp.Accounts do
       {:ok, user}
     else
       _ -> :error
+    end
+  end
+
+  ## Linked Accounts
+
+  @doc """
+  Links a secondary account to a primary user account.
+
+  ## Examples
+
+      iex> link_account(primary_user, linked_user)
+      {:ok, %LinkedAccount{}}
+
+      iex> link_account(primary_user, same_user)
+      {:error, %Ecto.Changeset{}}
+  """
+  def link_account(%User{} = primary_user, %User{} = linked_user, attrs \\ %{}) do
+    # Prevent linking to self
+    if primary_user.id == linked_user.id do
+      changeset = LinkedAccount.changeset(%LinkedAccount{}, %{})
+      {:error, Ecto.Changeset.add_error(changeset, :linked_user_id, "cannot link to the same account")}
+    else
+      # Check if the link already exists
+      case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user.id) do
+        %LinkedAccount{} = existing_link ->
+          {:ok, existing_link}
+        nil ->
+          %LinkedAccount{}
+          |> LinkedAccount.changeset(Map.merge(attrs, %{
+              primary_user_id: primary_user.id,
+              linked_user_id: linked_user.id
+            }))
+          |> Repo.insert()
+      end
+    end
+  end
+
+  @doc """
+  Lists all linked accounts for a given user.
+
+  ## Examples
+
+      iex> list_linked_accounts(user)
+      [%{user: %User{}, name: "Work Account"}, ...]
+  """
+  def list_linked_accounts(%User{} = user) do
+    query = from la in LinkedAccount,
+            where: la.primary_user_id == ^user.id and la.linked_user_id != ^user.id,
+            join: u in User, on: la.linked_user_id == u.id,
+            select: %{
+              id: la.id,
+              user: u,
+              name: la.name
+            }
+            
+    Repo.all(query)
+  end
+
+  @doc """
+  Removes a link between accounts.
+
+  ## Examples
+
+      iex> unlink_account(primary_user, linked_user_id)
+      {:ok, %LinkedAccount{}}
+
+      iex> unlink_account(primary_user, non_existent_id)
+      {:error, :not_found}
+  """
+  def unlink_account(%User{} = primary_user, linked_user_id) do
+    case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user_id) do
+      nil ->
+        {:error, :not_found}
+      link ->
+        Repo.delete(link)
+    end
+  end
+
+  @doc """
+  Switches the current session to use a linked account.
+  Returns the session token for the linked account if successful.
+
+  ## Examples
+
+      iex> switch_to_linked_account(current_user, linked_user_id)
+      {:ok, "new_session_token", %User{}}
+
+      iex> switch_to_linked_account(current_user, non_linked_id)
+      {:error, :not_linked}
+  """
+  def switch_to_linked_account(%User{} = current_user, linked_user_id) do
+    # First verify that this is a valid link
+    case Repo.get_by(LinkedAccount, primary_user_id: current_user.id, linked_user_id: linked_user_id) do
+      nil ->
+        {:error, :not_linked}
+      _link ->
+        # Get the linked user
+        linked_user = Repo.get(User, linked_user_id)
+        
+        case linked_user do
+          nil ->
+            {:error, :user_not_found}
+          linked_user ->
+            # Create a complete graph of linked accounts
+            
+            # 1. Get all accounts linked to the current user
+            current_user_links_query = from la in LinkedAccount,
+                                      where: la.primary_user_id == ^current_user.id,
+                                      select: la.linked_user_id
+            current_user_linked_ids = Repo.all(current_user_links_query)
+            
+            # 2. Get all accounts linked to the target user
+            linked_user_links_query = from la in LinkedAccount,
+                                     where: la.primary_user_id == ^linked_user_id,
+                                     select: la.linked_user_id
+            linked_user_linked_ids = Repo.all(linked_user_links_query)
+            
+            # 3. Add the current user and target user to their respective groups
+            group1 = [current_user.id | current_user_linked_ids]
+            group2 = [linked_user_id | linked_user_linked_ids]
+            
+            # 4. Create links between all accounts in both groups
+            for id1 <- group1, id2 <- group2 do
+              # Skip self-links
+              if id1 != id2 do
+                # Check if link already exists
+                case Repo.get_by(LinkedAccount, primary_user_id: id1, linked_user_id: id2) do
+                  nil ->
+                    # Create new link
+                    %LinkedAccount{}
+                    |> LinkedAccount.changeset(%{
+                      primary_user_id: id1,
+                      linked_user_id: id2
+                    })
+                    |> Repo.insert()
+                  _existing -> :ok
+                end
+                
+                # Create reciprocal link if needed
+                case Repo.get_by(LinkedAccount, primary_user_id: id2, linked_user_id: id1) do
+                  nil ->
+                    # Create new reciprocal link
+                    %LinkedAccount{}
+                    |> LinkedAccount.changeset(%{
+                      primary_user_id: id2,
+                      linked_user_id: id1
+                    })
+                    |> Repo.insert()
+                  _existing -> :ok
+                end
+              end
+            end
+            
+            # Generate a new session token for the linked user
+            token = generate_user_session_token(linked_user)
+            {:ok, token, linked_user}
+        end
     end
   end
 end

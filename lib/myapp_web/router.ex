@@ -11,7 +11,6 @@ defmodule MyappWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
-    plug :log_request
   end
 
   pipeline :browser_without_layout do
@@ -29,6 +28,7 @@ defmodule MyappWeb.Router do
   end
 
   # ----------------------------------------------------------------------
+  # Helper functions
 
   def log_request(conn, _opts) do
     IO.inspect(conn.request_path, label: "Requested Path")
@@ -37,6 +37,7 @@ defmodule MyappWeb.Router do
   end
 
   # ----------------------------------------------------------------------
+  # Routes
 
   # Landing page route
   scope "/", MyappWeb do
@@ -76,10 +77,9 @@ defmodule MyappWeb.Router do
     live "/counter", CounterLive
     live "/files", FileLive
     live "/search", SearchLive
-    
     # Replace the three separate upload routes with a single consolidated route
     live "/upload", UploadLive
-    
+
     # Keep the individual routes for direct access if needed, but they can be removed
     # if you want to force users to go through the main upload page
     live "/upload/post", Upload.PostLive
@@ -156,9 +156,14 @@ defmodule MyappWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{MyappWeb.UserAuth, :ensure_authenticated}] do
+      live "/users/profile", UserProfileLive, :show
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
     end
+    
+    # Routes for linked accounts
+    post "/users/link_account", UserSessionController, :link_account
+    get "/users/switch_account/:linked_user_id", UserSessionController, :switch_account
   end
 
   # Routes available to all users

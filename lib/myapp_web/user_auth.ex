@@ -24,9 +24,12 @@ defmodule MyappWeb.UserAuth do
   so LiveView sessions are identified and automatically
   disconnected on log out. The line can be safely removed
   if you are not using LiveView.
+
+  An optional token can be provided (e.g., when switching between linked accounts)
+  which will be used instead of generating a new one.
   """
-  def log_in_user(conn, user, params \\ %{}) do
-    token = Accounts.generate_user_session_token(user)
+  def log_in_user(conn, user, params \\ %{}, token \\ nil) do
+    token = token || Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
     
     # Save flash messages before session renewal
@@ -88,7 +91,7 @@ defmodule MyappWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/")
+    |> redirect(to: ~p"/users/log_in")
   end
 
   @doc """
@@ -223,9 +226,15 @@ defmodule MyappWeb.UserAuth do
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")
   end
-
   defp maybe_store_return_to(%{method: "GET"} = conn) do
-    put_session(conn, :user_return_to, current_path(conn))
+    # Check for return_to query parameter first, then use current path as fallback
+    return_to = 
+      case conn.query_params do
+        %{"return_to" => path} when is_binary(path) and path != "" -> path
+        _ -> current_path(conn)
+      end
+    
+    put_session(conn, :user_return_to, return_to)
   end
 
   defp maybe_store_return_to(conn), do: conn
