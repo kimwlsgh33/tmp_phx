@@ -1,4 +1,66 @@
 defmodule Myapp.Accounts.SocialMediaToken do
+  @moduledoc """
+  Manages encrypted social media access tokens for user authentication with third-party platforms.
+  
+  ## Purpose and Overview
+  
+  This module provides secure storage and management of OAuth tokens for various social media
+  platforms. Unlike the `PlatformToken` module, `SocialMediaToken` implements encryption for
+  all stored tokens, making it more suitable for production environments where security is
+  a critical concern.
+  
+  ## Token Structure
+  
+  Social media tokens are stored with the following key fields:
+  
+  * `user_id` - The ID of the user who owns the token
+  * `provider` - The social media platform (e.g., :twitter, :instagram)
+  * `access_token` - The encrypted OAuth access token used for API calls
+  * `refresh_token` - The encrypted OAuth refresh token (when available)
+  * `expires_at` - When the access token expires
+  * `refresh_token_expires_at` - When the refresh token expires
+  * `provider_user_id` - The user's ID on the social platform
+  * `revoked_at` - Timestamp when the token was invalidated (if applicable)
+  * `metadata` - Additional platform-specific data
+  
+  ## Encryption Approach
+  
+  Tokens are encrypted using Phoenix.Token with a salt-based approach:
+  
+  1. When tokens are stored, the plaintext values are passed via virtual fields
+     (`access_token_text` and `refresh_token_text`)
+  2. The encryption process uses Phoenix.Token to sign the data with a salt
+  3. Encrypted tokens are stored as binary data in the database
+  4. When retrieving tokens, they are automatically decrypted back to plaintext
+  
+  This approach prevents plaintext tokens from ever being stored in the database,
+  providing protection against database breaches or unauthorized access.
+  
+  ## Token Lifecycle
+  
+  Social media tokens follow this lifecycle:
+  
+  1. **Creation** - Tokens are stored via `store_tokens/4` after OAuth authentication
+  2. **Retrieval** - Active tokens are fetched via `get_active_tokens/2` with automatic decryption
+  3. **Refresh** - When tokens expire, they can be refreshed using `update_token/3`
+  4. **Expiration** - Tokens automatically expire based on provider-specified or default timeframes
+  5. **Revocation** - Tokens can be explicitly revoked via `revoke_active_tokens/2`
+  
+  The module provides helper functions like `needs_refresh?/1` and `refresh_token_valid?/1`
+  to manage this lifecycle.
+  
+  ## Comparison with PlatformToken
+  
+  While PlatformToken also manages social platform tokens, SocialMediaToken differs in key ways:
+  
+  * **Security** - SocialMediaToken encrypts tokens, PlatformToken stores them as plaintext
+  * **Structure** - SocialMediaToken has more fields for better token lifecycle tracking
+  * **Functionality** - SocialMediaToken includes built-in refresh and expiration handling
+  * **Implementation** - SocialMediaToken uses a more robust, database-only approach
+  
+  Both modules may exist during a transition period, with SocialMediaToken intended as
+  a more secure replacement for PlatformToken in production environments.
+  """
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
