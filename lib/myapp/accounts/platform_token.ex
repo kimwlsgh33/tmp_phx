@@ -1,6 +1,46 @@
 defmodule Myapp.Accounts.PlatformToken do
   @moduledoc """
-  Schema for storing social media platform access tokens.
+  A schema and utilities for managing social media platform access tokens.
+
+  ## Purpose
+  This module handles the storage, validation, and lifecycle management of access tokens 
+  used for authenticating with various social media platforms (Twitter, Facebook, etc.).
+  It provides a centralized way to store OAuth tokens securely in the database and 
+  perform common operations on them.
+
+  ## Structure
+  Each platform token contains:
+  * `platform` - The name of the social platform (twitter, facebook, etc.)
+  * `access_token` - The OAuth access token used for API requests
+  * `refresh_token` - Optional token used to refresh expired access tokens
+  * `expires_at` - UTC datetime when the token expires
+  * `token_type` - The type of token (usually "Bearer")
+  * `scope` - The permissions granted to the token
+  * `user_id` - The user who owns this token
+
+  ## Usage
+  PlatformTokens are typically created during OAuth flows when a user connects their
+  social media account. They are then used for making authenticated API requests to
+  the respective platforms. The module provides utility functions like:
+  * `expired?/1` - Check if a token has expired
+  * `authorization_header/1` - Format the token for use in API requests
+
+  ## Supported Platforms
+  Currently supported platforms include:
+  * Twitter
+  * Facebook
+  * Instagram
+  * TikTok
+  * YouTube
+  * Vimeo
+
+  ## Related Modules
+  This module is part of the token ecosystem in the application:
+  * `Myapp.Accounts.UserToken` - For authentication and session management
+  * `Myapp.Accounts.SocialMediaToken` - An alternative implementation with similar purpose
+  * `Myapp.TokenStore` - For in-memory token storage
+
+  Each user can have at most one token per platform, enforced by a unique constraint.
   """
   use Ecto.Schema
   import Ecto.Changeset

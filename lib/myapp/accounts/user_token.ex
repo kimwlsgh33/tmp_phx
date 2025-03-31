@@ -1,8 +1,47 @@
 defmodule Myapp.Accounts.UserToken do
+  @moduledoc """
+  Manages authentication and security tokens for users throughout the application.
+  
+  ## Purpose
+  This module is responsible for handling various types of user tokens needed for:
+  * Session management - maintaining authenticated user sessions
+  * Account verification - confirming user email addresses
+  * Password reset - secure password recovery process
+  * Email changes - validating requests to change a user's email
+  * API authentication - providing secure API access
+
+  ## Token Contexts
+  Different token contexts serve different purposes:
+  * "session" - Maintains a user's authenticated state across requests
+  * "confirm" - Used for verifying a user's email address (valid for #{@confirm_validity_in_days} days)
+  * "reset_password" - Used for password reset flows (valid for #{@reset_password_validity_in_days} day for security)
+  * "change:*" - Used when changing a user's email address (valid for #{@change_email_validity_in_days} days)
+  * "api-token" - Used for API authentication (valid for 365 days)
+
+  ## Storage and Security
+  Tokens are stored in the database with different security approaches based on their purpose:
+  
+  * **Session tokens** are stored as raw binary values since they are only transmitted in 
+    signed/encrypted cookies and allow for individual session management.
+  
+  * **Email tokens** (for confirmation, password reset, etc.) are stored as hashed values 
+    using SHA-256. The raw token is sent to the user's email, but only the hash is stored 
+    in the database, making it impossible to reconstruct the original token from the database.
+    This provides additional security if the database is compromised.
+
+  ## Token Lifecycle
+  1. **Creation** - Tokens are generated using strong random bytes (#{@rand_size} bytes)
+  2. **Storage** - Tokens are either stored directly (session) or hashed (email-related)
+  3. **Validation** - On use, tokens are verified against stored values and checked for expiration
+  4. **Expiration** - Each token type has a specific validity period after which it becomes invalid
+  5. **Invalidation** - Tokens can be explicitly invalidated when no longer needed
+
+  The system also ensures tokens are invalidated when sensitive information changes
+  (e.g., email address changes invalidate previous email-related tokens).
+  """
   use Ecto.Schema
   import Ecto.Query
   alias Myapp.Accounts.UserToken
-
   @hash_algorithm :sha256
   @rand_size 32
 
