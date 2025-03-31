@@ -17,16 +17,26 @@ defmodule MyappWeb.UserLoginLive do
           </div>
 
           <.header class="text-center">
-            <span class="text-2xl font-bold text-gray-400">Log in to your account</span>
+            <span class="text-2xl font-bold text-gray-400">
+              <%= if @linking do %>
+                Add a linked account
+              <% else %>
+                Log in to your account
+              <% end %>
+            </span>
             <:subtitle>
               <p class="mt-2 text-sm text-gray-400">
-                Don't have an account?
-                <.link
-                  navigate={~p"/users/register"}
-                  class="font-semibold text-[#FD4F00] hover:underline transition-colors duration-200"
-                >
-                  Sign up
-                </.link>
+                <%= if @linking do %>
+                  This account will be linked to your current session
+                <% else %>
+                  Don't have an account?
+                  <.link
+                    navigate={~p"/users/register"}
+                    class="font-semibold text-[#FD4F00] hover:underline transition-colors duration-200"
+                  >
+                    Sign up
+                  </.link>
+                <% end %>
               </p>
             </:subtitle>
           </.header>
@@ -83,7 +93,7 @@ defmodule MyappWeb.UserLoginLive do
               class="w-full py-2 px-3 rounded-md font-medium  border border-gray-300 hover:bg-zinc-800 transition-all duration-200 transform hover:scale-[1.02]  "
             >
               <span class="flex items-center justify-center">
-                <span>Log in</span>
+                <span><%= if @linking, do: "Link account", else: "Log in" %></span>
               </span>
             </.button>
           </:actions>
@@ -145,9 +155,17 @@ defmodule MyappWeb.UserLoginLive do
     """
   end
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     email = Phoenix.Flash.get(socket.assigns.flash, :email)
     form = to_form(%{"email" => email}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
+    
+    # Check if this is for linking an account
+    linking = params["link"] == "true"
+    
+    socket = socket
+    |> assign(:form, form)
+    |> assign(:linking, linking)
+    
+    {:ok, socket, temporary_assigns: [form: form]}
   end
 end
