@@ -159,16 +159,21 @@ defmodule MyappWeb.Router do
       live "/users/profile", UserProfileLive, :show
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/users/sign_out", UserLogoutLive, :show
+      live "/users/link_account", UserLoginLive, :link
     end
 
     # Routes for linked accounts
-    # post "/users/link_account", UserSessionController, :link_account
-    # get "/users/switch_account/:linked_user_id", UserSessionController, :switch_account
+    post "/users/link_account", UserSessionController, :link_account
+    get "/users/switch_account/:linked_user_id", UserSessionController, :switch_account
   end
 
   # Routes available to all users
   scope "/", MyappWeb do
     pipe_through [:browser]
+    
+    # Special route for linking accounts that bypasses authentication checks
+    get "/users/link_account_form", UserSessionController, :new_link
 
     delete "/users/log_out", UserSessionController, :delete
 

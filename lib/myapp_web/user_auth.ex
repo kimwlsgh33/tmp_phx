@@ -67,13 +67,15 @@ defmodule MyappWeb.UserAuth do
   #       |> put_session(:preferred_locale, preferred_locale)
   #     end
   #
-  defp renew_session(conn) do
-    delete_csrf_token()
+defp renew_session(conn) do
+  user_return_to = get_session(conn, :user_return_to)
+  delete_csrf_token()
 
-    conn
-    |> configure_session(renew: true)
-    |> clear_session()
-  end
+  conn
+  |> configure_session(renew: true)
+  |> clear_session()
+  |> put_session(:user_return_to, user_return_to)
+end
 
   @doc """
   Logs the user out.

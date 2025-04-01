@@ -183,15 +183,38 @@
                               x-transition:leave="transition ease-in duration-150"
                               x-transition:leave-start="transform opacity-100 scale-100"
                               x-transition:leave-end="transform opacity-0 scale-95"
-                              class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-zinc-800 dark:bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-60"
+                              class="absolute right-0 mt-3 w-64 origin-top-right rounded-md bg-zinc-800 dark:bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-60 transform -translate-x-10"
                               role="menu"
                               aria-orientation="vertical"
                               aria-labelledby="switch-menu-button"
                               tabindex="-1"
-                              style="display: none; top: 30px;"
+                              style="display: none; top: 40px;"
                             >
                               <div class="py-1">
+                                <div class="px-4 py-2 text-xs text-gray-500 border-b border-zinc-700">
+                                  Linked Accounts
+                                </div>
+
+                                <%= for linked_account <- Myapp.Accounts.list_linked_accounts(@current_user) do %>
+                                  <div class="flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-zinc-700 dark:hover:bg-zinc-900 hover:text-white transition-colors">
+                                    <div class="flex items-center">
+                                      <div class="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold mr-2">
+                                        {String.first(linked_account.user.email)}
+                                      </div>
+                                      <a
+                                        href={~p"/users/switch_account/#{linked_account.user.id}"}
+                                        class="flex-1 hover:underline"
+                                        @click="switchDropdownOpen = false"
+                                      >
+                                        {linked_account.user.email}
+                                      </a>
+                                    </div>
+                                  </div>
+                                <% end %>
+
+                                <div class="border-t border-zinc-700 mt-1"></div>
                                 <a
+                                  href={~p"/users/link_account"}
                                   class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-700 dark:hover:bg-zinc-900 hover:text-white transition-colors"
                                   role="menuitem"
                                   tabindex="-1"
@@ -259,8 +282,7 @@
                         </div>
                       </a>
                       <.link
-                        href={~p"/users/log_out"}
-                        method="delete"
+                        href={~p"/users/sign_out"}
                         class="block px-6 py-3 text-sm text-gray-300 hover:bg-zinc-800 dark:hover:bg-black hover:text-white transition-colors"
                         role="menuitem"
                       >

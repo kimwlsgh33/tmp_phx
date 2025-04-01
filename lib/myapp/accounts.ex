@@ -537,11 +537,20 @@ defmodule Myapp.Accounts do
       {:error, :not_found}
   """
   def unlink_account(%User{} = primary_user, linked_user_id) do
-    case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user_id) do
-      nil ->
+    # Check for primary-to-linked relationship
+    primary_to_linked = Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user_id)
+    primary_result = if primary_to_linked, do: Repo.delete(primary_to_linked), else: nil
+    
+    # Check for linked-to-primary (reciprocal) relationship
+    linked_to_primary = Repo.get_by(LinkedAccount, primary_user_id: linked_user_id, linked_user_id: primary_user.id)
+    reciprocal_result = if linked_to_primary, do: Repo.delete(linked_to_primary), else: nil
+    
+    # Return success if at least one link was found and deleted
+    cond do
+      primary_result || reciprocal_result ->
+        primary_result || reciprocal_result
+      true ->
         {:error, :not_found}
-      link ->
-        Repo.delete(link)
     end
   end
 

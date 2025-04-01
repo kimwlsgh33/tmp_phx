@@ -49,6 +49,12 @@ defmodule MyappWeb.UserLoginLive do
           phx-update="ignore"
           class="mt-8 space-y-6"
         >
+          <%= if @linking do %>
+            <input type="hidden" name="link" value="true" />
+            <%= if @return_to do %>
+              <input type="hidden" name="return_to" value={@return_to} />
+            <% end %>
+          <% end %>
           <div class="space-y-4">
             <.input
               field={@form[:email]}
@@ -156,16 +162,35 @@ defmodule MyappWeb.UserLoginLive do
   end
 
   def mount(params, _session, socket) do
+    IO.puts("UserLoginLive mount called with params: #{inspect(params)}")
     email = Phoenix.Flash.get(socket.assigns.flash, :email)
     form = to_form(%{"email" => email}, as: "user")
     
     # Check if this is for linking an account
     linking = params["link"] == "true"
     
+    # Extract return_to parameter from URL params
+    return_to = params["return_to"]
+    
     socket = socket
     |> assign(:form, form)
     |> assign(:linking, linking)
+    |> assign(:return_to, return_to)
     
     {:ok, socket, temporary_assigns: [form: form]}
+  end
+  
+  def handle_params(_params, _uri, socket) do
+    action = socket.assigns.live_action
+    
+    # If this is the link action, set linking to true
+    socket = 
+      if action == :link do
+        assign(socket, linking: true)
+      else
+        socket
+      end
+      
+    {:noreply, socket}
   end
 end
