@@ -67,7 +67,7 @@ defmodule MyappWeb.UserLoginLive do
             <.input
               field={@form[:password]}
               type="password"
-              placeholder="password"
+              placeholder="at leaset 1upercase, 1lowcase, 1special, 12 characters"
               autocomplete="current-password"
               class="appearance-none relative block w-full px-3 py-2 border border-gray-300  "
               required
@@ -99,7 +99,7 @@ defmodule MyappWeb.UserLoginLive do
               class="w-full py-2 px-3 rounded-md font-medium  border border-gray-300 hover:bg-zinc-800 transition-all duration-200 transform hover:scale-[1.02]  "
             >
               <span class="flex items-center justify-center">
-                <span><%= if @linking, do: "Link account", else: "Log in" %></span>
+                <span>{if @linking, do: "Link account", else: "Log in"}</span>
               </span>
             </.button>
           </:actions>
@@ -146,7 +146,7 @@ defmodule MyappWeb.UserLoginLive do
                   />
                 </g>
               </svg>
-              <span>Sign in with Google</span>
+              <span>{if @linking, do: "Link account with Google", else: "Sign in with Google"}</span>
             </a>
           </div>
         </div>
@@ -165,32 +165,33 @@ defmodule MyappWeb.UserLoginLive do
     IO.puts("UserLoginLive mount called with params: #{inspect(params)}")
     email = Phoenix.Flash.get(socket.assigns.flash, :email)
     form = to_form(%{"email" => email}, as: "user")
-    
+
     # Check if this is for linking an account
     linking = params["link"] == "true"
-    
+
     # Extract return_to parameter from URL params
     return_to = params["return_to"]
-    
-    socket = socket
-    |> assign(:form, form)
-    |> assign(:linking, linking)
-    |> assign(:return_to, return_to)
-    
+
+    socket =
+      socket
+      |> assign(:form, form)
+      |> assign(:linking, linking)
+      |> assign(:return_to, return_to)
+
     {:ok, socket, temporary_assigns: [form: form]}
   end
-  
+
   def handle_params(_params, _uri, socket) do
     action = socket.assigns.live_action
-    
+
     # If this is the link action, set linking to true
-    socket = 
+    socket =
       if action == :link do
         assign(socket, linking: true)
       else
         socket
       end
-      
+
     {:noreply, socket}
   end
 end

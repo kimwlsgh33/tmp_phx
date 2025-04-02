@@ -10,7 +10,7 @@ defmodule MyappWeb.UserSessionController do
     # Redirect to the login LiveView with link=true parameter
     redirect(conn, to: ~p"/users/log_in?link=true")
   end
-  
+
   def create(conn, %{"_action" => "registered"} = params) do
     create(conn, params, "Account created successfully!")
   end
@@ -128,46 +128,69 @@ defmodule MyappWeb.UserSessionController do
   def link_account(conn, %{"user" => user_params} = params) do
     IO.puts("UserSessionController link_account called with params: #{inspect(params)}")
     %{"email" => email, "password" => password} = user_params
-    current_user = conn.assigns.current_user
-
+    
+    # Check if this is a login-time linking (with link=true parameter)
+    is_login_linking = Map.get(params, "link") == "true"
+    
+    # Get current user - may be nil if this is a login-time linking
+    current_user = conn.assigns[:current_user]
+    
     # Extract return_to from params if it exists, otherwise default to "/"
     return_to = Map.get(params, "return_to", "/")
-
+    
     # Store return_to in session
     conn = put_session(conn, :user_return_to, return_to)
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
-      if user.id == current_user.id do
-        conn
-        |> put_flash(:error, "You cannot link your account to itself.")
-        |> redirect(to: return_to)
-      else
-        linked_accounts = Accounts.list_linked_accounts(current_user)
-
-        if length(linked_accounts) > 3 do
+      cond do
+        # Case 1: Login-time linking but no current user in session
+        is_login_linking && is_nil(current_user) ->
           conn
-          |> put_flash(:error, "You can link a maximum of 3 accounts")
+          |> put_flash(:error, "No current session found for linking accounts.")
           |> redirect(to: return_to)
-        else
-          case Accounts.link_account(current_user, user) do
-            {:ok, _linked_account} ->
-              conn
-              |> put_flash(:info, "Account linked successfully!")
-              |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
-
-            {:error, %Ecto.Changeset{} = changeset} ->
-              error_message =
-                if Enum.any?(changeset.errors, fn {field, _} -> field == :linked_user_id end) do
-                  "This account is already linked to your account."
+          
+        # Case 2: Attempting to link account to itself
+        current_user && user.id == current_user.id ->
+          conn
+          |> put_flash(:error, "You cannot link your account to itself.")
+          |> redirect(to: return_to)
+          
+        # Case 3: Normal linking and login-time linking with valid current user
+        true ->
+          linked_accounts = Accounts.list_linked_accounts(current_user)
+          
+          if length(linked_accounts) > 3 do
+            conn
+            |> put_flash(:error, "You can link a maximum of 3 accounts")
+            |> redirect(to: return_to)
+          else
+            case Accounts.link_account(current_user, user) do
+              {:ok, _linked_account} ->
+                if is_login_linking do
+                  # For login-time linking: link accounts AND switch to the new account
+                  conn
+                  |> put_flash(:info, "Account linked and switched successfully!")
+                  |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
                 else
-                  "Failed to link account. Please try again."
+                  # For regular linking: keep current session (current behavior)
+                  conn
+                  |> put_flash(:info, "Account linked successfully!")
+                  |> redirect(to: return_to)
                 end
-
-              conn
-              |> put_flash(:error, error_message)
-              |> redirect(to: return_to)
+                
+              {:error, %Ecto.Changeset{} = changeset} ->
+                error_message =
+                  if Enum.any?(changeset.errors, fn {field, _} -> field == :linked_user_id end) do
+                    "This account is already linked to your account."
+                  else
+                    "Failed to link account. Please try again."
+                  end
+                
+                conn
+                |> put_flash(:error, error_message)
+                |> redirect(to: return_to)
+            end
           end
-        end
       end
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
