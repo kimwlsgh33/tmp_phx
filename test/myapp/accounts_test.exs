@@ -514,4 +514,93 @@ defmodule Myapp.AccountsTest do
       assert Accounts.fetch_user_by_api_token("invalid") == :error
     end
   end
+  describe "unlink_account/2" do
+    setup do
+      primary_user = user_fixture()
+      linked_user = user_fixture()
+      {:ok, %{primary_user: primary_user, linked_user: linked_user}}
+    end
+
+    test "removes primary->linked link", %{primary_user: primary_user, linked_user: linked_user} do
+      # Create link from primary to linked
+      {:ok, _link} = Accounts.link_account(primary_user, linked_user)
+      
+      # Verify link exists
+      assert Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: primary_user.id, 
+        linked_user_id: linked_user.id)
+      
+      # Unlink accounts
+      {:ok, _} = Accounts.unlink_account(primary_user, linked_user.id)
+      
+      # Verify link is removed
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: primary_user.id, 
+        linked_user_id: linked_user.id)
+    end
+
+    test "removes reciprocal link (linked->primary)", %{primary_user: primary_user, linked_user: linked_user} do
+      # Create a bidirectional link
+      {:ok, _link1} = Accounts.link_account(primary_user, linked_user)
+      {:ok, _link2} = Accounts.link_account(linked_user, primary_user)
+      
+      # Verify both links exist
+      assert Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: primary_user.id, 
+        linked_user_id: linked_user.id)
+      assert Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: linked_user.id, 
+        linked_user_id: primary_user.id)
+      
+      # Unlink accounts
+      {:ok, _} = Accounts.unlink_account(primary_user, linked_user.id)
+      
+      # Verify both links are removed
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: primary_user.id, 
+        linked_user_id: linked_user.id)
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: linked_user.id, 
+        linked_user_id: primary_user.id)
+    end
+
+    test "returns success when only one direction exists", %{primary_user: primary_user, linked_user: linked_user} do
+      # Create only the linked->primary direction
+      {:ok, _link} = Accounts.link_account(linked_user, primary_user)
+      
+      # Verify only the linked->primary link exists
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: primary_user.id, 
+        linked_user_id: linked_user.id)
+      assert Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: linked_user.id, 
+        linked_user_id: primary_user.id)
+      
+      # Unlink accounts
+      {:ok, _} = Accounts.unlink_account(primary_user, linked_user.id)
+      
+      # Verify all links are removed
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: primary_user.id, 
+        linked_user_id: linked_user.id)
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: linked_user.id, 
+        linked_user_id: primary_user.id)
+    end
+
+    test "returns :not_found when neither link exists", %{primary_user: primary_user, linked_user: linked_user} do
+      # No links created
+      
+      # Verify no links exist
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: primary_user.id, 
+        linked_user_id: linked_user.id)
+      refute Repo.get_by(Myapp.Accounts.LinkedAccount, 
+        primary_user_id: linked_user.id, 
+        linked_user_id: primary_user.id)
+      
+      # Attempt to unlink non-existent links
+      assert {:error, :not_found} = Accounts.unlink_account(primary_user, linked_user.id)
+    end
+  end
 end

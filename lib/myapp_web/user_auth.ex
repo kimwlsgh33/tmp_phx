@@ -67,13 +67,15 @@ defmodule MyappWeb.UserAuth do
   #       |> put_session(:preferred_locale, preferred_locale)
   #     end
   #
-  defp renew_session(conn) do
-    delete_csrf_token()
+defp renew_session(conn) do
+  user_return_to = get_session(conn, :user_return_to)
+  delete_csrf_token()
 
-    conn
-    |> configure_session(renew: true)
-    |> clear_session()
-  end
+  conn
+  |> configure_session(renew: true)
+  |> clear_session()
+  |> put_session(:user_return_to, user_return_to)
+end
 
   @doc """
   Logs the user out.
@@ -194,7 +196,23 @@ defmodule MyappWeb.UserAuth do
   Used for routes that require the user to not be authenticated.
   """
   def redirect_if_user_is_authenticated(conn, _opts) do
-    if conn.assigns[:current_user] do
+    # Check if the request contains the "link" parameter with value "true"
+    # First check direct params, then nested params (common in form submissions)
+    user_params = Map.get(conn.params, "user", %{})
+    
+    link_param = cond do
+      # Check in top-level params (includes both query params and form body)
+      Map.get(conn.params, "link") == "true" -> true
+      
+      # Check in nested user param (common in form submissions like %{"user" => %{"link" => "true"}})
+      is_map(user_params) && Map.get(user_params, "link") == "true" -> true
+      
+      # Default case - no link param found
+      true -> false
+    end
+    
+    # Only redirect if there's a current user AND this is not a link=true request
+    if conn.assigns[:current_user] && !link_param do
       conn
       |> redirect(to: signed_in_path(conn))
       |> halt()

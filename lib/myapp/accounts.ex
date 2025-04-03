@@ -489,17 +489,47 @@ defmodule Myapp.Accounts do
       changeset = LinkedAccount.changeset(%LinkedAccount{}, %{})
       {:error, Ecto.Changeset.add_error(changeset, :linked_user_id, "cannot link to the same account")}
     else
-      # Check if the link already exists
-      case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user.id) do
-        %LinkedAccount{} = existing_link ->
-          {:ok, existing_link}
-        nil ->
-          %LinkedAccount{}
-          |> LinkedAccount.changeset(Map.merge(attrs, %{
-              primary_user_id: primary_user.id,
-              linked_user_id: linked_user.id
-            }))
-          |> Repo.insert()
+      # Check if the primary->linked link already exists
+      primary_to_linked = 
+        case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user.id) do
+          %LinkedAccount{} = existing_link ->
+            {:existing, existing_link}
+          nil ->
+            # Create primary->linked link
+            case %LinkedAccount{}
+                |> LinkedAccount.changeset(Map.merge(attrs, %{
+                    primary_user_id: primary_user.id,
+                    linked_user_id: linked_user.id
+                  }))
+                |> Repo.insert() do
+              {:ok, link} -> {:created, link}
+              {:error, changeset} -> {:error, changeset}
+            end
+        end
+
+      case primary_to_linked do
+        {:error, changeset} ->
+          {:error, changeset}
+        {_, link} ->
+          # Now ensure the reciprocal link (linked->primary) exists
+          _linked_to_primary =
+            case Repo.get_by(LinkedAccount, primary_user_id: linked_user.id, linked_user_id: primary_user.id) do
+              %LinkedAccount{} = _existing_link ->
+                # Reciprocal link already exists, do nothing
+                :ok
+              nil ->
+                # Create linked->primary link
+                %LinkedAccount{}
+                |> LinkedAccount.changeset(%{
+                    primary_user_id: linked_user.id,
+                    linked_user_id: primary_user.id,
+                    name: attrs[:name]
+                  })
+                |> Repo.insert()
+            end
+            
+          # Return the primary->linked link (either existing or newly created)
+          {:ok, link}
       end
     end
   end
@@ -537,11 +567,20 @@ defmodule Myapp.Accounts do
       {:error, :not_found}
   """
   def unlink_account(%User{} = primary_user, linked_user_id) do
-    case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user_id) do
-      nil ->
+    # Check for primary-to-linked relationship
+    primary_to_linked = Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user_id)
+    primary_result = if primary_to_linked, do: Repo.delete(primary_to_linked), else: nil
+    
+    # Check for linked-to-primary (reciprocal) relationship
+    linked_to_primary = Repo.get_by(LinkedAccount, primary_user_id: linked_user_id, linked_user_id: primary_user.id)
+    reciprocal_result = if linked_to_primary, do: Repo.delete(linked_to_primary), else: nil
+    
+    # Return success if at least one link was found and deleted
+    cond do
+      primary_result || reciprocal_result ->
+        primary_result || reciprocal_result
+      true ->
         {:error, :not_found}
-      link ->
-        Repo.delete(link)
     end
   end
 
