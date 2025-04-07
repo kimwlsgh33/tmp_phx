@@ -198,64 +198,64 @@ defmodule MyappWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div class="flex h-screen">
-      <!-- Left Sidebar -->
-      <div class="w-64 bg-gray-800 text-white p-4 flex flex-col shadow-md">
-        <h2 class="text-xl font-bold mb-6">Dashboard</h2>
-        
-        <!-- Social Media Accounts Section -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold mb-2">Connected Accounts</h3>
-          
-          <%= if @loading_accounts do %>
-            <div class="animate-pulse flex flex-col space-y-2">
-              <div class="h-6 bg-gray-600 rounded"></div>
-              <div class="h-6 bg-gray-600 rounded"></div>
-              <div class="h-6 bg-gray-600 rounded"></div>
-            </div>
-          <% else %>
-            <ul class="space-y-2">
-              <%= for {platform, status} <- @social_accounts do %>
-                <li class="flex items-center justify-between">
-                  <span><%= platform |> Atom.to_string() |> String.capitalize() %></span>
-                  <span 
-                    class={"h-3 w-3 rounded-full #{if status.connected, do: "bg-green-500", else: "bg-red-500"}"} 
-                    title={if status.connected, do: "Connected", else: "Disconnected"}>
-                  </span>
-                </li>
-              <% end %>
-            </ul>
-          <% end %>
-        </div>
-        
-        <!-- Quick Action Buttons -->
-        <div class="space-y-2 mb-6">
-          <button 
-            phx-click={JS.push_focus(to: "#upload-area")}
-            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded flex items-center animate-button-glow">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-            </svg>
-            Start New Upload
-          </button>
-          
-          <.link 
-            patch={~p"/dashboard?tab=results"}
-            class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
-            </svg>
-            View Recent Uploads
-          </.link>
-        </div>
-        
-        <!-- Footer Section -->
-        <div class="mt-auto text-sm text-gray-400">
-          <p>Need help? <a href="#" class="text-indigo-400 hover:text-indigo-300">View Documentation</a></p>
-        </div>
-      </div>
-      
+      <!-- <!-- Left Sidebar --> 
+      <!-- <div class="w-64 bg-black text-white p-4 flex flex-col shadow-md"> -->
+      <!--   <h2 class="text-xl font-bold mb-6">Dashboard</h2> -->
+      <!--    -->
+      <!--   <!-- Social Media Accounts Section --> 
+      <!--   <div class="mb-6"> -->
+      <!--     <h3 class="text-lg font-semibold mb-2">Connected Accounts</h3> -->
+      <!--      -->
+      <!--     <%= if @loading_accounts do %> -->
+      <!--       <div class="animate-pulse flex flex-col space-y-2"> -->
+      <!--         <div class="h-6 bg-gray-600 rounded"></div> -->
+      <!--         <div class="h-6 bg-gray-600 rounded"></div> -->
+      <!--         <div class="h-6 bg-gray-600 rounded"></div> -->
+      <!--       </div> -->
+      <!--     <% else %> -->
+      <!--       <ul class="space-y-2"> -->
+      <!--         <%= for {platform, status} <- @social_accounts do %> -->
+      <!--           <li class="flex items-center justify-between"> -->
+      <!--             <span><%= platform |> Atom.to_string() |> String.capitalize() %></span> -->
+      <!--             <span  -->
+      <!--               class={"h-3 w-3 rounded-full #{if status.connected, do: "bg-green-500", else: "bg-red-500"}"}  -->
+      <!--               title={if status.connected, do: "Connected", else: "Disconnected"}> -->
+      <!--             </span> -->
+      <!--           </li> -->
+      <!--         <% end %> -->
+      <!--       </ul> -->
+      <!--     <% end %> -->
+      <!--   </div> -->
+      <!--    -->
+      <!--   <!-- Quick Action Buttons --> 
+      <!--   <div class="space-y-2 mb-6"> -->
+      <!--     <button  -->
+      <!--       phx-click={JS.push_focus(to: "#upload-area")} -->
+      <!--       class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded flex items-center animate-button-glow"> -->
+      <!--       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"> -->
+      <!--         <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /> -->
+      <!--       </svg> -->
+      <!--       Start New Upload -->
+      <!--     </button> -->
+      <!--      -->
+      <!--     <.link  -->
+      <!--       patch={~p"/dashboard?tab=results"} -->
+      <!--       class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded flex items-center"> -->
+      <!--       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"> -->
+      <!--         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /> -->
+      <!--       </svg> -->
+      <!--       View Recent Uploads -->
+      <!--     </.link> -->
+      <!--   </div> -->
+      <!--    -->
+      <!--   <!-- Footer Section --> 
+      <!--   <div class="mt-auto text-sm text-gray-400"> -->
+      <!--     <p>Need help? <a href="#" class="text-indigo-400 hover:text-indigo-300">View Documentation</a></p> -->
+      <!--   </div> -->
+      <!-- </div> -->
+      <!--  -->
       <!-- Main Content Area -->
-      <div class="flex-1 bg-gray-100 overflow-y-auto">
+      <div class="flex-1 bg-gray-900 overflow-y-auto">
         <div class="p-6">
           <div class="mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Social Media Dashboard</h1>
@@ -297,112 +297,114 @@ defmodule MyappWeb.DashboardLive do
                   <h2 class="text-xl font-semibold mb-4">Upload Content</h2>
                   
                   <form phx-submit="save" phx-change="validate-form">
-                    <!-- File Upload Area -->
-                    <div 
-                      id="upload-area"
-                      phx-drop-target={@uploads.video.ref} 
-                      class="border-2 border-dashed border-gray-300 rounded-lg p-8 mb-6 text-center hover:border-indigo-500 transition-colors">
-                      
-                      <%= if Enum.empty?(@uploads.video.entries) do %>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                        <p class="mt-2 text-sm text-gray-500">
-                          <span class="font-medium text-indigo-600 hover:text-indigo-500">
-                            Upload a video
-                          </span> or drag and drop
-                        </p>
-                        <p class="mt-1 text-xs text-gray-500">
-                          MP4, MOV, AVI, WMV, FLV, WEBM up to 500MB
-                        </p>
+                    <!-- Grid container for side-by-side layout -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <!-- Metadata Form Fields (Left Column) -->
+                      <div class="space-y-4">
+                        <div>
+                          <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                          <input 
+                            type="text" 
+                            id="title" 
+                            name="upload_form[title]" 
+                            value={@upload_form["title"]} 
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                            placeholder="Enter a title for your video" 
+                          />
+                        </div>
                         
-                        <label for="video-upload" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        <div>
+                          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                          <textarea 
+                            id="description" 
+                            name="upload_form[description]" 
+                            rows="3" 
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                            placeholder="Describe your video"
+                          ><%= @upload_form["description"] %></textarea>
+                        </div>
+                        
+                        <div>
+                          <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
+                          <input 
+                            type="text" 
+                            id="tags" 
+                            name="upload_form[tags]" 
+                            value={@upload_form["tags"]} 
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                            placeholder="Enter tags separated by commas" 
+                          />
+                          <p class="mt-1 text-xs text-gray-500">Add relevant tags to help people discover your content</p>
+                        </div>
+                      </div>
+                      
+                      <!-- File Upload Area (Right Column) -->
+                      <div 
+                        id="upload-area"
+                        phx-drop-target={@uploads.video.ref} 
+                        class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors">
+                        <%= if Enum.empty?(@uploads.video.entries) do %>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                           </svg>
-                          Select Video
-                        </label>
-                        <.live_file_input id="video-upload" upload={@uploads.video} class="sr-only" />
-                      <% else %>
-                        <!-- Upload in progress or completed -->
-                        <%= for entry <- @uploads.video.entries do %>
-                          <div class="relative">
-                            <!-- Video preview or placeholder -->
-                            <div class="flex items-center justify-center h-32 bg-gray-100 rounded">
-                              <%= if @preview_url do %>
-                                <img src={@preview_url} alt="Video thumbnail" class="h-full object-cover rounded" />
-                              <% else %>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
+                          <p class="mt-2 text-sm text-gray-500">
+                            <span class="font-medium text-indigo-600 hover:text-indigo-500">
+                              Upload a video
+                            </span> or drag and drop
+                          </p>
+                          <p class="mt-1 text-xs text-gray-500">
+                            MP4, MOV, AVI, WMV, FLV, WEBM up to 500MB
+                          </p>
+                          
+                          <label for="video-upload" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Select Video
+                          </label>
+                          <.live_file_input id="video-upload" upload={@uploads.video} class="sr-only" />
+                        <% else %>
+                          <!-- Upload in progress or completed -->
+                          <%= for entry <- @uploads.video.entries do %>
+                            <div class="relative">
+                              <!-- Video preview or placeholder -->
+                              <div class="flex items-center justify-center h-32 bg-gray-100 rounded">
+                                <%= if @preview_url do %>
+                                  <img src={@preview_url} alt="Video thumbnail" class="h-full object-cover rounded" />
+                                <% else %>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                  </svg>
+                                <% end %>
+                              </div>
+                              
+                              <!-- Progress bar -->
+                              <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                <div class="bg-indigo-600 h-2.5 rounded-full" style={"width: #{@upload_progress}%"}></div>
+                              </div>
+                              
+                              <div class="flex items-center justify-between mt-2">
+                                <span class="text-sm text-gray-500">
+                                  <%= entry.client_name %> (<%= Number.Delimit.number_to_delimited(div(entry.client_size, 1024 * 1024), precision: 1) %> MB)
+                                </span>
+                                
+                                <button 
+                                  phx-click="cancel-upload" 
+                                  phx-value-ref={entry.ref} 
+                                  class="text-red-500 hover:text-red-700 text-sm">
+                                  Cancel
+                                </button>
+                              </div>
+                              
+                              <!-- Entry errors -->
+                              <%= for err <- upload_errors(@uploads.video, entry) do %>
+                                <div class="text-red-500 text-sm mt-1"><%= err %></div>
                               <% end %>
                             </div>
-                            
-                            <!-- Progress bar -->
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                              <div class="bg-indigo-600 h-2.5 rounded-full" style={"width: #{@upload_progress}%"}></div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between mt-2">
-                              <span class="text-sm text-gray-500">
-                                <%= entry.client_name %> (<%= Number.Delimit.number_to_delimited(div(entry.client_size, 1024 * 1024), precision: 1) %> MB)
-                              </span>
-                              
-                              <button 
-                                phx-click="cancel-upload" 
-                                phx-value-ref={entry.ref} 
-                                class="text-red-500 hover:text-red-700 text-sm">
-                                Cancel
-                              </button>
-                            </div>
-                            
-                            <!-- Entry errors -->
-                            <%= for err <- upload_errors(@uploads.video, entry) do %>
-                              <div class="text-red-500 text-sm mt-1"><%= err %></div>
-                            <% end %>
-                          </div>
+                          <% end %>
                         <% end %>
-                      <% end %>
-                    </div>
-                    
-                    <!-- Metadata Form Fields -->
-                    <div class="grid grid-cols-1 gap-4 mb-6">
-                      <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-                        <input 
-                          type="text" 
-                          id="title" 
-                          name="upload_form[title]" 
-                          value={@upload_form["title"]} 
-                          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                          placeholder="Enter a title for your video" 
-                        />
                       </div>
-                      
-                      <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea 
-                          id="description" 
-                          name="upload_form[description]" 
-                          rows="3" 
-                          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                          placeholder="Describe your video"
-                        ><%= @upload_form["description"] %></textarea>
-                      </div>
-                      
-                      <div>
-                        <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
-                        <input 
-                          type="text" 
-                          id="tags" 
-                          name="upload_form[tags]" 
-                          value={@upload_form["tags"]} 
-                          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                          placeholder="Enter tags separated by commas" 
-                        />
-                        <p class="mt-1 text-xs text-gray-500">Add relevant tags to help people discover your content</p>
-                      </div>
-                    </div>
+                    </div><!-- End of grid container -->
                     
                     <!-- Platform Selection -->
                     <div class="mb-6">
