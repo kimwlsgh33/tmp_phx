@@ -161,6 +161,9 @@ defmodule MyappWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       live "/users/sign_out", UserLogoutLive, :show
       live "/users/link_account", UserLoginLive, :link
+      
+      # Dashboard route
+      live "/dashboard", DashboardLive, :index
     end
 
     # Routes for linked accounts
