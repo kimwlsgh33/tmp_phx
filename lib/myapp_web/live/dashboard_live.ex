@@ -255,10 +255,10 @@ defmodule MyappWeb.DashboardLive do
       <!-- </div> -->
       <!--  -->
       <!-- Main Content Area -->
-      <div class="flex-1 bg-black overflow-y-auto">
+      <div class="flex-1 bg-white overflow-y-auto">
         <div class="p-6">
           <div class="mb-6">
-            <h1 class="text-2xl font-bold text-white ">Social Media Dashboard</h1>
+            <h1 class="text-2xl font-bold text-black ">Social Media Dashboard</h1>
             <p class="text-gray-400">Manage your content across multiple platforms</p>
           </div>
           
