@@ -25,7 +25,7 @@
     data-logged-in={if assigns[:current_user], do: "true", else: "false"}
   >
     <!-- Navigation -->
-    <header class="bg-white z-1">
+    <header class="bg-zinc-800 z-1">
       <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
         <div class="flex w-full items-center justify-between border-b border-gray-200 py-3 lg:border-none">
           <div class="flex items-center">
@@ -116,7 +116,7 @@
                     x-transition:leave="transition ease-in duration-200"
                     x-transition:leave-start="transform opacity-100 translate-x-0"
                     x-transition:leave-end="transform opacity-0 translate-x-full"
-                    class="fixed inset-y-0 right-0 w-80 bg-black shadow-xl z-50 overflow-y-auto"
+                    class="fixed inset-y-0 right-0 w-80 bg-black border-b-white rounded-2xl shadow-xl z-50 overflow-y-auto"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="user-menu-button"
