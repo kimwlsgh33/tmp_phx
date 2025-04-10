@@ -8,6 +8,7 @@ A Phoenix-based project for creating and displaying documentation for various se
 - **LiveView**: Real-time updates without refreshing the page
 - **Documentation System**: Comprehensive markdown-based documentation for various services
 - **Responsive Design**: Fully responsive documentation UI that works across all device sizes
+- **Error Handling**: Standardized error handling system with Sentry integration for monitoring
 
 ## Quick Start
 
@@ -15,13 +16,13 @@ A Phoenix-based project for creating and displaying documentation for various se
    ```bash
    # Install dependencies
    mix deps.get
-   
+
    # Setup database
    mix ecto.setup
-   
+
    # Install Node.js dependencies
    cd assets && npm install && cd ..
-   
+
    # Start Phoenix server
    mix phx.server
    ```
@@ -30,7 +31,7 @@ A Phoenix-based project for creating and displaying documentation for various se
 
 ## Documentation
 
-This project contains documentation for various platforms:
+This project contains documentation for various platforms and features:
 
 - [Claude-Code](docs/Claude-Code.md) - Documentation for Claude AI coding capabilities
 - [Cloudflare](docs/Cloudflare.md) - Cloudflare service documentation
@@ -38,6 +39,8 @@ This project contains documentation for various platforms:
 - [LLC](docs/LLC.md) - LLC formation documentation
 - [TikTok](docs/Tiktok.md) - TikTok platform documentation
 - [YouTube](docs/Youtube.md) - YouTube platform documentation
+- [Error Handling Guide](docs/error_handling_guide.md) - Guide for using the error handling system
+- [Error Monitoring](docs/error_monitoring.md) - Documentation for Sentry error monitoring integration
 
 ## Development
 

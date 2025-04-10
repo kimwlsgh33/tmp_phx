@@ -7,6 +7,52 @@ defmodule Myapp.Content do
   import Ecto.Query
   alias Myapp.Repo
   alias Myapp.Content.{Post, ShortVideo, LongVideo, PlatformUpload}
+  alias Myapp.ErrorHandler
+
+  # Helper functions for error handling
+
+  @doc """
+  Handles the result of a Repo operation, standardizing error handling.
+
+  ## Parameters
+
+  - `result`: The result of a Repo operation (insert, update, delete)
+  - `message`: A human-readable error message
+  - `details`: Additional details about the operation
+
+  ## Examples
+
+      iex> handle_repo_result({:ok, post}, "Failed to create post", %{attrs: attrs})
+      {:ok, post}
+
+      iex> handle_repo_result({:error, changeset}, "Failed to create post", %{attrs: attrs})
+      {:error, %{type: :validation_error, message: "Failed to create post", ...}}
+  """
+  defp handle_repo_result({:ok, result} = success, _message, _details), do: success
+
+  defp handle_repo_result({:error, %Ecto.Changeset{} = changeset}, message, details) do
+    ErrorHandler.handle(
+      ErrorHandler.error(
+        :validation_error,
+        message,
+        Map.merge(details, %{changeset: changeset}),
+        __MODULE__
+      ),
+      __MODULE__
+    )
+  end
+
+  defp handle_repo_result({:error, reason}, message, details) do
+    ErrorHandler.handle(
+      ErrorHandler.error(
+        :database_error,
+        message,
+        Map.merge(details, %{reason: reason}),
+        __MODULE__
+      ),
+      __MODULE__
+    )
+  end
 
   # Post Functions
 
@@ -17,6 +63,7 @@ defmodule Myapp.Content do
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+    |> handle_repo_result("Failed to create post", %{attrs: attrs})
   end
 
   @doc """
@@ -26,21 +73,74 @@ defmodule Myapp.Content do
     post
     |> Post.changeset(attrs)
     |> Repo.update()
+    |> handle_repo_result("Failed to update post", %{post_id: post.id, attrs: attrs})
   end
 
   @doc """
   Gets a post by ID.
   """
-  def get_post!(id), do: Repo.get!(Post, id)
+  def get_post!(id) do
+    try do
+      Repo.get!(Post, id)
+    rescue
+      e in Ecto.NoResultsError ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Post not found",
+            %{post_id: id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+        # Re-raise the original exception
+        reraise e, __STACKTRACE__
+    end
+  end
+
+  @doc """
+  Gets a post by ID, returning {:ok, post} or {:error, reason}.
+  """
+  def get_post(id) do
+    case Repo.get(Post, id) do
+      %Post{} = post -> {:ok, post}
+      nil ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Post not found",
+            %{post_id: id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
+  end
 
   @doc """
   Lists all posts for a user.
   """
   def list_user_posts(user_id) do
-    Post
-    |> where(user_id: ^user_id)
-    |> order_by(desc: :inserted_at)
-    |> Repo.all()
+    try do
+      posts = Post
+      |> where(user_id: ^user_id)
+      |> order_by(desc: :inserted_at)
+      |> Repo.all()
+
+      {:ok, posts}
+    rescue
+      e in [Ecto.QueryError] ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :database_error,
+            "Error querying posts",
+            %{user_id: user_id, error: e},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
   end
 
   # Short Video Functions
@@ -52,6 +152,7 @@ defmodule Myapp.Content do
     %ShortVideo{}
     |> ShortVideo.changeset(attrs)
     |> Repo.insert()
+    |> handle_repo_result("Failed to create short video", %{attrs: attrs})
   end
 
   @doc """
@@ -61,21 +162,74 @@ defmodule Myapp.Content do
     video
     |> ShortVideo.changeset(attrs)
     |> Repo.update()
+    |> handle_repo_result("Failed to update short video", %{video_id: video.id, attrs: attrs})
   end
 
   @doc """
   Gets a short video by ID.
   """
-  def get_short_video!(id), do: Repo.get!(ShortVideo, id)
+  def get_short_video!(id) do
+    try do
+      Repo.get!(ShortVideo, id)
+    rescue
+      e in Ecto.NoResultsError ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Short video not found",
+            %{video_id: id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+        # Re-raise the original exception
+        reraise e, __STACKTRACE__
+    end
+  end
+
+  @doc """
+  Gets a short video by ID, returning {:ok, video} or {:error, reason}.
+  """
+  def get_short_video(id) do
+    case Repo.get(ShortVideo, id) do
+      %ShortVideo{} = video -> {:ok, video}
+      nil ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Short video not found",
+            %{video_id: id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
+  end
 
   @doc """
   Lists all short videos for a user.
   """
   def list_user_short_videos(user_id) do
-    ShortVideo
-    |> where(user_id: ^user_id)
-    |> order_by(desc: :inserted_at)
-    |> Repo.all()
+    try do
+      videos = ShortVideo
+      |> where(user_id: ^user_id)
+      |> order_by(desc: :inserted_at)
+      |> Repo.all()
+
+      {:ok, videos}
+    rescue
+      e in [Ecto.QueryError] ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :database_error,
+            "Error querying short videos",
+            %{user_id: user_id, error: e},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
   end
 
   # Long Video Functions
@@ -87,6 +241,7 @@ defmodule Myapp.Content do
     %LongVideo{}
     |> LongVideo.changeset(attrs)
     |> Repo.insert()
+    |> handle_repo_result("Failed to create long video", %{attrs: attrs})
   end
 
   @doc """
@@ -96,21 +251,74 @@ defmodule Myapp.Content do
     video
     |> LongVideo.changeset(attrs)
     |> Repo.update()
+    |> handle_repo_result("Failed to update long video", %{video_id: video.id, attrs: attrs})
   end
 
   @doc """
   Gets a long video by ID.
   """
-  def get_long_video!(id), do: Repo.get!(LongVideo, id)
+  def get_long_video!(id) do
+    try do
+      Repo.get!(LongVideo, id)
+    rescue
+      e in Ecto.NoResultsError ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Long video not found",
+            %{video_id: id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+        # Re-raise the original exception
+        reraise e, __STACKTRACE__
+    end
+  end
+
+  @doc """
+  Gets a long video by ID, returning {:ok, video} or {:error, reason}.
+  """
+  def get_long_video(id) do
+    case Repo.get(LongVideo, id) do
+      %LongVideo{} = video -> {:ok, video}
+      nil ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Long video not found",
+            %{video_id: id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
+  end
 
   @doc """
   Lists all long videos for a user.
   """
   def list_user_long_videos(user_id) do
-    LongVideo
-    |> where(user_id: ^user_id)
-    |> order_by(desc: :inserted_at)
-    |> Repo.all()
+    try do
+      videos = LongVideo
+      |> where(user_id: ^user_id)
+      |> order_by(desc: :inserted_at)
+      |> Repo.all()
+
+      {:ok, videos}
+    rescue
+      e in [Ecto.QueryError] ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :database_error,
+            "Error querying long videos",
+            %{user_id: user_id, error: e},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
   end
 
   # Common Functions
@@ -119,19 +327,42 @@ defmodule Myapp.Content do
   Returns the list of all content for a user, sorted by creation date.
   """
   def list_user_content(user_id) do
-    posts = list_user_posts(user_id)
-    short_videos = list_user_short_videos(user_id)
-    long_videos = list_user_long_videos(user_id)
-
-    posts ++ short_videos ++ long_videos
-    |> Enum.sort_by(&(&1.inserted_at), {:desc, DateTime})
+    try do
+      with {:ok, posts} <- list_user_posts(user_id),
+           {:ok, short_videos} <- list_user_short_videos(user_id),
+           {:ok, long_videos} <- list_user_long_videos(user_id) do
+        content = posts ++ short_videos ++ long_videos
+                  |> Enum.sort_by(&(&1.inserted_at), {:desc, DateTime})
+        {:ok, content}
+      else
+        {:error, _} = error -> error
+      end
+    rescue
+      e ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :internal_error,
+            "Error retrieving user content",
+            %{user_id: user_id, error: e},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
   end
 
   @doc """
   Deletes a content item of any type.
   """
   def delete_content(%_{} = content) do
+    content_type = content.__struct__ |> Module.split() |> List.last()
+    content_id = content.id
+
     Repo.delete(content)
+    |> handle_repo_result(
+      "Failed to delete #{content_type}",
+      %{content_type: content_type, content_id: content_id}
+    )
   end
 
   @doc """
@@ -149,23 +380,43 @@ defmodule Myapp.Content do
   Gets platform upload status for a content item.
   """
   def get_platform_status(content_id, platform) do
-    PlatformUpload
-    |> where(content_id: ^content_id, platform: ^platform)
-    |> Repo.one()
+    try do
+      status = PlatformUpload
+      |> where(content_id: ^content_id, platform: ^platform)
+      |> Repo.one()
+
+      {:ok, status}
+    rescue
+      e in [Ecto.QueryError] ->
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :database_error,
+            "Error querying platform status",
+            %{content_id: content_id, platform: platform, error: e},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+    end
   end
 
   @doc """
   Updates platform upload status for a content item.
   """
   def update_platform_status(content_id, platform, status, platform_content_id \\ nil) do
-    %PlatformUpload{}
-    |> PlatformUpload.changeset(%{
+    attrs = %{
       content_id: content_id,
       platform: platform,
       status: status,
       platform_content_id: platform_content_id
-    })
+    }
+
+    %PlatformUpload{}
+    |> PlatformUpload.changeset(attrs)
     |> Repo.insert_or_update()
+    |> handle_repo_result(
+      "Failed to update platform status",
+      %{content_id: content_id, platform: platform, status: status}
+    )
   end
 end
-

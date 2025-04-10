@@ -4,6 +4,7 @@ defmodule MyappWeb.UserSessionController do
   alias Myapp.Accounts
   alias Myapp.Accounts.LinkedAccount
   alias MyappWeb.UserAuth
+  alias Myapp.ErrorHandler
 
   # Redirect to login screen with link parameter
   def new_link(conn, _params) do
@@ -39,6 +40,17 @@ defmodule MyappWeb.UserSessionController do
         |> UserAuth.log_in_user(user, user_params)
       end
     else
+      # Log the authentication failure with our error handler
+      ErrorHandler.handle(
+        ErrorHandler.error(
+          :unauthorized,
+          "Failed login attempt",
+          %{email: email, ip: conn.remote_ip},
+          __MODULE__
+        ),
+        __MODULE__
+      )
+
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
       |> put_flash(:error, "Invalid email or password")
@@ -76,6 +88,17 @@ defmodule MyappWeb.UserSessionController do
         end
       rescue
         Ecto.NoResultsError ->
+          # Log the error with our error handler
+          ErrorHandler.handle(
+            ErrorHandler.error(
+              :not_found,
+              "Account not found during logout",
+              %{logout_user_id: logout_user_id},
+              __MODULE__
+            ),
+            __MODULE__
+          )
+
           conn
           |> put_flash(:error, "Account not found")
           |> redirect(to: referer_path)
@@ -128,16 +151,16 @@ defmodule MyappWeb.UserSessionController do
   def link_account(conn, %{"user" => user_params} = params) do
     IO.puts("UserSessionController link_account called with params: #{inspect(params)}")
     %{"email" => email, "password" => password} = user_params
-    
+
     # Check if this is a login-time linking (with link=true parameter)
     is_login_linking = Map.get(params, "link") == "true"
-    
+
     # Get current user - may be nil if this is a login-time linking
     current_user = conn.assigns[:current_user]
-    
+
     # Extract return_to from params if it exists, otherwise default to "/"
     return_to = Map.get(params, "return_to", "/")
-    
+
     # Store return_to in session
     conn = put_session(conn, :user_return_to, return_to)
 
@@ -148,18 +171,29 @@ defmodule MyappWeb.UserSessionController do
           conn
           |> put_flash(:error, "No current session found for linking accounts.")
           |> redirect(to: return_to)
-          
+
         # Case 2: Attempting to link account to itself
         current_user && user.id == current_user.id ->
           conn
           |> put_flash(:error, "You cannot link your account to itself.")
           |> redirect(to: return_to)
-          
+
         # Case 3: Normal linking and login-time linking with valid current user
         true ->
           linked_accounts = Accounts.list_linked_accounts(current_user)
-          
+
           if length(linked_accounts) > 3 do
+            # Log the error with our error handler
+            ErrorHandler.handle(
+              ErrorHandler.error(
+                :bad_request,
+                "Maximum linked accounts limit reached",
+                %{current_user_id: current_user.id, linked_accounts_count: length(linked_accounts)},
+                __MODULE__
+              ),
+              __MODULE__
+            )
+
             conn
             |> put_flash(:error, "You can link a maximum of 3 accounts")
             |> redirect(to: return_to)
@@ -177,7 +211,7 @@ defmodule MyappWeb.UserSessionController do
                   |> put_flash(:info, "Account linked successfully!")
                   |> redirect(to: return_to)
                 end
-                
+
               {:error, %Ecto.Changeset{} = changeset} ->
                 error_message =
                   if Enum.any?(changeset.errors, fn {field, _} -> field == :linked_user_id end) do
@@ -185,7 +219,22 @@ defmodule MyappWeb.UserSessionController do
                   else
                     "Failed to link account. Please try again."
                   end
-                
+
+                # Log the error with our error handler
+                ErrorHandler.handle(
+                  ErrorHandler.error(
+                    :validation_error,
+                    "Failed to link accounts",
+                    %{
+                      current_user_id: current_user.id,
+                      target_user_id: user.id,
+                      changeset: changeset
+                    },
+                    __MODULE__
+                  ),
+                  __MODULE__
+                )
+
                 conn
                 |> put_flash(:error, error_message)
                 |> redirect(to: return_to)
@@ -193,6 +242,17 @@ defmodule MyappWeb.UserSessionController do
           end
       end
     else
+      # Log the authentication failure with our error handler
+      ErrorHandler.handle(
+        ErrorHandler.error(
+          :unauthorized,
+          "Failed login attempt during account linking",
+          %{email: email, ip: conn.remote_ip},
+          __MODULE__
+        ),
+        __MODULE__
+      )
+
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
       |> put_flash(:error, "Invalid email or password")
@@ -212,6 +272,17 @@ defmodule MyappWeb.UserSessionController do
         |> UserAuth.log_in_user(linked_user, %{"remember_me" => "true"}, token)
 
       {:error, :not_linked} ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :forbidden,
+            "Attempted to switch to non-linked account",
+            %{current_user_id: current_user.id, linked_user_id: linked_user_id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+
         conn
         |> put_flash(
           :error,
@@ -220,6 +291,17 @@ defmodule MyappWeb.UserSessionController do
         |> redirect(to: ~p"/")
 
       {:error, :user_not_found} ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Linked account not found during switch",
+            %{current_user_id: current_user.id, linked_user_id: linked_user_id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+
         conn
         |> put_flash(:error, "The linked account was not found")
         |> redirect(to: ~p"/")

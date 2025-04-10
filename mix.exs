@@ -66,7 +66,9 @@ defmodule Myapp.MixProject do
       {:ueberauth, "~> 0.10"},
       {:ueberauth_google, "~> 0.10"},
       {:dotenv, "~> 3.1 "},
-      {:mox, "~> 1.0", only: :test}
+      {:mox, "~> 1.0", only: :test},
+      {:sentry, "~> 10.0"},
+      {:hackney, "~> 1.18"}
     ]
   end
 

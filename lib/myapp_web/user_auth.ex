@@ -5,6 +5,8 @@ defmodule MyappWeb.UserAuth do
   import Phoenix.Controller
 
   alias Myapp.Accounts
+  alias Myapp.Tokens
+  alias Myapp.ErrorHandler
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -29,12 +31,18 @@ defmodule MyappWeb.UserAuth do
   which will be used instead of generating a new one.
   """
   def log_in_user(conn, user, params \\ %{}, token \\ nil) do
-    token = token || Accounts.generate_user_session_token(user)
+    # Use the new Tokens module to create a session token
+    {:ok, token, _metadata} = if token do
+      {:ok, token, %{context: "session"}}
+    else
+      Tokens.create_session_token(user)
+    end
+
     user_return_to = get_session(conn, :user_return_to)
-    
+
     # Save flash messages before session renewal
     flash = conn.private[:phoenix_flash] || %{}
-    
+
     conn
     |> renew_session()
     |> put_token_in_session(token)
@@ -67,15 +75,15 @@ defmodule MyappWeb.UserAuth do
   #       |> put_session(:preferred_locale, preferred_locale)
   #     end
   #
-defp renew_session(conn) do
-  user_return_to = get_session(conn, :user_return_to)
-  delete_csrf_token()
+  defp renew_session(conn) do
+    user_return_to = get_session(conn, :user_return_to)
+    delete_csrf_token()
 
-  conn
-  |> configure_session(renew: true)
-  |> clear_session()
-  |> put_session(:user_return_to, user_return_to)
-end
+    conn
+    |> configure_session(renew: true)
+    |> clear_session()
+    |> put_session(:user_return_to, user_return_to)
+  end
 
   @doc """
   Logs the user out.
@@ -84,7 +92,10 @@ end
   """
   def log_out_user(conn) do
     user_token = get_session(conn, :user_token)
-    user_token && Accounts.delete_user_session_token(user_token)
+    # Use the new Tokens module to revoke the session token
+    if user_token do
+      Tokens.revoke_session_token(user_token)
+    end
 
     if live_socket_id = get_session(conn, :live_socket_id) do
       MyappWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
@@ -102,7 +113,27 @@ end
   """
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Accounts.get_user_by_session_token(user_token)
+
+    # Use the new Tokens module to verify the session token
+    user = if user_token do
+      case Tokens.verify_session_token(user_token) do
+        {:ok, user} ->
+          user
+        {:error, reason} ->
+          # Log the error but don't fail the request
+          ErrorHandler.handle(
+            ErrorHandler.error(
+              :unauthorized,
+              "Invalid session token",
+              %{reason: reason},
+              __MODULE__
+            ),
+            __MODULE__
+          )
+          nil
+      end
+    end
+
     assign(conn, :current_user, user)
   end
 
@@ -113,11 +144,26 @@ end
       conn = fetch_cookies(conn, signed: [@remember_me_cookie])
 
       if token = conn.cookies[@remember_me_cookie] do
+        # Found token in remember_me cookie
         {token, put_token_in_session(conn, token)}
       else
+        # No token found in session or cookies
         {nil, conn}
       end
     end
+  rescue
+    e ->
+      # Handle cookie parsing errors
+      ErrorHandler.handle(
+        ErrorHandler.error(
+          :bad_request,
+          "Error processing authentication cookies",
+          %{error: e},
+          __MODULE__
+        ),
+        __MODULE__
+      )
+      {nil, conn}
   end
 
   @doc """
@@ -187,7 +233,23 @@ end
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
-        Accounts.get_user_by_session_token(user_token)
+        # Use the new Tokens module to verify the session token
+        case Tokens.verify_session_token(user_token) do
+          {:ok, user} ->
+            user
+          {:error, reason} ->
+            # Log the error but don't fail the LiveView mount
+            ErrorHandler.handle(
+              ErrorHandler.error(
+                :unauthorized,
+                "Invalid session token in LiveView",
+                %{reason: reason},
+                __MODULE__
+              ),
+              __MODULE__
+            )
+            nil
+        end
       end
     end)
   end
@@ -196,23 +258,7 @@ end
   Used for routes that require the user to not be authenticated.
   """
   def redirect_if_user_is_authenticated(conn, _opts) do
-    # Check if the request contains the "link" parameter with value "true"
-    # First check direct params, then nested params (common in form submissions)
-    user_params = Map.get(conn.params, "user", %{})
-    
-    link_param = cond do
-      # Check in top-level params (includes both query params and form body)
-      Map.get(conn.params, "link") == "true" -> true
-      
-      # Check in nested user param (common in form submissions like %{"user" => %{"link" => "true"}})
-      is_map(user_params) && Map.get(user_params, "link") == "true" -> true
-      
-      # Default case - no link param found
-      true -> false
-    end
-    
-    # Only redirect if there's a current user AND this is not a link=true request
-    if conn.assigns[:current_user] && !link_param do
+    if conn.assigns[:current_user] do
       conn
       |> redirect(to: signed_in_path(conn))
       |> halt()
@@ -244,15 +290,9 @@ end
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")
   end
+
   defp maybe_store_return_to(%{method: "GET"} = conn) do
-    # Check for return_to query parameter first, then use current path as fallback
-    return_to = 
-      case conn.query_params do
-        %{"return_to" => path} when is_binary(path) and path != "" -> path
-        _ -> current_path(conn)
-      end
-    
-    put_session(conn, :user_return_to, return_to)
+    put_session(conn, :user_return_to, current_path(conn))
   end
 
   defp maybe_store_return_to(conn), do: conn
@@ -261,12 +301,49 @@ end
 
   def fetch_api_user(conn, _opts) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {:ok, user} <- Accounts.fetch_user_by_api_token(token) do
+         {:ok, user} <- Tokens.verify_session_token(token) do
       assign(conn, :current_user, user)
     else
-      _ ->
+      [] ->
+        # No authorization header
+        error = ErrorHandler.error(
+          :unauthorized,
+          "Missing authorization header",
+          %{},
+          __MODULE__
+        )
+
         conn
-        |> send_resp(:unauthorized, "No access for you")
+        |> put_resp_content_type("application/json")
+        |> send_resp(:unauthorized, Jason.encode!(%{error: error.message}))
+        |> halt()
+
+      [header] ->
+        # Invalid authorization header format
+        error = ErrorHandler.error(
+          :unauthorized,
+          "Invalid authorization header format",
+          %{header: header},
+          __MODULE__
+        )
+
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(:unauthorized, Jason.encode!(%{error: error.message}))
+        |> halt()
+
+      {:error, reason} ->
+        # Token verification failed
+        error = ErrorHandler.error(
+          :unauthorized,
+          "Invalid or expired token",
+          %{reason: reason},
+          __MODULE__
+        )
+
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(:unauthorized, Jason.encode!(%{error: error.message}))
         |> halt()
     end
   end

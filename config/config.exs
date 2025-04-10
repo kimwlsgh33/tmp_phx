@@ -54,9 +54,13 @@ config :tailwind,
   ]
 
 # Configures Elixir's Logger
+config :logger,
+  backends: [:console, Sentry.LoggerBackend],
+  utc_log: true
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [:request_id, :user_id, :trace_id]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
@@ -99,6 +103,18 @@ config :ueberauth, Ueberauth,
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
+
+# Configure Sentry for error monitoring
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN"),
+  environment_name: config_env(),
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!(),
+  tags: %{
+    env: config_env()
+  },
+  included_environments: [:prod, :dev],
+  client: Sentry.HackneyClient
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

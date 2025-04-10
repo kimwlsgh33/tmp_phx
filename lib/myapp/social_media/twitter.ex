@@ -1,27 +1,27 @@
 defmodule Myapp.SocialMedia.Twitter do
   @moduledoc """
   Twitter implementation of the SocialMedia behaviour.
-  
+
   This module provides standardized functions for Twitter integration
   following the SocialMedia behaviour interface.
   """
-  
+
   @behaviour Myapp.SocialMedia
-  
+
   require Logger
   alias Myapp.Twitter
-  alias Myapp.TwitterOauth
-  alias Myapp.SocialMediaToken
-  
+  alias Myapp.SocialAuth.Twitter, as: TwitterAuth
+  alias Myapp.Tokens
+
   @doc """
   Checks if the user is authenticated with Twitter.
-  
+
   ## Parameters
-  
+
     * `user_id` - The ID of the user to check authentication for.
-    
+
   ## Returns
-  
+
     * `{:ok, %{authenticated: true, details: details}}` - If the user is authenticated.
     * `{:ok, %{authenticated: false}}` - If the user is not authenticated.
     * `{:error, reason}` - If an error occurs.
@@ -49,19 +49,19 @@ defmodule Myapp.SocialMedia.Twitter do
         {:error, reason}
     end
   end
-  
+
   @doc """
   Creates a post (tweet) on Twitter.
-  
+
   ## Parameters
-  
+
     * `user_id` - The ID of the user creating the post.
     * `content` - The content of the post (tweet text).
     * `media_ids` - Optional list of media IDs to attach to the post.
     * `options` - Additional Twitter-specific options.
-    
+
   ## Returns
-  
+
     * `{:ok, post}` - If the post was created successfully.
     * `{:error, reason}` - If an error occurs.
   """
@@ -75,19 +75,19 @@ defmodule Myapp.SocialMedia.Twitter do
       end
     end
   end
-  
+
   @doc """
   Uploads media to Twitter.
-  
+
   ## Parameters
-  
+
     * `user_id` - The ID of the user uploading the media.
     * `media_path` - The path to the media file.
     * `mime_type` - The MIME type of the media file.
     * `options` - Additional Twitter-specific options.
-    
+
   ## Returns
-  
+
     * `{:ok, media_id}` - If the media was uploaded successfully.
     * `{:error, reason}` - If an error occurs.
   """
@@ -101,17 +101,17 @@ defmodule Myapp.SocialMedia.Twitter do
       {:error, reason} -> {:error, reason}
     end
   end
-  
+
   @doc """
   Deletes a post (tweet) from Twitter.
-  
+
   ## Parameters
-  
+
     * `user_id` - The ID of the user who owns the post.
     * `post_id` - The ID of the post (tweet) to delete.
-    
+
   ## Returns
-  
+
     * `{:ok, result}` - If the post was deleted successfully.
     * `{:error, reason}` - If an error occurs.
   """
@@ -121,17 +121,17 @@ defmodule Myapp.SocialMedia.Twitter do
       Twitter.delete_tweet(conn, post_id)
     end
   end
-  
+
   @doc """
   Retrieves the user's timeline from Twitter.
-  
+
   ## Parameters
-  
+
     * `user_id` - The ID of the user whose timeline to retrieve.
     * `options` - Additional options such as limit, max_id, etc.
-    
+
   ## Returns
-  
+
     * `{:ok, posts}` - If the timeline was retrieved successfully.
     * `{:error, reason}` - If an error occurs.
   """
@@ -139,35 +139,35 @@ defmodule Myapp.SocialMedia.Twitter do
   def get_timeline(user_id, options \\ []) do
     # Convert keyword list to map for Twitter API
     opts = Enum.into(options, %{})
-    
+
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
       Twitter.get_user_timeline(conn, opts)
     end
   end
-  
+
   @doc """
   Retrieves the user's profile from Twitter.
-  
+
   ## Parameters
-  
+
     * `user_id` - The ID of the user whose profile to retrieve.
-    
+
   ## Returns
-  
+
     * `{:ok, profile}` - If the profile was retrieved successfully.
     * `{:error, reason}` - If an error occurs.
   """
   @impl Myapp.SocialMedia
   def get_profile(user_id) do
     with {:ok, conn} <- get_conn_from_user_id(user_id),
-         {:ok, token} <- TwitterOauth.get_access_token(conn),
+         {:ok, token} <- get_access_token_from_conn(conn),
          {:ok, twitter_user_id} <- Twitter.get_authenticated_user_id(token),
          {:ok, response} <- Twitter.make_api_call(:get, "/users/#{twitter_user_id}", token, %{
            "user.fields" => "name,username,profile_image_url,description,created_at,public_metrics"
          }) do
-      
+
       profile_data = response["data"]
-      
+
       if profile_data do
         {:ok, %{
           id: profile_data["id"],
@@ -183,16 +183,16 @@ defmodule Myapp.SocialMedia.Twitter do
       end
     end
   end
-  
+
   @doc """
   Refreshes the user's authentication tokens if needed.
-  
+
   ## Parameters
-  
+
     * `user_id` - The ID of the user whose tokens to refresh.
-    
+
   ## Returns
-  
+
     * `{:ok, tokens}` - If the tokens were refreshed successfully.
     * `{:ok, :not_needed}` - If token refresh was not needed.
     * `{:error, reason}` - If an error occurs.
@@ -210,46 +210,48 @@ defmodule Myapp.SocialMedia.Twitter do
         # Token is invalid, but we can't refresh it automatically in most OAuth 2.0 flows
         # without redirect. The application may need to initiate a new OAuth flow.
         {:error, :token_expired_needs_reauthorization}
-      
+
       {:error, reason} ->
         {:error, reason}
     end
   end
-  
+
   # Helper function to get conn from user_id
   # In a real application, this would likely retrieve tokens from a database
   # and construct a conn-like structure for the Twitter module to use
   defp get_conn_from_user_id(user_id) do
-    # Get the access token from the database
-    with {:ok, access_token} <- SocialMediaToken.get_token(user_id, :twitter, :access),
-         {:ok, refresh_token} <- get_refresh_token(user_id) do
-      # Create a mock conn with session data that TwitterOauth can use
-      {:ok, %{
-        private: %{
-          plug_session: %{
-            "twitter_access_token" => access_token,
-            "twitter_refresh_token" => refresh_token
+    # Get the access token from the database using the new Tokens module
+    case Tokens.get_social_token(user_id, :twitter) do
+      {:ok, token_data} ->
+        # Create a mock conn with session data that TwitterAuth can use
+        {:ok, %{
+          private: %{
+            plug_session: %{
+              "twitter_access_token" => token_data.access_token,
+              "twitter_refresh_token" => token_data.refresh_token
+            }
           }
-        }
-      }}
-    else
-      {:error, :token_not_found} ->
+        }}
+
+      {:error, :not_found} ->
         {:error, :authentication_required}
+
       {:error, reason} ->
         {:error, reason}
     end
   end
 
-  # Helper function to safely get refresh token (might not exist)
-  defp get_refresh_token(user_id) do
-    case SocialMediaToken.get_token(user_id, :twitter, :refresh) do
-      {:ok, refresh_token} -> {:ok, refresh_token}
-      {:error, :refresh_token_not_available} -> {:ok, nil} # Make it non-fatal if refresh token is missing
-      {:error, reason} -> {:error, reason}
+  # Helper function to get access token from conn
+  defp get_access_token_from_conn(conn) do
+    case conn.private.plug_session["twitter_access_token"] do
+      nil -> {:error, :token_not_found}
+      token -> {:ok, token}
     end
-    
-    # For testing during implementation, you might return a mock:
-    # {:ok, %{private: %{plug_session: %{"twitter_access_token" => "test_token"}}}}
+  end
+
+  # This function is no longer needed as we get both tokens from Tokens.get_social_token/2
+  # Keeping it as a no-op for backward compatibility
+  defp get_refresh_token(_user_id) do
+    {:ok, nil}
   end
 end
-

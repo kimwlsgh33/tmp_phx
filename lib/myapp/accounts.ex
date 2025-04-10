@@ -7,6 +7,8 @@ defmodule Myapp.Accounts do
   alias Myapp.Repo
 
   alias Myapp.Accounts.{User, UserToken, UserNotifier, LinkedAccount}
+  alias Myapp.Tokens
+  alias Myapp.ErrorHandler
 
   ## Database getters
 
@@ -221,25 +223,52 @@ defmodule Myapp.Accounts do
   Generates a session token.
   """
   def generate_user_session_token(user) do
-    {token, user_token} = UserToken.build_session_token(user)
-    Repo.insert!(user_token)
-    token
+    # Use the new Tokens module to create a session token
+    case Tokens.create_session_token(user) do
+      {:ok, token, _metadata} -> token
+      {:error, reason} ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :internal_error,
+            "Failed to create session token",
+            %{user_id: user.id, reason: reason},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+        raise "Failed to create session token: #{inspect(reason)}"
+    end
   end
 
   @doc """
   Gets the user with the given signed token.
   """
   def get_user_by_session_token(token) do
-    {:ok, query} = UserToken.verify_session_token_query(token)
-    Repo.one(query)
+    # Use the new Tokens module to verify the session token
+    case Tokens.verify_session_token(token) do
+      {:ok, user} -> user
+      {:error, reason} ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :unauthorized,
+            "Invalid session token",
+            %{reason: reason},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+        nil
+    end
   end
 
   @doc """
   Deletes the signed token with the given context.
   """
   def delete_user_session_token(token) do
-    Repo.delete_all(UserToken.by_token_and_context_query(token, "session"))
-    :ok
+    # Use the new Tokens module to revoke the session token
+    Tokens.revoke_session_token(token)
   end
 
   ## Confirmation
@@ -262,18 +291,18 @@ defmodule Myapp.Accounts do
     else
       # Generate a 6-letter confirmation code
       confirmation_code = generate_confirmation_code()
-      
+
       # Update the user with the confirmation code
       {:ok, updated_user} =
         user
         |> User.confirmation_code_changeset(%{confirmation_code: confirmation_code})
         |> Repo.update()
-      
+
       # Send the confirmation code via email
       UserNotifier.deliver_confirmation_instructions(updated_user, confirmation_code)
     end
   end
-  
+
   # Generates a random 6-letter confirmation code
   defp generate_confirmation_code do
     # Generate 6 random uppercase letters
@@ -289,12 +318,12 @@ defmodule Myapp.Accounts do
   def confirm_user(email, confirmation_code) when is_binary(email) and is_binary(confirmation_code) do
     # First check if a user with this email exists
     case Repo.get_by(User, email: email) do
-      nil -> 
+      nil ->
         {:error, :user_not_found}
-        
+
       %User{confirmed_at: confirmed_at} when not is_nil(confirmed_at) ->
         {:error, :already_confirmed}
-        
+
       user ->
         # Now verify the confirmation code
         if user.confirmation_code == confirmation_code do
@@ -326,8 +355,8 @@ defmodule Myapp.Accounts do
   """
   def deliver_user_reset_password_instructions(%User{} = user, reset_password_url_fun)
       when is_function(reset_password_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
-    Repo.insert!(user_token)
+    # Use the new Tokens module to create an email token
+    {:ok, encoded_token} = Tokens.create_email_token(user, "reset_password")
     UserNotifier.deliver_reset_password_instructions(user, reset_password_url_fun.(encoded_token))
   end
 
@@ -344,11 +373,21 @@ defmodule Myapp.Accounts do
 
   """
   def get_user_by_reset_password_token(token) do
-    with {:ok, query} <- UserToken.verify_email_token_query(token, "reset_password"),
-         %User{} = user <- Repo.one(query) do
-      user
-    else
-      _ -> nil
+    # Use the new Tokens module to verify the email token
+    case Tokens.verify_email_token(token, "reset_password") do
+      {:ok, user} -> user
+      {:error, reason} ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :unauthorized,
+            "Invalid reset password token",
+            %{reason: reason},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+        nil
     end
   end
 
@@ -400,9 +439,20 @@ defmodule Myapp.Accounts do
       info: %{email: email, image: avatar_url}
     } = auth
 
-    # Add debug logging
+    # Log the OAuth authentication attempt
     require Logger
     Logger.debug("OAuth User Data - Email: #{email}, Provider: #{provider}, Avatar URL: #{avatar_url}")
+
+    # Record the OAuth authentication attempt with our error handler
+    ErrorHandler.handle(
+      ErrorHandler.error(
+        :info,
+        "OAuth authentication attempt",
+        %{email: email, provider: provider, uid: uid},
+        __MODULE__
+      ),
+      __MODULE__
+    )
 
     # Generate a secure random password for OAuth users
     random_password = generate_secure_password(32)
@@ -415,7 +465,7 @@ defmodule Myapp.Accounts do
       avatar_url: avatar_url,
       password: random_password
     }
-    
+
     Logger.debug("User params being saved: #{inspect(user_params)}")
 
     # Try to find an existing user with this email
@@ -423,16 +473,64 @@ defmodule Myapp.Accounts do
       # User exists - update their OAuth info if needed
       %User{} = user ->
         Logger.debug("Updating existing user with OAuth info")
-        user
-        |> User.oauth_changeset(user_params)
-        |> Repo.update()
+
+        # Record the OAuth user update with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :info,
+            "Updating existing user with OAuth info",
+            %{user_id: user.id, provider: provider},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+
+        case user |> User.oauth_changeset(user_params) |> Repo.update() do
+          {:ok, updated_user} = result -> result
+          {:error, changeset} = error ->
+            # Log the error with our error handler
+            ErrorHandler.handle(
+              ErrorHandler.error(
+                :validation_error,
+                "Failed to update user with OAuth info",
+                %{user_id: user.id, provider: provider, changeset: changeset},
+                __MODULE__
+              ),
+              __MODULE__
+            )
+            error
+        end
 
       # User doesn't exist - create a new one
       nil ->
         Logger.debug("Creating new user with OAuth info")
-        %User{}
-        |> User.oauth_registration_changeset(user_params)
-        |> Repo.insert()
+
+        # Record the OAuth user creation with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :info,
+            "Creating new user with OAuth info",
+            %{email: email, provider: provider},
+            __MODULE__
+          ),
+          __MODULE__
+        )
+
+        case %User{} |> User.oauth_registration_changeset(user_params) |> Repo.insert() do
+          {:ok, new_user} = result -> result
+          {:error, changeset} = error ->
+            # Log the error with our error handler
+            ErrorHandler.handle(
+              ErrorHandler.error(
+                :validation_error,
+                "Failed to create user with OAuth info",
+                %{email: email, provider: provider, changeset: changeset},
+                __MODULE__
+              ),
+              __MODULE__
+            )
+            error
+        end
     end
   end
 
@@ -487,10 +585,23 @@ defmodule Myapp.Accounts do
     # Prevent linking to self
     if primary_user.id == linked_user.id do
       changeset = LinkedAccount.changeset(%LinkedAccount{}, %{})
-      {:error, Ecto.Changeset.add_error(changeset, :linked_user_id, "cannot link to the same account")}
+      error_changeset = Ecto.Changeset.add_error(changeset, :linked_user_id, "cannot link to the same account")
+
+      # Log the error with our error handler
+      ErrorHandler.handle(
+        ErrorHandler.error(
+          :validation_error,
+          "Cannot link account to itself",
+          %{user_id: primary_user.id, changeset: error_changeset},
+          __MODULE__
+        ),
+        __MODULE__
+      )
+
+      {:error, error_changeset}
     else
       # Check if the primary->linked link already exists
-      primary_to_linked = 
+      primary_to_linked =
         case Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user.id) do
           %LinkedAccount{} = existing_link ->
             {:existing, existing_link}
@@ -503,12 +614,33 @@ defmodule Myapp.Accounts do
                   }))
                 |> Repo.insert() do
               {:ok, link} -> {:created, link}
-              {:error, changeset} -> {:error, changeset}
+              {:error, changeset} ->
+                # Log the error with our error handler
+                ErrorHandler.handle(
+                  ErrorHandler.error(
+                    :validation_error,
+                    "Failed to create account link",
+                    %{primary_user_id: primary_user.id, linked_user_id: linked_user.id, changeset: changeset},
+                    __MODULE__
+                  ),
+                  __MODULE__
+                )
+                {:error, changeset}
             end
         end
 
       case primary_to_linked do
         {:error, changeset} ->
+          # Log the error with our error handler
+          ErrorHandler.handle(
+            ErrorHandler.error(
+              :validation_error,
+              "Failed to link accounts",
+              %{primary_user_id: primary_user.id, linked_user_id: linked_user.id, changeset: changeset},
+              __MODULE__
+            ),
+            __MODULE__
+          )
           {:error, changeset}
         {_, link} ->
           # Now ensure the reciprocal link (linked->primary) exists
@@ -519,15 +651,41 @@ defmodule Myapp.Accounts do
                 :ok
               nil ->
                 # Create linked->primary link
-                %LinkedAccount{}
-                |> LinkedAccount.changeset(%{
-                    primary_user_id: linked_user.id,
-                    linked_user_id: primary_user.id,
-                    name: attrs[:name]
-                  })
-                |> Repo.insert()
+                case %LinkedAccount{}
+                  |> LinkedAccount.changeset(%{
+                      primary_user_id: linked_user.id,
+                      linked_user_id: primary_user.id,
+                      name: attrs[:name]
+                    })
+                  |> Repo.insert() do
+                  {:ok, _} -> :ok
+                  {:error, changeset} ->
+                    # Log the error with our error handler
+                    ErrorHandler.handle(
+                      ErrorHandler.error(
+                        :validation_error,
+                        "Failed to create reciprocal account link",
+                        %{primary_user_id: linked_user.id, linked_user_id: primary_user.id, changeset: changeset},
+                        __MODULE__
+                      ),
+                      __MODULE__
+                    )
+                    # We don't fail the whole operation if just the reciprocal link fails
+                    :error
+                end
             end
-            
+
+          # Log the successful link
+          ErrorHandler.handle(
+            ErrorHandler.error(
+              :info,
+              "Successfully linked accounts",
+              %{primary_user_id: primary_user.id, linked_user_id: linked_user.id},
+              __MODULE__
+            ),
+            __MODULE__
+          )
+
           # Return the primary->linked link (either existing or newly created)
           {:ok, link}
       end
@@ -551,7 +709,7 @@ defmodule Myapp.Accounts do
               user: u,
               name: la.name
             }
-            
+
     Repo.all(query)
   end
 
@@ -570,16 +728,36 @@ defmodule Myapp.Accounts do
     # Check for primary-to-linked relationship
     primary_to_linked = Repo.get_by(LinkedAccount, primary_user_id: primary_user.id, linked_user_id: linked_user_id)
     primary_result = if primary_to_linked, do: Repo.delete(primary_to_linked), else: nil
-    
+
     # Check for linked-to-primary (reciprocal) relationship
     linked_to_primary = Repo.get_by(LinkedAccount, primary_user_id: linked_user_id, linked_user_id: primary_user.id)
     reciprocal_result = if linked_to_primary, do: Repo.delete(linked_to_primary), else: nil
-    
+
     # Return success if at least one link was found and deleted
     cond do
       primary_result || reciprocal_result ->
+        # Log the successful unlink
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :info,
+            "Successfully unlinked accounts",
+            %{primary_user_id: primary_user.id, linked_user_id: linked_user_id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
         primary_result || reciprocal_result
       true ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :not_found,
+            "Attempted to unlink non-linked account",
+            %{primary_user_id: primary_user.id, linked_user_id: linked_user_id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
         {:error, :not_found}
     end
   end
@@ -600,33 +778,53 @@ defmodule Myapp.Accounts do
     # First verify that this is a valid link
     case Repo.get_by(LinkedAccount, primary_user_id: current_user.id, linked_user_id: linked_user_id) do
       nil ->
+        # Log the error with our error handler
+        ErrorHandler.handle(
+          ErrorHandler.error(
+            :forbidden,
+            "Attempted to switch to non-linked account",
+            %{current_user_id: current_user.id, linked_user_id: linked_user_id},
+            __MODULE__
+          ),
+          __MODULE__
+        )
         {:error, :not_linked}
       _link ->
         # Get the linked user
         linked_user = Repo.get(User, linked_user_id)
-        
+
         case linked_user do
           nil ->
+            # Log the error with our error handler
+            ErrorHandler.handle(
+              ErrorHandler.error(
+                :not_found,
+                "Linked account user not found",
+                %{current_user_id: current_user.id, linked_user_id: linked_user_id},
+                __MODULE__
+              ),
+              __MODULE__
+            )
             {:error, :user_not_found}
           linked_user ->
             # Create a complete graph of linked accounts
-            
+
             # 1. Get all accounts linked to the current user
             current_user_links_query = from la in LinkedAccount,
                                       where: la.primary_user_id == ^current_user.id,
                                       select: la.linked_user_id
             current_user_linked_ids = Repo.all(current_user_links_query)
-            
+
             # 2. Get all accounts linked to the target user
             linked_user_links_query = from la in LinkedAccount,
                                      where: la.primary_user_id == ^linked_user_id,
                                      select: la.linked_user_id
             linked_user_linked_ids = Repo.all(linked_user_links_query)
-            
+
             # 3. Add the current user and target user to their respective groups
             group1 = [current_user.id | current_user_linked_ids]
             group2 = [linked_user_id | linked_user_linked_ids]
-            
+
             # 4. Create links between all accounts in both groups
             for id1 <- group1, id2 <- group2 do
               # Skip self-links
@@ -643,7 +841,7 @@ defmodule Myapp.Accounts do
                     |> Repo.insert()
                   _existing -> :ok
                 end
-                
+
                 # Create reciprocal link if needed
                 case Repo.get_by(LinkedAccount, primary_user_id: id2, linked_user_id: id1) do
                   nil ->
@@ -658,7 +856,18 @@ defmodule Myapp.Accounts do
                 end
               end
             end
-            
+
+            # Log the successful account switch
+            ErrorHandler.handle(
+              ErrorHandler.error(
+                :info,
+                "User switched to linked account",
+                %{from_user_id: current_user.id, to_user_id: linked_user.id},
+                __MODULE__
+              ),
+              __MODULE__
+            )
+
             # Generate a new session token for the linked user
             token = generate_user_session_token(linked_user)
             {:ok, token, linked_user}
