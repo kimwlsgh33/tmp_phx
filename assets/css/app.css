@@ -81,6 +81,22 @@
   animation: fadeIn 0.3s ease-out forwards;
 }
 
+/* Right-to-left animation */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
 /* Enhanced markdown content styling */
 #markdown-content {
   /* Basic typography */
@@ -206,5 +222,50 @@
 
   & .danger {
     @apply bg-red-50 border-l-4 border-red-500;
+  }
+}
+
+/* Dark mode enhancements */
+.dark {
+  color-scheme: dark;
+}
+
+/* Dark mode markdown content styling */
+.dark #markdown-content {
+  /* Basic typography */
+  @apply text-gray-200;
+  
+  /* Headings */
+  & h1, & h2, & h3, & h4, & h5, & h6 {
+    @apply text-gray-100;
+    @apply border-gray-700;
+  }
+  
+  /* Code blocks */
+  & code {
+    @apply bg-gray-800 text-gray-200;
+  }
+  
+  /* Tables */
+  & thead {
+    @apply bg-gray-800;
+  }
+  
+  & th {
+    @apply text-gray-200;
+  }
+  
+  & td {
+    @apply text-gray-300;
+  }
+  
+  /* Links */
+  & a {
+    @apply text-blue-400 hover:text-blue-300;
+  }
+  
+  /* Horizontal rule */
+  & hr {
+    @apply border-gray-700;
   }
 }

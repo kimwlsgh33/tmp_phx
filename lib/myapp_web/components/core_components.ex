@@ -50,7 +50,11 @@ defmodule MyappWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="bg-zinc-50/90 dark:bg-gray-800/90 fixed inset-0 transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -66,7 +70,7 @@ defmodule MyappWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white p-14 shadow-lg ring-1 transition"
+              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white dark:bg-zinc-900 p-14 shadow-lg ring-1 transition"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -116,8 +120,10 @@ defmodule MyappWeb.CoreComponents do
       role="alert"
       class={[
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+        @kind == :info &&
+          "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-100 ring-emerald-500 fill-cyan-900",
+        @kind == :error &&
+          "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-100 shadow-md ring-rose-500 fill-rose-900"
       ]}
       {@rest}
     >
@@ -202,7 +208,7 @@ defmodule MyappWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="mt-10 space-y-8 bg-white dark:bg-black">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -232,7 +238,7 @@ defmodule MyappWeb.CoreComponents do
       type={@type}
       class={[
         "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "text-sm font-semibold leading-6 text-gray-400 active:text-white/80 dark:text-gray-300 dark:hover:text-white",
         @class
       ]}
       {@rest}
@@ -310,7 +316,7 @@ defmodule MyappWeb.CoreComponents do
 
     ~H"""
     <div>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600 dark:text-gray-400">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
         <input
           type="checkbox"
@@ -318,8 +324,7 @@ defmodule MyappWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
-          {@rest}
+          class="rounded border-zinc-300 dark:border-zinc-600 text-zinc-900 focus:ring-0"
         />
         {@label}
       </label>
@@ -328,24 +333,23 @@ defmodule MyappWeb.CoreComponents do
     """
   end
 
-  def input(%{type: "select"} = assigns) do
-    ~H"""
-    <div>
-      <.label for={@id}>{@label}</.label>
-      <select
-        id={@id}
-        name={@name}
-        class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
-        multiple={@multiple}
-        {@rest}
-      >
-        <option :if={@prompt} value="">{@prompt}</option>
-        {Phoenix.HTML.Form.options_for_select(@options, @value)}
-      </select>
-      <.error :for={msg <- @errors}>{msg}</.error>
-    </div>
-    """
-  end
+  # def input(%{type: "select"} = assigns) do
+  #   ~H"""
+  #   <div>
+  #     <.label for={@id}>{@label}</.label>
+  #     <select
+  #       id={@id}
+  #       name={@name}
+  #       class="mt-2 block w-full rounded-md border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 dark:text-gray-900 shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+  #       {@rest}
+  #     >
+  #       <option :if={@prompt} value="">{@prompt}</option>
+  #       {Phoenix.HTML.Form.options_for_select(@options, @value)}
+  #     </select>
+  #     <.error :for={msg <- @errors}>{msg}</.error>
+  #   </div>
+  #   """
+  # end
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
@@ -355,8 +359,9 @@ defmodule MyappWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
+          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-white focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
+          @errors == [] &&
+            "border-zinc-300 dark:border-gray-300 dark:bg-zinc-800 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -377,8 +382,9 @@ defmodule MyappWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
+          "mt-2 block w-full rounded-lg bg-zinc-900 text-gray-200 focus:ring-0 sm:text-sm sm:leading-6",
+          "placeholder-gray-400 border-gray-400",
+          @errors == [] && "border-gray-400 focus:border-[#FD4F00]",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -396,7 +402,7 @@ defmodule MyappWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6 text-gray-300">
       {render_slot(@inner_block)}
     </label>
     """
@@ -411,7 +417,7 @@ defmodule MyappWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class={[
-      "mt-3 flex gap-3 text-sm leading-6 text-rose-600",
+      "mt-3 flex gap-3 text-sm leading-6 text-rose-600 dark:text-rose-400",
       @class
     ]}>
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
@@ -433,10 +439,10 @@ defmodule MyappWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-lg font-semibold leading-8 text-zinc-800 dark:text-gray-200">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600 dark:text-gray-200">
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -479,7 +485,7 @@ defmodule MyappWeb.CoreComponents do
     ~H"""
     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
       <table class="w-[40rem] mt-11 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
+        <thead class="text-sm text-left leading-6 text-zinc-500 dark:text-zinc-400">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
             <th :if={@action != []} class="relative p-0 pb-4">
@@ -490,27 +496,31 @@ defmodule MyappWeb.CoreComponents do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
+          class="relative divide-y divide-zinc-100 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700 text-sm leading-6 text-zinc-700 dark:text-zinc-300"
         >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+          <tr
+            :for={row <- @rows}
+            id={@row_id && @row_id.(row)}
+            class="group hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-800 sm:rounded-l-xl" />
+                <span class={["relative", i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100"]}>
                   {render_slot(col, @row_item.(row))}
                 </span>
               </div>
             </td>
             <td :if={@action != []} class="relative w-14 p-0">
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-800 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                  class="relative ml-4 font-semibold leading-6 text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300"
                 >
                   {render_slot(action, @row_item.(row))}
                 </span>
@@ -540,10 +550,10 @@ defmodule MyappWeb.CoreComponents do
   def list(assigns) do
     ~H"""
     <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
+      <dl class="-my-4 divide-y divide-zinc-100 dark:divide-zinc-700">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500">{item.title}</dt>
-          <dd class="text-zinc-700">{render_slot(item)}</dd>
+          <dt class="w-1/4 flex-none text-zinc-500 dark:text-zinc-300">{item.title}</dt>
+          <dd class="text-zinc-700 dark:text-zinc-100">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -565,7 +575,7 @@ defmodule MyappWeb.CoreComponents do
     <div class="mt-16">
       <.link
         navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        class="text-sm font-semibold leading-6 text-zinc-900 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-100"
       >
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         {render_slot(@inner_block)}
@@ -611,23 +621,33 @@ defmodule MyappWeb.CoreComponents do
   """
   attr :is_connected, :boolean, required: true, doc: "whether the user is connected to TikTok"
   attr :class, :string, default: nil, doc: "additional CSS classes"
-  attr :connect_path, :string, default: "/tiktok/oauth/connect", doc: "path to the connect endpoint"
-  attr :disconnect_path, :string, default: "/tiktok/oauth/disconnect", doc: "path to the disconnect endpoint"
+
+  attr :connect_path, :string,
+    default: "/tiktok/oauth/connect",
+    doc: "path to the connect endpoint"
+
+  attr :disconnect_path, :string,
+    default: "/tiktok/oauth/disconnect",
+    doc: "path to the disconnect endpoint"
 
   def tiktok_oauth_status(assigns) do
     ~H"""
-    <div class={["flex items-center justify-between p-4 rounded-lg border", @class]}>
+    <div class={[
+      "flex items-center justify-between p-4 rounded-lg border dark:border-zinc-700",
+      @class
+    ]}>
       <div class="flex items-center">
         <div class={[
           "w-3 h-3 rounded-full mr-2",
           @is_connected && "bg-green-500",
           !@is_connected && "bg-red-500"
-        ]}></div>
+        ]}>
+        </div>
         <span class="font-medium">
           <%= if @is_connected do %>
-            <span class="text-green-600">Connected to TikTok</span>
+            <span class="text-green-600 dark:text-green-400">Connected to TikTok</span>
           <% else %>
-            <span class="text-red-600">Not Connected to TikTok</span>
+            <span class="text-red-600 dark:text-red-400">Not Connected to TikTok</span>
           <% end %>
         </span>
       </div>
@@ -635,14 +655,14 @@ defmodule MyappWeb.CoreComponents do
         <%= if @is_connected do %>
           <.link
             href={@disconnect_path}
-            class="text-sm px-3 py-2 rounded bg-red-50 text-red-700 hover:bg-red-100 font-medium"
+            class="text-sm px-3 py-2 rounded bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800 font-medium"
           >
             Disconnect
           </.link>
         <% else %>
           <.link
             href={@connect_path}
-            class="text-sm px-3 py-2 rounded bg-zinc-900 text-white hover:bg-zinc-700 font-medium"
+            class="text-sm px-3 py-2 rounded bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 font-medium"
           >
             Connect to TikTok
           </.link>

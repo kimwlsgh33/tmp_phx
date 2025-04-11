@@ -21,9 +21,11 @@ module.exports = {
         'gradient-background': 'gradient 15s ease infinite',
         'grid-flow': 'grid-flow 20s linear infinite',
         'button-glow': 'button-glow 1.5s ease-in-out infinite',
+        'button-glow': 'button-glow 1.5s ease-in-out infinite',
         'button-shine': 'button-shine 8s ease-in-out infinite',
         'logo-scroll': 'logo-scroll 30s linear infinite',
         'bounce-slow': 'bounce-slow 3s infinite',
+        'slide-in-right': 'slideInRight 0.3s ease-out forwards',
       },
       keyframes: {
         gradient: {
@@ -61,6 +63,10 @@ module.exports = {
         'bounce-slow': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-20px)' }
+        },
+        'slideInRight': {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' }
         },
       },
       backgroundSize: {

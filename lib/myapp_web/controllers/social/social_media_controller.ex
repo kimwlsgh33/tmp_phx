@@ -1,7 +1,7 @@
 defmodule MyappWeb.Social.SocialMediaController do
   @moduledoc """
   Controller for handling social media platform integrations and uploads.
-  
+
   Provides common controller logic and functions that can be used by
   platform-specific features. This module standardizes:
   - OAuth authentication flows
@@ -12,7 +12,7 @@ defmodule MyappWeb.Social.SocialMediaController do
   """
   use MyappWeb, :controller
 
-  alias Myapp.{Accounts, Content, SocialMediaConfig, SocialMediaToken}
+  alias Myapp.{Accounts, Content, SocialMediaConfig, Tokens}
   alias Myapp.Content.{Post, ShortVideo, LongVideo}
 
   # Platform-specific constraints
@@ -64,13 +64,13 @@ defmodule MyappWeb.Social.SocialMediaController do
   """
   def validate_provider(provider) when is_binary(provider) do
     case SocialMediaConfig.get_provider_modules(provider) do
-      {:ok, %{auth_module: auth_module, api_module: api_module}} -> 
+      {:ok, %{auth_module: auth_module, api_module: api_module}} ->
         {:ok, auth_module, api_module}
-      {:error, reason} -> 
+      {:error, reason} ->
         {:error, reason}
     end
   end
-  
+
   def validate_provider(_), do: {:error, :invalid_provider}
 
   @doc """
@@ -85,7 +85,7 @@ defmodule MyappWeb.Social.SocialMediaController do
         conn
         |> put_flash(:error, "Invalid social media provider")
         |> redirect(to: ~p"/")
-      
+
       {:error, reason} ->
         conn
         |> put_flash(:error, "Failed to connect to #{provider}: #{inspect(reason)}")
@@ -108,7 +108,7 @@ defmodule MyappWeb.Social.SocialMediaController do
         conn
         |> put_flash(:error, "Invalid social media provider")
         |> redirect(to: ~p"/")
-      
+
       {:error, reason} ->
         conn
         |> put_flash(:error, "Authentication failed with #{provider}: #{inspect(reason)}")
@@ -223,20 +223,13 @@ defmodule MyappWeb.Social.SocialMediaController do
     else
       # Convert provider from string to atom for SocialMediaToken
       platform = String.to_existing_atom(provider)
-      
-      # Get the token
-      case SocialMediaToken.get_token(user_id, platform) do
-        {:ok, access_token} ->
-          # Get refresh token if available
-          refresh_result = SocialMediaToken.get_token(user_id, platform, :refresh)
-          refresh_token = case refresh_result do
-            {:ok, token} -> token
-            _ -> nil
-          end
-          
+
+      # Get the token using the new Tokens module
+      case Tokens.get_social_token(user_id, platform) do
+        {:ok, token_data} ->
           # Return tokens in a map
-          {:ok, %{access_token: access_token, refresh_token: refresh_token}}
-        
+          {:ok, %{access_token: token_data.access_token, refresh_token: token_data.refresh_token}}
+
         {:error, reason} ->
           {:error, reason}
       end
@@ -252,12 +245,12 @@ defmodule MyappWeb.Social.SocialMediaController do
       true ->
         {:ok, content}
       false ->
-        failed_platforms = 
+        failed_platforms =
           results
           |> Enum.filter(&match?({:error, _}, &1))
           |> Enum.map(fn {:error, {platform, reason}} -> "#{platform}: #{reason}" end)
           |> Enum.join(", ")
-        
+
         {:error, "Failed to upload to some platforms: #{failed_platforms}"}
     end
   end
@@ -294,32 +287,24 @@ defmodule MyappWeb.Social.SocialMediaController do
   # Token Management
 
   defp get_tokens(platform, user) do
-    case Accounts.get_platform_token(user.id, platform) do
-      {:ok, token} ->
-        if token_expired?(token) do
-          refresh_token(platform, token)
-        else
-          {:ok, token}
-        end
+    case Tokens.get_social_token(user.id, platform) do
+      {:ok, token_data} ->
+        # The Tokens module already handles token expiration and refresh
+        {:ok, token_data}
       error -> error
     end
   end
 
-  defp token_expired?(token) do
-    token.expires_at && DateTime.compare(token.expires_at, DateTime.utc_now()) == :lt
-  end
+  # Token expiration and refresh are now handled by the Tokens module
+  # These functions are kept as no-ops for backward compatibility
+  defp token_expired?(_token), do: false
 
-  defp refresh_token(provider, token) do
-    case validate_provider(provider) do
-      {:ok, auth_module, _} -> auth_module.refresh_token(token)
-      error -> error
-    end
-  end
+  defp refresh_token(_provider, _token), do: {:error, :not_implemented}
 
   # Content Validation Functions
 
   defp validate_user_tokens(user, platforms) do
-    missing_tokens = 
+    missing_tokens =
       platforms
       |> Enum.reject(&has_valid_token?(user, &1))
       |> Enum.map(&"#{&1}")
@@ -331,8 +316,8 @@ defmodule MyappWeb.Social.SocialMediaController do
   end
 
   defp has_valid_token?(user, platform) do
-    case Accounts.get_platform_token(user.id, platform) do
-      {:ok, token} -> !token_expired?(token)
+    case Tokens.get_social_token(user.id, platform) do
+      {:ok, _token_data} -> true
       _ -> false
     end
   end
@@ -360,7 +345,7 @@ defmodule MyappWeb.Social.SocialMediaController do
   end
 
   defp validate_post_file_types(files) do
-    invalid_files = 
+    invalid_files =
       files
       |> Enum.reject(&valid_post_file_type?/1)
       |> Enum.map(&Path.basename(&1))
@@ -402,7 +387,7 @@ defmodule MyappWeb.Social.SocialMediaController do
   end
 
   defp validate_post_file_sizes(files, platforms) do
-    results = 
+    results =
       for platform <- platforms,
           file <- files do
         validate_file_size(file, platform)
@@ -478,7 +463,7 @@ defmodule MyappWeb.Social.SocialMediaController do
 
     hashtags = Map.get(options, :hashtags, parse_hashtags(content))
     media_ids = Map.get(options, :media_ids, [])
-    
+
     with {:ok, tokens} <- get_tokens(conn, provider, user_id),
          post_data <- %{
            content: content,
@@ -507,5 +492,3 @@ defmodule MyappWeb.Social.SocialMediaController do
     end
   end
 end
-
-

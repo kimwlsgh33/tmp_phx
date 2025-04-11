@@ -10,7 +10,7 @@ defmodule MyappWeb.Endpoint do
     signing_salt: "DG6ud072",
     same_site: "Lax"
   ]
-  
+
   # Function to expose session options to other modules
   def session_options, do: @session_options
 
@@ -44,6 +44,9 @@ defmodule MyappWeb.Endpoint do
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
+  # Add Sentry request tracking
+  plug Sentry.PlugContext
+
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
@@ -52,5 +55,9 @@ defmodule MyappWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+
+  # Add Sentry user context after session is loaded
+  plug MyappWeb.Plugs.SentryContext
+
   plug MyappWeb.Router
 end

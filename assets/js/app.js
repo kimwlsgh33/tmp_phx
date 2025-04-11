@@ -29,7 +29,7 @@ let csrfToken = document
   .getAttribute("content");
 let Hooks = {
   ThemeToggle,
-  DocsNavigation
+  DocsNavigation,
 };
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
@@ -37,19 +37,31 @@ let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
 });
 
+// Add debug logging for socket connection
+console.log("[LiveView] Initializing LiveSocket...");
+
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
 // connect if there are any LiveViews on the page
+console.log("[LiveView] Attempting to connect LiveSocket...");
 liveSocket.connect();
 
+// Add event listeners for socket connection status
+liveSocket.socket.onOpen(() => console.log("[LiveView] Socket CONNECTED"));
+liveSocket.socket.onClose(() => console.log("[LiveView] Socket DISCONNECTED"));
+liveSocket.socket.onError((error) => console.error("[LiveView] Socket ERROR:", error));
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+
+// Enable debug mode to see detailed LiveView messages in console
+liveSocket.enableDebug();
+console.log("[LiveView] Debug mode enabled. Check browser console for detailed messages.");
 
 // spinner
 document.addEventListener("DOMContentLoaded", () => {
@@ -74,4 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
     content.style.display = "block";
     content.classList.remove("hidden"); // 부드러운 전환을 위해
   });
+  
+  console.log("[LiveView] Page initialization complete");
+  
+  // Debug helper functions for use in browser console
+  window.checkLiveSocket = () => {
+    console.log("[LiveView] Connection status:", liveSocket.isConnected() ? "CONNECTED" : "DISCONNECTED");
+    console.log("[LiveView] Socket object:", liveSocket.socket);
+    return liveSocket.isConnected();
+  };
 });
