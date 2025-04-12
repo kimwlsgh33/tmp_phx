@@ -9,7 +9,7 @@ defmodule Myapp.SocialMedia.Instagram do
   @behaviour Myapp.SocialMedia
 
   require Logger
-  alias Myapp.InstagramOauth
+  alias Myapp.SocialAuth.Instagram, as: InstagramAuth
   alias Myapp.SocialMediaToken
   alias Myapp.{ErrorHandler, ApiError}
 
@@ -30,7 +30,7 @@ defmodule Myapp.SocialMedia.Instagram do
   def authenticated?(user_id) do
     case get_conn_from_user_id(user_id) do
       {:ok, conn} ->
-        case InstagramOauth.validate_token(conn) do
+        case InstagramAuth.validate_token(conn) do
           {:ok, %{valid: true, user_id: instagram_user_id, username: username}} ->
             # Get additional profile details if needed
             case get_profile(user_id) do
@@ -80,7 +80,7 @@ defmodule Myapp.SocialMedia.Instagram do
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
       if media_ids && length(media_ids) > 0 do
         # Call the Instagram API to create a post
-        case InstagramOauth.create_media_post(conn, content, media_ids, options) do
+        case InstagramAuth.create_media_post(conn, content, media_ids, options) do
           {:ok, post} -> {:ok, post}
           {:error, reason} ->
             # Use our standardized error handling
@@ -123,7 +123,7 @@ defmodule Myapp.SocialMedia.Instagram do
     with {:ok, conn} <- get_conn_from_user_id(user_id),
          {:ok, media_binary} <- File.read(media_path) do
       # Call the Instagram API to upload media
-      case InstagramOauth.upload_media(conn, media_binary, mime_type, options) do
+      case InstagramAuth.upload_media(conn, media_binary, mime_type, options) do
         {:ok, media} -> {:ok, media}
         {:error, reason} ->
           # Use our standardized error handling
@@ -166,7 +166,7 @@ defmodule Myapp.SocialMedia.Instagram do
   def delete_post(user_id, post_id) do
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
       # Call the Instagram API to delete the post
-      case InstagramOauth.delete_media(conn, post_id) do
+      case InstagramAuth.delete_media(conn, post_id) do
         {:ok, result} -> {:ok, result}
         {:error, reason} ->
           # Use our standardized error handling
@@ -199,7 +199,7 @@ defmodule Myapp.SocialMedia.Instagram do
     opts = Enum.into(options, %{})
 
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
-      InstagramOauth.get_user_media(conn, opts)
+      InstagramAuth.get_user_media(conn, opts)
     end
   end
 
@@ -219,7 +219,7 @@ defmodule Myapp.SocialMedia.Instagram do
   def get_profile(user_id) do
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
       # Call the Instagram API to get the user profile
-      case InstagramOauth.get_user_profile(conn) do
+      case InstagramAuth.get_user_profile(conn) do
         {:ok, profile} when is_map(profile) and map_size(profile) > 0 ->
           # Format the profile data
           {:ok, %{
@@ -303,7 +303,7 @@ defmodule Myapp.SocialMedia.Instagram do
   before they expire (typically 60 days).
   """
   def do_refresh_token(token) do
-    case InstagramOauth.refresh_long_lived_token(token.refresh_token || token.access_token) do
+    case InstagramAuth.refresh_long_lived_token(token.refresh_token || token.access_token) do
       {:ok, %{access_token: access_token, expires_in: expires_in}} ->
         expires_at = DateTime.add(DateTime.utc_now(), expires_in, :second)
 
@@ -325,8 +325,8 @@ defmodule Myapp.SocialMedia.Instagram do
     # Get the access token from the database
     case SocialMediaToken.get_token(user_id, :instagram, :access) do
       {:ok, access_token} ->
-        # Create a connection object that InstagramOauth can use
-        {:ok, InstagramOauth.client_with_token(access_token)}
+        # Create a connection object that InstagramAuth can use
+        {:ok, InstagramAuth.client_with_token(access_token)}
 
       {:error, :token_not_found} ->
         {:error, :authentication_required}

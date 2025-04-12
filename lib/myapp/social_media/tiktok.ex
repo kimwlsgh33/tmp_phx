@@ -1,29 +1,29 @@
 defmodule Myapp.SocialMedia.Tiktok do
   @moduledoc """
   TikTok implementation of the Myapp.SocialMedia behavior.
-  
+
   This module serves as a bridge between the TikTok controller and
   the actual TikTok API integration in Myapp.Tiktok.
   """
-  
+
   @behaviour Myapp.SocialMedia
-  
+
   alias Myapp.Tiktok
   alias Myapp.Accounts.SocialMediaToken
-  alias Myapp.SocialAuth.TikTok, as: TiktokOauth
+  alias Myapp.SocialAuth.TikTok, as: TikTokAuth
   alias HTTPoison
-  
+
   @doc """
   Checks if the user is authenticated with TikTok.
-  
+
   Verifies if valid OAuth tokens exist for the specified user.
-  
+
   ## Parameters
-  
+
     * user_id - The ID of the user to check.
-    
+
   ## Returns
-  
+
     * {:ok, %{authenticated: true, details: details}} - If authenticated.
     * {:ok, %{authenticated: false}} - If not authenticated.
     * {:error, reason} - If an error occurs.
@@ -40,19 +40,19 @@ defmodule Myapp.SocialMedia.Tiktok do
         {:error, reason}
     end
   end
-  
+
   @doc """
   Uploads media to TikTok.
-  
+
   ## Parameters
-  
+
     * user_id - The ID of the user.
     * media_path - Path to the media file.
     * mime_type - MIME type of the media.
     * options - Additional options for the upload.
-    
+
   ## Returns
-  
+
     * {:ok, media_id} - If the video was uploaded successfully.
     * {:error, reason} - If an error occurs.
   """
@@ -71,7 +71,7 @@ defmodule Myapp.SocialMedia.Tiktok do
         {:error, reason}
     end
   end
-  
+
   # Validates that the file exists and is a video
   defp validate_video_file(media_path, mime_type) do
     cond do
@@ -83,14 +83,14 @@ defmodule Myapp.SocialMedia.Tiktok do
         :ok
     end
   end
-  
+
   @doc """
   Creates a post on TikTok.
-  
+
   Uses the provided media_id to publish a new video on TikTok with the given text.
-  
+
   ## Parameters
-  
+
     * user_id - The ID of the user publishing the post.
     * media_id - The ID of the previously uploaded media to post.
     * text - The caption or description for the TikTok post.
@@ -98,9 +98,9 @@ defmodule Myapp.SocialMedia.Tiktok do
         * `hashtags` - List of hashtags to include
         * `mention_ids` - List of user IDs to mention
         * `visibility` - Privacy setting ("public", "friends", "private")
-    
+
   ## Returns
-  
+
     * {:ok, post_id} - If the post was created successfully.
     * {:error, reason} - If an error occurs.
   """
@@ -111,10 +111,10 @@ defmodule Myapp.SocialMedia.Tiktok do
       disable_comments = Keyword.get(options, :disable_comments, false)
       disable_duet = Keyword.get(options, :disable_duet, false)
       disable_stitch = Keyword.get(options, :disable_stitch, false)
-      
+
       case Myapp.Tiktok.finalize_upload(
-        media_id, 
-        text, 
+        media_id,
+        text,
         privacy_level,
         disable_comments,
         disable_duet,
@@ -135,7 +135,7 @@ defmodule Myapp.SocialMedia.Tiktok do
       end
     end
   end
-  
+
   @doc """
   Lists videos from TikTok.
 
@@ -174,19 +174,19 @@ defmodule Myapp.SocialMedia.Tiktok do
         {:error, reason}
     end
   end
-  
+
   @doc """
   Deletes a post from TikTok.
-  
+
   Removes a specific post from the user's TikTok account.
-  
+
   ## Parameters
-  
+
     * user_id - The ID of the user who owns the post.
     * post_id - The ID of the post to delete.
-    
+
   ## Returns
-  
+
     * {:ok, %{id: post_id}} - If the post was deleted successfully.
     * {:error, reason} - If an error occurs (post not found, permission issues, etc.).
   """
@@ -204,11 +204,11 @@ defmodule Myapp.SocialMedia.Tiktok do
         {:error, reason}
     end
   end
-  
+
   @doc """
   Gets the user's TikTok profile.
 
-  Retrieves profile information including username, bio, follower count, 
+  Retrieves profile information including username, bio, follower count,
   and other public profile data from the user's TikTok account.
 
   ## Parameters
@@ -251,15 +251,15 @@ defmodule Myapp.SocialMedia.Tiktok do
         {:error, reason}
     end
   end
-  
+
   @doc """
   Gets the user's TikTok timeline.
-  
+
   Retrieves a paginated timeline (feed) from the user's TikTok account, which can
   be configured to return either the "For You" feed or the "Following" feed.
-  
+
   ## Parameters
-  
+
     * user_id - The ID of the user whose timeline should be retrieved.
     * options - Additional options for timeline retrieval (optional):
         * `feed_type` - Type of feed to retrieve ('for_you' or 'following', default: 'for_you')
@@ -267,9 +267,9 @@ defmodule Myapp.SocialMedia.Tiktok do
         * `page_token` - Token for retrieving the next page of results
         * `include_comments` - Whether to include comment previews (boolean, default: false)
         * `include_stats` - Whether to include engagement statistics (boolean, default: true)
-  
+
   ## Returns
-  
+
     * {:ok, %{posts: posts, next_page_token: token}} - If timeline was retrieved successfully.
     * {:error, reason} - If an error occurs.
   """
@@ -287,7 +287,7 @@ defmodule Myapp.SocialMedia.Tiktok do
         {:error, reason}
     end
   end
-  
+
   @doc """
   Refreshes TikTok OAuth tokens.
   """
@@ -309,24 +309,24 @@ defmodule Myapp.SocialMedia.Tiktok do
   Refreshes the TikTok OAuth token.
   """
   def do_refresh_token(token) do
-    case TiktokOauth.refresh_access_token(token.refresh_token) do
+    case TikTokAuth.refresh_token(token.refresh_token) do
       {:ok, %{access_token: access_token, refresh_token: refresh_token, expires_in: expires_in}} ->
         expires_at = DateTime.add(DateTime.utc_now(), expires_in, :second)
-        
+
         token_params = %{
           access_token: access_token,
           refresh_token: refresh_token,
           expires_at: expires_at,
           last_used_at: DateTime.utc_now()
         }
-        
+
         SocialMediaToken.update_token(token, token_params)
-      
+
       {:error, reason} ->
         {:error, reason}
     end
   end
-  
+
   # Private helper functions
   defp parse_user_id(user_id) when is_binary(user_id) do
     case Integer.parse(user_id) do
@@ -334,7 +334,7 @@ defmodule Myapp.SocialMedia.Tiktok do
       _ -> {:error, "Invalid user ID format"}
     end
   end
-  
+
   defp parse_user_id(user_id) when is_integer(user_id), do: {:ok, user_id}
   defp parse_user_id(_), do: {:error, "Invalid user ID format"}
 

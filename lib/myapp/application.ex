@@ -22,6 +22,10 @@ defmodule Myapp.Application do
     # Verify critical environment variables
     verify_environment_variables()
 
+    # Initialize token storage
+    Logger.info("Initializing token storage system...")
+    initialize_token_storage()
+
     children = [
       MyappWeb.Telemetry,
       Myapp.Repo,
@@ -32,7 +36,7 @@ defmodule Myapp.Application do
       # Start the token cache for improved performance
       Myapp.Tokens.Cache,
       # Start the YouTube API client
-      Myapp.Youtube,
+      Myapp.SocialMedia.Providers.Youtube,
       # Start to serve requests, typically the last entry
       MyappWeb.Endpoint
     ]
@@ -154,6 +158,21 @@ defmodule Myapp.Application do
         # But log a prominent error message
         Logger.error("WARNING: Application may not function correctly without required environment variables")
         :error
+    end
+  end
+
+  defp initialize_token_storage do
+    # Log the configured storage type
+    storage_type = Application.get_env(:myapp, :token_storage, :hybrid)
+    Logger.info("Using token storage type: #{storage_type}")
+
+    # Initialize the cache tables directly
+    try do
+      :ets.new(:token_session_cache, [:set, :public, :named_table])
+      :ets.new(:token_social_cache, [:set, :public, :named_table])
+      :ets.new(:token_email_cache, [:set, :public, :named_table])
+    rescue
+      ArgumentError -> :ok # Tables already exist
     end
   end
 end

@@ -1,4 +1,4 @@
-defmodule Myapp.Youtube do
+defmodule Myapp.SocialMedia.Providers.Youtube do
   @moduledoc """
   YouTube API integration using the YouTube Data API v3.
   Handles video searches, playlist management, and quota tracking.

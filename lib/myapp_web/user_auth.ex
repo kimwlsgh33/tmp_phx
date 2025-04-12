@@ -300,8 +300,10 @@ defmodule MyappWeb.UserAuth do
   defp signed_in_path(_conn), do: ~p"/"
 
   def fetch_api_user(conn, _opts) do
+    tokens_module = Application.get_env(:myapp, :tokens_module, Myapp.Tokens)
+
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {:ok, user} <- Tokens.verify_session_token(token) do
+         {:ok, user} <- tokens_module.verify_session_token(token) do
       assign(conn, :current_user, user)
     else
       [] ->

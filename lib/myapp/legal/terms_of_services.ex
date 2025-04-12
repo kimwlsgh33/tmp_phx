@@ -1,4 +1,4 @@
-defmodule Myapp.TermsOfServices do
+defmodule Myapp.Legal.TermsOfServices do
   @moduledoc """
   Handles terms of service retrieval and management.
 

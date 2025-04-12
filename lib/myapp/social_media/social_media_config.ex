@@ -1,4 +1,4 @@
-defmodule Myapp.SocialMediaConfig do
+defmodule Myapp.SocialMedia.Config do
   @moduledoc """
   Centralized configuration management for social media integrations.
   Provides a unified interface for accessing social media credentials and settings.
@@ -21,7 +21,7 @@ defmodule Myapp.SocialMediaConfig do
   """
   def get(provider, key) do
     provider_config = Application.get_env(:myapp, :"#{provider}_api") || %{}
-    
+
     case Map.get(provider_config, key) || get_from_env(provider, key) do
       nil ->
         Logger.error("Missing configuration: #{provider}/#{key}")
@@ -32,9 +32,9 @@ defmodule Myapp.SocialMediaConfig do
 
   @doc """
   Returns the configuration for a specific provider.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.get_provider_config(:twitter)
       %{
         auth_module: Myapp.SocialAuth.Twitter,
@@ -54,7 +54,7 @@ defmodule Myapp.SocialMediaConfig do
           api_secret: get(:twitter, :api_secret),
           redirect_uri: get(:twitter, :redirect_uri)
         }
-      
+
       :tiktok ->
         %{
           auth_module: Myapp.SocialAuth.TikTok,
@@ -63,7 +63,7 @@ defmodule Myapp.SocialMediaConfig do
           client_secret: get(:tiktok, :client_secret),
           redirect_uri: get(:tiktok, :redirect_uri)
         }
-      
+
       _ ->
         config = Application.get_env(:myapp, :social_media)[provider]
         config || raise "Configuration for provider #{provider} not found"
@@ -72,9 +72,9 @@ defmodule Myapp.SocialMediaConfig do
 
   @doc """
   Returns credentials for a specific provider.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.get_credentials(:twitter)
       %{
         api_key: "your_api_key",
@@ -84,7 +84,7 @@ defmodule Myapp.SocialMediaConfig do
   """
   def get_credentials(provider) do
     config = get_provider_config(provider)
-    
+
     %{
       api_key: config[:api_key] || config[:client_key],
       api_secret: config[:api_secret] || config[:client_secret],
@@ -94,9 +94,9 @@ defmodule Myapp.SocialMediaConfig do
 
   @doc """
   Returns the auth module for a specific provider.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.get_auth_module(:twitter)
       Myapp.SocialAuth.Twitter
   """
@@ -106,9 +106,9 @@ defmodule Myapp.SocialMediaConfig do
 
   @doc """
   Returns the API module for a specific provider.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.get_api_module(:twitter)
       Myapp.SocialMedia.Twitter
   """
@@ -119,19 +119,19 @@ defmodule Myapp.SocialMediaConfig do
   @doc """
   Validates the configuration for a specific provider.
   Returns :ok if the configuration is valid, or {:error, reason} if invalid.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.validate_config(:twitter)
       :ok
-      
+
       iex> SocialMediaConfig.validate_config(:unknown_provider)
       {:error, "Provider :unknown_provider is not supported"}
   """
   def validate_config(provider) when provider in @supported_providers do
     try do
       config = get_provider_config(provider)
-      
+
       # Check required keys
       required_keys = [:auth_module, :api_module, :redirect_uri]
       required_keys = required_keys ++
@@ -140,9 +140,9 @@ defmodule Myapp.SocialMediaConfig do
           :tiktok -> [:client_key, :client_secret]
           _ -> []
         end
-      
+
       missing_keys = Enum.filter(required_keys, fn key -> is_nil(config[key]) end)
-      
+
       if Enum.empty?(missing_keys) do
         :ok
       else
@@ -160,9 +160,9 @@ defmodule Myapp.SocialMediaConfig do
   @doc """
   Validates the configuration for all providers.
   Returns a map with the validation result for each provider.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.validate_all_configs()
       %{
         twitter: :ok,
@@ -178,9 +178,9 @@ defmodule Myapp.SocialMediaConfig do
 
   @doc """
   Lists all configured providers.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.list_providers()
       [:twitter, :tiktok, :instagram, :youtube, :thread]
   """
@@ -191,12 +191,12 @@ defmodule Myapp.SocialMediaConfig do
 
   @doc """
   Checks if a provider is configured and available.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.provider_available?(:twitter)
       true
-      
+
       iex> SocialMediaConfig.provider_available?(:unknown_provider)
       false
   """
@@ -209,17 +209,17 @@ defmodule Myapp.SocialMediaConfig do
 
   @doc """
   Returns both auth and API modules for a specific provider.
-  
+
   This function handles both string and atom inputs for the provider name.
-  
+
   ## Examples
-      
+
       iex> SocialMediaConfig.get_provider_modules(:twitter)
       {:ok, %{auth_module: Myapp.SocialAuth.Twitter, api_module: Myapp.SocialMedia.Twitter}}
-      
+
       iex> SocialMediaConfig.get_provider_modules("instagram")
       {:ok, %{auth_module: Myapp.SocialAuth.Instagram, api_module: Myapp.SocialMedia.Instagram}}
-      
+
       iex> SocialMediaConfig.get_provider_modules(:unknown)
       {:error, "Provider :unknown is not supported"}
   """
@@ -248,10 +248,10 @@ defmodule Myapp.SocialMediaConfig do
   defp get_from_env(:twitter, :api_key), do: System.get_env("TWITTER_API_KEY")
   defp get_from_env(:twitter, :api_secret), do: System.get_env("TWITTER_API_SECRET")
   defp get_from_env(:twitter, :redirect_uri), do: System.get_env("TWITTER_REDIRECT_URI")
-  
+
   defp get_from_env(:tiktok, :client_key), do: System.get_env("TIKTOK_CLIENT_KEY")
   defp get_from_env(:tiktok, :client_secret), do: System.get_env("TIKTOK_CLIENT_SECRET")
   defp get_from_env(:tiktok, :redirect_uri), do: System.get_env("TIKTOK_REDIRECT_URI")
-  
+
   defp get_from_env(_, _), do: nil
 end

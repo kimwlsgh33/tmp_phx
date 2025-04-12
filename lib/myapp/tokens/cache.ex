@@ -129,9 +129,24 @@ defmodule Myapp.Tokens.Cache do
 
   @impl true
   def init(_) do
-    # Create ETS tables
-    :ets.new(@session_table, [:set, :named_table, :public, read_concurrency: true])
-    :ets.new(@social_table, [:set, :named_table, :public, read_concurrency: true])
+    # Create ETS tables if they don't exist
+    try do
+      :ets.new(@session_table, [:set, :named_table, :public, read_concurrency: true])
+    catch
+      :error, :badarg -> :ok # Table already exists
+    end
+
+    try do
+      :ets.new(@social_table, [:set, :named_table, :public, read_concurrency: true])
+    catch
+      :error, :badarg -> :ok # Table already exists
+    end
+
+    try do
+      :ets.new(@email_table, [:set, :named_table, :public, read_concurrency: true])
+    catch
+      :error, :badarg -> :ok # Table already exists
+    end
 
     # Schedule periodic cleanup
     schedule_cleanup()

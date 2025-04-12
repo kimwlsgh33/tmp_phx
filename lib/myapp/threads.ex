@@ -1,9 +1,10 @@
 defmodule Myapp.Threads do
+  @behaviour Myapp.Threads.Behaviour
   @moduledoc """
   The Threads context.
   """
 
-  alias Myapp.ThreadApi
+  alias Myapp.Threads.Api, as: ThreadApi
 
   @doc """
   Creates a new thread.
@@ -22,6 +23,52 @@ defmodule Myapp.Threads do
   end
 
   def create_thread(_), do: {:error, "Text is required"}
+
+  @doc """
+  Creates a new thread with user ID.
+
+  ## Examples
+
+      iex> create_thread(1, %{text: "Hello, Thread!"})
+      {:ok, %{"id" => "123", ...}}
+
+      iex> create_thread(1, %{text: ""})
+      {:error, %{"error" => %{"message" => "Invalid text"}}}
+
+  """
+  def create_thread(user_id, %{text: text}) when is_binary(text) and text != "" do
+    ThreadApi.create_thread(text)
+  end
+
+  def create_thread(_, _), do: {:error, "Text is required"}
+
+  @doc """
+  Lists threads for a user.
+
+  ## Examples
+
+      iex> list_threads(1)
+      {:ok, [%{"id" => "123", ...}, %{"id" => "456", ...}]}
+
+  """
+  def list_threads(user_id) do
+    # In a real implementation, this would filter by user_id
+    {:ok, []}
+  end
+
+  @doc """
+  Updates a thread.
+
+  ## Examples
+
+      iex> update_thread("123", %{text: "Updated text"})
+      {:ok, %{"id" => "123", ...}}
+
+  """
+  def update_thread(thread_id, params) when is_binary(thread_id) do
+    # In a real implementation, this would update the thread
+    get_thread(thread_id)
+  end
 
   @doc """
   Replies to a thread.

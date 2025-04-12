@@ -1,4 +1,5 @@
 defmodule Myapp.Tokens do
+  @behaviour Myapp.TokensBehaviour
   @moduledoc """
   Unified token management system for the application.
 
@@ -51,9 +52,15 @@ defmodule Myapp.Tokens do
   ```
   """
 
+  @behaviour Myapp.Tokens.API
+
   alias Myapp.Repo
   alias Myapp.Accounts.{User, UserToken, SocialMediaToken}
-  alias Myapp.Tokens.{Cache, Encryption, Metrics}
+  alias Myapp.Tokens.{Metrics, Common}
+  alias Myapp.Tokens.Storage.Factory
+
+  # Get the configured storage adapter
+  @storage Factory.create_from_config()
 
   import Ecto.Query
 
@@ -69,23 +76,27 @@ defmodule Myapp.Tokens do
       iex> {:ok, token, _metadata} = Myapp.Tokens.create_session_token(user)
       {:ok, "g3QAAAACZAAEZGF0YW0AAAAkNDI4M...", %{context: "session"}}
   """
-  def create_session_token(%User{} = user) do
-    {token, user_token} = UserToken.build_session_token(user)
+  @impl Myapp.Tokens.API
+  def create_session_token(%User{} = user, opts \\ []) do
+    # Generate a secure token
+    token = Common.generate_url_safe_token()
 
-    result = with {:ok, %UserToken{} = saved_token} <- Repo.insert(user_token) do
-      metadata = %{
-        context: saved_token.context,
-        created_at: saved_token.inserted_at
-      }
+    # Create metadata
+    metadata = %{
+      context: "session",
+      created_at: DateTime.utc_now()
+    }
 
-      # Cache the token for faster lookups
-      Cache.put_session_token(token, user.id)
-
-      {:ok, token, metadata}
+    # Store the token using the configured storage adapter
+    result = case @storage.store_session_token(token, user.id, metadata) do
+      {:ok, _stored_token} -> {:ok, token, metadata}
+      {:error, reason} -> {:error, reason}
     end
 
     # Record metrics
     Metrics.record_session_token_create(result)
+
+    result
   end
 
   @doc """
@@ -101,33 +112,30 @@ defmodule Myapp.Tokens do
       iex> Myapp.Tokens.verify_session_token("invalid")
       {:error, :invalid_token}
   """
-  def verify_session_token(token) do
-    # First try to get from cache for performance
-    result = case Cache.get_session_token(token) do
+  @impl Myapp.Tokens.API
+  @impl Myapp.TokensBehaviour
+  def verify_session_token(token, opts \\ []) do
+    do_verify_session_token(token)
+  end
+
+  defp do_verify_session_token(token) do
+    # Get the user ID from the storage adapter
+    result = case @storage.get_session_token(token) do
       {:ok, user_id} ->
-        # Token found in cache, get the user
-        Metrics.record_cache_hit(:session_token)
+        # Token found, get the user
         case Repo.get(User, user_id) do
           %User{} = user -> {:ok, user}
           nil -> {:error, :user_not_found}
         end
 
-      {:error, :not_found} ->
-        # Not in cache, check the database
-        Metrics.record_cache_miss(:session_token)
-        with {:ok, query} <- UserToken.verify_session_token_query(token),
-             %User{} = user <- Repo.one(query) do
-          # Cache the result for future lookups
-          Cache.put_session_token(token, user.id)
-          {:ok, user}
-        else
-          nil -> {:error, :invalid_token}
-          {:error, reason} -> {:error, reason}
-        end
+      {:error, reason} ->
+        {:error, reason}
     end
 
     # Record metrics
     Metrics.record_session_token_verify(result)
+
+    result
   end
 
   @doc """
@@ -140,18 +148,15 @@ defmodule Myapp.Tokens do
       iex> Myapp.Tokens.revoke_session_token(token)
       :ok
   """
-  def revoke_session_token(token) do
-    # Remove from cache first
-    Cache.delete_session_token(token)
-
-    # Then delete from database
-    result = case Repo.delete_all(UserToken.by_token_and_context_query(token, "session")) do
-      {count, _} when count > 0 -> :ok
-      {0, _} -> {:error, :token_not_found}
-    end
+  @impl Myapp.Tokens.API
+  def revoke_session_token(token, opts \\ []) do
+    # Delete the token using the storage adapter
+    result = @storage.delete_session_token(token)
 
     # Record metrics
     Metrics.record_session_token_revoke(result)
+
+    result
   end
 
   @doc """
@@ -164,18 +169,10 @@ defmodule Myapp.Tokens do
       iex> Myapp.Tokens.revoke_other_session_tokens(user, current_token)
       :ok
   """
-  def revoke_other_session_tokens(%User{id: user_id}, current_token) do
-    query =
-      from t in UserToken,
-        where: t.user_id == ^user_id,
-        where: t.context == "session",
-        where: t.token != ^current_token
-
-    # Clear cache for these tokens (would need to implement this)
-    Cache.delete_user_session_tokens(user_id, except: current_token)
-
-    {_count, _} = Repo.delete_all(query)
-    :ok
+  @impl Myapp.Tokens.API
+  def revoke_other_session_tokens(%User{id: user_id}, current_token, opts \\ []) do
+    # Delete all tokens for the user except the current one
+    @storage.delete_user_session_tokens(user_id, current_token)
   end
 
   @doc """
@@ -191,15 +188,27 @@ defmodule Myapp.Tokens do
       iex> {:ok, token} = Myapp.Tokens.create_email_token(user, "confirm")
       {:ok, "g3QAAAACZAAEZGF0YW0AAAAkNDI4M..."}
   """
-  def create_email_token(%User{} = user, context) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, context)
+  @impl Myapp.Tokens.API
+  def create_email_token(%User{} = user, context, opts \\ []) do
+    # Generate a secure token
+    token = Common.generate_url_safe_token()
 
-    result = with {:ok, %UserToken{}} <- Repo.insert(user_token) do
-      {:ok, encoded_token}
+    # Create metadata
+    metadata = %{
+      context: context,
+      created_at: DateTime.utc_now()
+    }
+
+    # Store the token using the configured storage adapter
+    result = case @storage.store_email_token(token, user.id, context, metadata) do
+      {:ok, _stored_token} -> {:ok, token}
+      {:error, reason} -> {:error, reason}
     end
 
     # Record metrics
     Metrics.record_email_token_create(result)
+
+    result
   end
 
   @doc """
@@ -212,17 +221,25 @@ defmodule Myapp.Tokens do
       iex> {:ok, user} = Myapp.Tokens.verify_email_token(token, "confirm")
       {:ok, %User{}}
   """
-  def verify_email_token(token, context) do
-    result = with {:ok, query} <- UserToken.verify_email_token_query(token, context),
-         %User{} = user <- Repo.one(query) do
-      {:ok, user}
-    else
-      nil -> {:error, :invalid_token}
-      {:error, reason} -> {:error, reason}
+  @impl Myapp.Tokens.API
+  def verify_email_token(token, context, opts \\ []) do
+    # Get the user ID from the storage adapter
+    result = case @storage.get_email_token(token, context) do
+      {:ok, user_id} ->
+        # Token found, get the user
+        case Repo.get(User, user_id) do
+          %User{} = user -> {:ok, user}
+          nil -> {:error, :user_not_found}
+        end
+
+      {:error, reason} ->
+        {:error, reason}
     end
 
     # Record metrics
     Metrics.record_email_token_verify(result)
+
+    result
   end
 
   @doc """
@@ -240,31 +257,18 @@ defmodule Myapp.Tokens do
       iex> {:ok, stored_data} = Myapp.Tokens.store_social_token(user_id, :twitter, token_data)
       {:ok, %{...}}
   """
-  def store_social_token(user_id, provider, token_data) when is_atom(provider) do
-    # Store in database with encryption
-    result = case SocialMediaToken.store_tokens(user_id, provider, token_data) do
-      {:ok, token} ->
-        # Cache the access token for faster lookups
-        Cache.put_social_token(user_id, provider, %{
-          access_token: token.access_token_text,
-          refresh_token: token.refresh_token_text,
-          expires_at: token.expires_at
-        })
+  @impl Myapp.Tokens.API
+  def store_social_token(user_id, provider, token_data, opts \\ []) when is_atom(provider) do
+    # Normalize the token data
+    normalized_data = Common.normalize_oauth_response(token_data)
 
-        {:ok, %{
-          access_token: token.access_token_text,
-          refresh_token: token.refresh_token_text,
-          expires_at: token.expires_at,
-          provider_user_id: token.provider_user_id,
-          scope: token.scope
-        }}
-
-      {:error, changeset} ->
-        {:error, {:storage_error, changeset}}
-    end
+    # Store the token using the configured storage adapter
+    result = @storage.store_social_token(user_id, provider, normalized_data)
 
     # Record metrics
     Metrics.record_social_token_store(result)
+
+    result
   end
 
   @doc """
@@ -278,12 +282,11 @@ defmodule Myapp.Tokens do
       iex> {:ok, token_data} = Myapp.Tokens.get_social_token(user_id, :twitter)
       {:ok, %{access_token: "ACCESS_TOKEN", ...}}
   """
-  def get_social_token(user_id, provider) when is_atom(provider) do
-    # First try to get from cache
-    result = case Cache.get_social_token(user_id, provider) do
+  @impl Myapp.Tokens.API
+  def get_social_token(user_id, provider, opts \\ []) when is_atom(provider) do
+    # Get the token using the configured storage adapter
+    result = case @storage.get_social_token(user_id, provider) do
       {:ok, token_data} ->
-        # Cache hit
-        Metrics.record_cache_hit(:social_token)
         # Check if token is expired
         if token_expired?(token_data) do
           # Try to refresh if possible
@@ -292,37 +295,14 @@ defmodule Myapp.Tokens do
           {:ok, token_data}
         end
 
-      {:error, :not_found} ->
-        # Cache miss
-        Metrics.record_cache_miss(:social_token)
-        # Not in cache, get from database
-        case SocialMediaToken.get_active_tokens(user_id, provider) do
-          {:ok, token} ->
-            token_data = %{
-              access_token: token.access_token_text,
-              refresh_token: token.refresh_token_text,
-              expires_at: token.expires_at,
-              provider_user_id: token.provider_user_id,
-              scope: token.scope
-            }
-
-            # Cache for future lookups
-            Cache.put_social_token(user_id, provider, token_data)
-
-            # Check if token needs refresh
-            if SocialMediaToken.needs_refresh?(token) do
-              refresh_social_token(user_id, provider)
-            else
-              {:ok, token_data}
-            end
-
-          {:error, reason} ->
-            {:error, reason}
-        end
+      {:error, reason} ->
+        {:error, reason}
     end
 
     # Record metrics
     Metrics.record_social_token_get(result)
+
+    result
   end
 
   @doc """
@@ -335,7 +315,8 @@ defmodule Myapp.Tokens do
       iex> {:ok, new_token_data} = Myapp.Tokens.refresh_social_token(user_id, :twitter)
       {:ok, %{access_token: "NEW_ACCESS_TOKEN", ...}}
   """
-  def refresh_social_token(user_id, provider) when is_atom(provider) do
+  @impl Myapp.Tokens.API
+  def refresh_social_token(user_id, provider, opts \\ []) when is_atom(provider) do
     # This would call the appropriate auth module to refresh the token
     # For now, we'll just return an error
     result = {:error, :not_implemented}
@@ -344,11 +325,12 @@ defmodule Myapp.Tokens do
     Metrics.record_social_token_refresh(result)
 
     # In a real implementation, you would:
-    # 1. Get the current token from the database
+    # 1. Get the current token from the storage adapter
     # 2. Call the appropriate auth module to refresh it
-    # 3. Update the token in the database
-    # 4. Update the cache
-    # 5. Return the new token data
+    # 3. Update the token using the storage adapter
+    # 4. Return the new token data
+
+    result
   end
 
   @doc """
@@ -361,24 +343,23 @@ defmodule Myapp.Tokens do
       iex> Myapp.Tokens.revoke_social_token(user_id, :twitter)
       :ok
   """
-  def revoke_social_token(user_id, provider) when is_atom(provider) do
-    # Remove from cache
-    Cache.delete_social_token(user_id, provider)
-
-    # Mark as revoked in database
-    result = case SocialMediaToken.revoke_active_tokens(user_id, provider) do
-      :ok -> :ok
-      {:error, reason} -> {:error, reason}
-    end
+  @impl Myapp.Tokens.API
+  def revoke_social_token(user_id, provider, opts \\ []) when is_atom(provider) do
+    # Delete the token using the storage adapter
+    result = @storage.delete_social_token(user_id, provider)
 
     # Record metrics
     Metrics.record_social_token_revoke(result)
+
+    result
   end
 
   # Private helpers
 
-  defp token_expired?(%{expires_at: nil}), do: false
-  defp token_expired?(%{expires_at: expires_at}) do
-    DateTime.compare(expires_at, DateTime.utc_now()) == :lt
+  defp token_expired?(token_data) do
+    case token_data do
+      %{expires_at: expires_at} -> Myapp.Tokens.Common.expired?(expires_at)
+      _ -> false
+    end
   end
 end

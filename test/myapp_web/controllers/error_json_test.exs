@@ -2,11 +2,11 @@ defmodule MyappWeb.ErrorJSONTest do
   use MyappWeb.ConnCase, async: true
 
   test "renders 404" do
-    assert MyappWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
+    assert MyappWeb.Error.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
   end
 
   test "renders 500" do
-    assert MyappWeb.ErrorJSON.render("500.json", %{}) ==
+    assert MyappWeb.Error.ErrorJSON.render("500.json", %{}) ==
              %{errors: %{detail: "Internal Server Error"}}
   end
 end

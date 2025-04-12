@@ -1,4 +1,4 @@
-defmodule Myapp.HttpClient do
+defmodule Myapp.Shared.HttpClient do
   @moduledoc """
   Centralized HTTP client using Finch for all HTTP requests.
   Provides a consistent interface for making HTTP requests across the application.
@@ -16,7 +16,7 @@ defmodule Myapp.HttpClient do
   def get(url, opts \\ []) do
     headers = Keyword.get(opts, :headers, [])
     params = Keyword.get(opts, :params)
-    
+
     url = if params, do: append_query_params(url, params), else: url
 
     Finch.build(:get, url, headers)
@@ -44,7 +44,7 @@ defmodule Myapp.HttpClient do
     case Finch.request(req, Myapp.Finch) do
       {:ok, %Finch.Response{status: status, body: body}} ->
         {:ok, %{status_code: status, body: body}}
-      
+
       {:error, reason} ->
         Logger.error("HTTP request failed: #{inspect(reason)}")
         {:error, %{reason: reason}}
@@ -56,10 +56,10 @@ defmodule Myapp.HttpClient do
     case get_content_type(headers) do
       "application/x-www-form-urlencoded" ->
         URI.encode_query(body)
-      
+
       "application/json" ->
         Jason.encode!(body)
-      
+
       _ ->
         body
     end
@@ -76,16 +76,15 @@ defmodule Myapp.HttpClient do
     uri = URI.parse(url)
     existing_query = uri.query || ""
     existing_params = URI.decode_query(existing_query)
-    
-    new_params = 
+
+    new_params =
       if is_map(params) do
         Map.merge(existing_params, params)
       else
         Enum.into(params, existing_params)
       end
-    
+
     query = URI.encode_query(new_params)
     %{uri | query: query} |> URI.to_string()
   end
 end
-

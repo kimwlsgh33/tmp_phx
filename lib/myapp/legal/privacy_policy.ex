@@ -1,4 +1,4 @@
-defmodule Myapp.PrivacyPolicy do
+defmodule Myapp.Legal.PrivacyPolicy do
   @versions ["v1", "v1_en", "v2", "v2_en"]
 
   def get_versions, do: @versions

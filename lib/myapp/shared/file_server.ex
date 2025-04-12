@@ -1,4 +1,4 @@
-defmodule Myapp.FileServer do
+defmodule Myapp.Shared.FileServer do
   @moduledoc """
   Handles file operations for the application.
   """

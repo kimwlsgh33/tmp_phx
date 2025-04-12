@@ -9,7 +9,8 @@ import Config
 
 config :myapp,
   ecto_repos: [Myapp.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  token_storage: :hybrid # Options: :database, :cache, :hybrid
 
 # Configures the endpoint
 config :myapp, MyappWeb.Endpoint,

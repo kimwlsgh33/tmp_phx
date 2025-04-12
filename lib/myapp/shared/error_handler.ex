@@ -1,4 +1,4 @@
-defmodule Myapp.ErrorHandler do
+defmodule Myapp.Shared.ErrorHandler do
   @moduledoc """
   Centralized error handling for the application.
 

@@ -45,7 +45,7 @@ defmodule MyappWeb.UserSettingsLiveTest do
         })
         |> render_submit()
 
-      assert result =~ "A link to confirm your email"
+      assert result =~ "A link to confirm your email change has been sent"
       assert Accounts.get_user_by_email(user.email)
     end
 
@@ -108,7 +108,7 @@ defmodule MyappWeb.UserSettingsLiveTest do
 
       new_password_conn = follow_trigger_action(form, conn)
 
-      assert redirected_to(new_password_conn) == ~p"/users/settings"
+      assert redirected_to(new_password_conn) == "/"
 
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
 

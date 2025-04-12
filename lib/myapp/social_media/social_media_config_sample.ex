@@ -1,9 +1,9 @@
-defmodule Myapp.SocialMediaConfigSample do
+defmodule Myapp.SocialMedia.ConfigSample do
   @moduledoc """
   Sample configuration file for social media integrations.
-  
+
   This file demonstrates how to configure social media integrations in a centralized way.
-  Copy this file to your config.exs (or the appropriate environment config file) and 
+  Copy this file to your config.exs (or the appropriate environment config file) and
   update the values with your actual credentials.
   """
 
@@ -71,7 +71,7 @@ defmodule Myapp.SocialMediaConfigSample do
       client_secret: System.get_env("YOUTUBE_CLIENT_SECRET"),
       redirect_uri: System.get_env("YOUTUBE_REDIRECT_URI"),
       api_key: System.get_env("YOUTUBE_API_KEY")
-    
+
     # Thread API credentials
     config :myapp, :thread_api,
       client_id: System.get_env("THREAD_CLIENT_ID"),
@@ -101,4 +101,3 @@ defmodule Myapp.SocialMediaConfigSample do
     """
   end
 end
-

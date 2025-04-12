@@ -1,4 +1,4 @@
-defmodule Myapp.Twitter do
+defmodule Myapp.SocialMedia.Providers.Twitter do
   @moduledoc """
   Module for interacting with the Twitter/X API.
   Provides functions for posting tweets, retrieving timeline, and deleting tweets.

@@ -1,4 +1,4 @@
-defmodule Myapp.ThreadApi do
+defmodule Myapp.Threads.Api do
   @moduledoc """
   Client for interacting with Thread (Meta) API.
   """

@@ -1,4 +1,4 @@
-defmodule Myapp.SocialMediaUtils do
+defmodule Myapp.SocialMedia.Utils do
   @moduledoc """
   Provides common utility functions for social media operations across different platforms.
   Contains shared functionality for file handling, HTTP requests, rate limiting, and error normalization.
@@ -166,17 +166,17 @@ defmodule Myapp.SocialMediaUtils do
   defp extract_error_type(parsed_body) do
     cond do
       # Twitter style
-      Map.has_key?(parsed_body, "errors") -> 
+      Map.has_key?(parsed_body, "errors") ->
         get_in(parsed_body, ["errors", Access.at(0), "code"]) || :api_error
-      
+
       # Facebook/Instagram style
-      Map.has_key?(parsed_body, "error") -> 
+      Map.has_key?(parsed_body, "error") ->
         get_in(parsed_body, ["error", "type"]) || :api_error
-      
+
       # TikTok style
       Map.has_key?(parsed_body, "error_code") ->
         parsed_body["error_code"] || :api_error
-      
+
       true -> :unknown_error
     end
   end
@@ -184,17 +184,17 @@ defmodule Myapp.SocialMediaUtils do
   defp extract_error_message(parsed_body) do
     cond do
       # Twitter style
-      Map.has_key?(parsed_body, "errors") -> 
+      Map.has_key?(parsed_body, "errors") ->
         get_in(parsed_body, ["errors", Access.at(0), "message"]) || "Unknown error"
-      
+
       # Facebook/Instagram style
-      Map.has_key?(parsed_body, "error") -> 
+      Map.has_key?(parsed_body, "error") ->
         get_in(parsed_body, ["error", "message"]) || "Unknown error"
-      
+
       # TikTok style
       Map.has_key?(parsed_body, "error_message") ->
         parsed_body["error_message"] || "Unknown error"
-      
+
       true -> "Unknown error"
     end
   end
@@ -204,7 +204,7 @@ defmodule Myapp.SocialMediaUtils do
   """
   def check_rate_limit(bucket, tokens_per_interval, interval_ms) do
     now = :os.system_time(:milli_seconds)
-    
+
     case :ets.lookup(:social_media_rate_limits, bucket) do
       [] ->
         # First request, initialize the bucket
@@ -214,9 +214,9 @@ defmodule Myapp.SocialMediaUtils do
       [{^bucket, last_updated, tokens}] ->
         time_passed = now - last_updated
         periods_passed = div(time_passed, interval_ms)
-        
+
         new_tokens = min(tokens_per_interval, tokens + periods_passed * tokens_per_interval)
-        
+
         if new_tokens > 0 do
           :ets.insert(:social_media_rate_limits, {bucket, now, new_tokens - 1})
           :ok
@@ -245,7 +245,7 @@ defmodule Myapp.SocialMediaUtils do
     |> Base.url_encode64()
     |> binary_part(0, length)
   end
-  
+
   @doc """
   Builds a query string from a map of parameters.
   """
@@ -254,7 +254,7 @@ defmodule Myapp.SocialMediaUtils do
     |> Enum.map(fn {k, v} -> "#{URI.encode_www_form(to_string(k))}=#{URI.encode_www_form(to_string(v))}" end)
     |> Enum.join("&")
   end
-  
+
   @doc """
   Handles common social media API errors and translates them to user-friendly messages.
   """
@@ -262,28 +262,27 @@ defmodule Myapp.SocialMediaUtils do
     case error do
       {:error, :invalid_file_type} ->
         "The file type you've selected isn't supported. Please use JPEG, PNG, GIF, MP4, or other common media formats."
-        
+
       {:error, :file_too_large} ->
         "The file you've selected is too large. Images should be under 10MB, videos under 500MB."
-        
+
       {:error, :max_retries_reached} ->
         "We're having trouble connecting to the social media service. Please try again later."
-        
+
       {:error, %{error_type: :rate_limit_exceeded}} ->
         "You've reached the rate limit for this social media platform. Please try again later."
-        
+
       {:error, %{error_type: :invalid_token}} ->
         "Your connection to this social media account has expired. Please reconnect your account."
-        
+
       {:error, %{error_type: :permission_denied}} ->
         "You don't have permission to perform this action. You may need to reconnect your account with additional permissions."
-        
+
       {:error, _} ->
         "An unexpected error occurred. Please try again later."
-        
+
       _ ->
         "An unknown error occurred. Please try again later."
     end
   end
 end
-

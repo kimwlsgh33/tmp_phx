@@ -1,4 +1,4 @@
-defmodule Myapp.Tiktok do
+defmodule Myapp.SocialMedia.Providers.Tiktok do
   @moduledoc """
   TikTok API integration for video uploads and management.
 
