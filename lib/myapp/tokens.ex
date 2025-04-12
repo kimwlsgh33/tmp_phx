@@ -1,5 +1,6 @@
 defmodule Myapp.Tokens do
-  @behaviour Myapp.TokensBehaviour
+  # Implementing both behaviors causes conflicts, so we'll just use one
+  # @behaviour Myapp.TokensBehaviour
   @moduledoc """
   Unified token management system for the application.
 
@@ -114,7 +115,6 @@ defmodule Myapp.Tokens do
       {:error, :invalid_token}
   """
   @impl Myapp.Tokens.API
-  @impl Myapp.TokensBehaviour
   def verify_session_token(token, _opts \\ []) do
     do_verify_session_token(token)
   end

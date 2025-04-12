@@ -35,20 +35,7 @@ defmodule MyappWeb.Error.ErrorJSON do
     end
   end
 
-  @doc """
-  Renders a changeset error response.
-
-  ## Parameters
-
-  - `"error.json"`: The template name
-  - `%{changeset: changeset}`: The assigns map containing the changeset
-
-  ## Examples
-
-      iex> changeset = Ecto.Changeset.add_error(%Ecto.Changeset{}, :email, "is invalid")
-      iex> MyappWeb.Error.ErrorJSON.render("error.json", %{changeset: changeset})
-      %{errors: %{email: ["is invalid"]}}
-  """
+  # Renders a changeset error response
   def render("error.json", %{changeset: changeset}) do
     # Convert changeset errors to a map
     errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->

@@ -90,7 +90,7 @@ defmodule MyappWeb.Social.SocialMediaController do
       {:error, reason} ->
         conn
         |> put_flash(:error, "Failed to connect to #{provider}: #{inspect(reason)}")
-        |> redirect(to: ~p"/#{provider}")
+        |> redirect(to: ~p"/auth/#{provider}")
     end
   end
 
@@ -103,7 +103,7 @@ defmodule MyappWeb.Social.SocialMediaController do
          {:ok, _} <- Accounts.store_platform_token(provider, tokens) do
       conn
       |> put_flash(:info, "Successfully connected to #{provider}")
-      |> redirect(to: ~p"/#{provider}")
+      |> redirect(to: ~p"/auth/#{provider}")
     else
       {:error, :invalid_provider} ->
         conn
@@ -113,7 +113,7 @@ defmodule MyappWeb.Social.SocialMediaController do
       {:error, reason} ->
         conn
         |> put_flash(:error, "Authentication failed with #{provider}: #{inspect(reason)}")
-        |> redirect(to: ~p"/#{provider}")
+        |> redirect(to: ~p"/auth/#{provider}")
     end
   end
 
@@ -199,18 +199,7 @@ defmodule MyappWeb.Social.SocialMediaController do
     end
   end
 
-  @doc """
-  Retrieves tokens for a user and platform using the SocialMediaToken functionality.
-
-  ## Parameters
-    - conn: The connection struct
-    - provider: The social media provider as a string
-    - user_id: The ID of the user (optional, defaults to current user in conn)
-
-  ## Returns
-    - {:ok, tokens} on success
-    - {:error, reason} on failure
-  """
+  # Retrieves tokens for a user and platform using the SocialMediaToken functionality.
   defp get_tokens(conn, provider, user_id) do
     # Get user_id from conn if not provided
     user_id = if is_nil(user_id) and conn.assigns[:current_user] do

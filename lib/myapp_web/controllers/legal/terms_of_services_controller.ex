@@ -42,12 +42,10 @@ defmodule MyappWeb.Legal.TermsOfServicesController do
     end
   end
 
-  @doc """
-  Fallback for when no version is specified. Redirects to the latest version.
-  """
+  # Fallback for when no version is specified. Redirects to the latest version.
   def page(conn, _params) do
     # Get the latest version and redirect to it
     latest_version = List.last(Myapp.Legal.TermsOfServices.get_versions())
-    redirect(conn, to: ~p"/legal/terms/#{latest_version}")
+    redirect(conn, to: ~p"/terms-of-services/#{latest_version}")
   end
 end

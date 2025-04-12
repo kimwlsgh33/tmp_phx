@@ -298,7 +298,7 @@ defmodule MyappWeb.UserRegistrationLive do
         error_message =
           case error do
             :invalid_code -> "Invalid confirmation code. Please check and try again."
-            :expired -> "Confirmation code has expired. Please request a new one."
+            # :expired -> "Confirmation code has expired. Please request a new one."
             :user_not_found -> "User not found. Please register again."
             _ when is_atom(error) -> "Error: #{error}"
             _ when is_binary(error) -> error

@@ -168,18 +168,23 @@ defmodule MyappWeb.Upload.ShortVideoComponent do
       upload_file(%{path: path}, entry)
     end) do
       [video_path] ->
-        case SocialMediaController.create_short_video(user, %{
+        # Call the controller function and handle the response
+        # Since our stub implementation always returns {:ok, _}, we'll add error handling for completeness
+        result = SocialMediaController.create_short_video(user, %{
           title: title,
           description: description,
           video_path: video_path,
           platforms: platforms
-        }) do
+        })
+
+        case result do
           {:ok, _video} ->
             send(self(), {:upload_success, "Short video uploaded successfully!"})
             {:noreply, socket}
 
-          {:error, reason} ->
-            send(self(), {:upload_error, reason})
+          # This is for future implementation when errors might be returned
+          _error ->
+            send(self(), {:upload_error, "Failed to upload short video"})
             {:noreply, socket}
         end
 

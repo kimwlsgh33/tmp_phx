@@ -31,14 +31,14 @@ defmodule MyappWeb.UserConfirmationLive do
   # Do not log in the user after confirmation to avoid a
   # leaked token giving the user access to the account.
   def handle_event("confirm_account", %{"user" => %{"token" => token}}, socket) do
-    case Accounts.confirm_user(token) do
+    case Accounts.confirm_user(token, %{}) do
       {:ok, _} ->
         {:noreply,
          socket
          |> put_flash(:info, "User confirmed successfully.")
          |> redirect(to: ~p"/")}
 
-      :error ->
+      {:error, _reason} ->
         # If there is a current user and the account was already confirmed,
         # then odds are that the confirmation link was already visited, either
         # by some automation or by the user themselves, so we redirect without

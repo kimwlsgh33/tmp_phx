@@ -31,23 +31,22 @@ defmodule Myapp.SocialMedia.Youtube do
   """
   @impl Myapp.SocialMedia
   def authenticated?(user_id) do
-    case SocialMediaToken.valid_token?(user_id, :youtube) do
-      {:ok, true} ->
-        # Get profile info to return in details
-        case get_profile(user_id) do
-          {:ok, profile} ->
-            {:ok, %{authenticated: true, details: profile}}
-          {:error, error} ->
-            # Log the error but don't fail the authentication check
-            ErrorHandler.handle(error, __MODULE__, %{user_id: user_id})
-            {:ok, %{authenticated: true}}
-        end
-      {:ok, false} ->
-        {:ok, %{authenticated: false}}
-      {:error, reason} ->
-        # Use our standardized error handling but return a user-friendly response
-        ErrorHandler.handle(
-          ErrorHandler.error(:unauthorized, "YouTube authentication invalid", %{reason: reason}),
+    is_valid = SocialMediaToken.valid_token?(user_id, :youtube)
+
+    if is_valid do
+      # Get profile info to return in details
+      case get_profile(user_id) do
+        {:ok, profile} ->
+          {:ok, %{authenticated: true, details: profile}}
+        {:error, error} ->
+          # Log the error but don't fail the authentication check
+          ErrorHandler.handle(error, __MODULE__, %{user_id: user_id})
+          {:ok, %{authenticated: true}}
+      end
+    else
+      # Use our standardized error handling but return a user-friendly response
+      ErrorHandler.handle(
+          ErrorHandler.error(:unauthorized, "YouTube authentication invalid", %{}),
           __MODULE__,
           %{user_id: user_id}
         )

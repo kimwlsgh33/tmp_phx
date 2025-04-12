@@ -154,7 +154,6 @@ defmodule Myapp.SocialMedia.Tiktok do
     * {:ok, %{videos: videos, next_page_token: token}} - If videos were retrieved successfully.
     * {:error, reason} - If an error occurs.
   """
-  @impl Myapp.SocialMedia
   def list_videos(user_id, options \\ []) do
     with {:ok, access_token} <- get_conn_from_user_id(user_id),
          {:ok, response} <- TiktokProvider.list_videos([access_token: access_token] ++ options) do

@@ -4,11 +4,11 @@ defmodule MyappWeb.ConsolidatedUploadLive do
   alias MyappWeb.Upload.{PostComponent, ShortVideoComponent, LongVideoComponent}
 
   @impl true
-  def mount(_params, session, socket) do
+  def mount(params, session, socket) do
     case MyappWeb.Auth.verify_session(session) do
       {:ok, user} ->
-        active_tab = Map.get(_params, "tab", "post")
-        
+        active_tab = Map.get(params, "tab", "post")
+
         {:ok,
          socket
          |> assign(:current_user, user)
@@ -20,7 +20,7 @@ defmodule MyappWeb.ConsolidatedUploadLive do
         {:ok,
          socket
          |> put_flash(:error, "Please login to continue")
-         |> redirect(to: ~p"/login")}
+         |> redirect(to: ~p"/users/log_in")}
     end
   end
 
@@ -35,20 +35,20 @@ defmodule MyappWeb.ConsolidatedUploadLive do
     ~H"""
     <div class="container mx-auto p-4">
       <h1 class="text-2xl font-bold mb-4">Upload Content</h1>
-      
+
       <div class="mb-6">
         <nav class="flex border-b">
-          <.link 
+          <.link
             patch={~p"/upload?tab=post"}
             class={"px-4 py-2 font-medium #{if @active_tab == "post", do: "border-b-2 border-blue-500 text-blue-500", else: "text-gray-500 hover:text-blue-500"}"}>
             Post
           </.link>
-          <.link 
+          <.link
             patch={~p"/upload?tab=short"}
             class={"px-4 py-2 font-medium #{if @active_tab == "short", do: "border-b-2 border-blue-500 text-blue-500", else: "text-gray-500 hover:text-blue-500"}"}>
             Short Video
           </.link>
-          <.link 
+          <.link
             patch={~p"/upload?tab=long"}
             class={"px-4 py-2 font-medium #{if @active_tab == "long", do: "border-b-2 border-blue-500 text-blue-500", else: "text-gray-500 hover:text-blue-500"}"}>
             Long Video
@@ -65,17 +65,17 @@ defmodule MyappWeb.ConsolidatedUploadLive do
 
         <%= case @active_tab do %>
           <% "post" -> %>
-            <.live_component 
+            <.live_component
               module={PostComponent}
               id="post-upload"
               current_user={@current_user} />
           <% "short" -> %>
-            <.live_component 
+            <.live_component
               module={ShortVideoComponent}
               id="short-upload"
               current_user={@current_user} />
           <% "long" -> %>
-            <.live_component 
+            <.live_component
               module={LongVideoComponent}
               id="long-upload"
               current_user={@current_user} />
@@ -86,11 +86,12 @@ defmodule MyappWeb.ConsolidatedUploadLive do
   end
 
   # Handle authentication refresh
+  @impl true
   def handle_info({:token_refresh_required, reason}, socket) do
     {:noreply,
      socket
      |> put_flash(:error, "Please login again: #{reason}")
-     |> redirect(to: ~p"/login")}
+     |> redirect(to: ~p"/users/log_in")}
   end
 
   # Handle upload errors from components
@@ -98,4 +99,3 @@ defmodule MyappWeb.ConsolidatedUploadLive do
     {:noreply, assign(socket, :upload_error, error_message)}
   end
 end
-

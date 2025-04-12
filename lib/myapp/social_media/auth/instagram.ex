@@ -176,10 +176,7 @@ defmodule Myapp.SocialAuth.Instagram do
         end
 
         # Check if the token is valid
-        is_valid = case SocialMediaToken.valid_token?(user_id, :instagram) do
-          {:ok, valid} -> valid
-          _ -> false
-        end
+        is_valid = SocialMediaToken.valid_token?(user_id, :instagram)
 
         if is_valid do
           {:ok, %{
@@ -232,12 +229,12 @@ defmodule Myapp.SocialAuth.Instagram do
 
     # Delete the token from our database
     case SocialMediaToken.delete_token(user_id, :instagram) do
-      :ok ->
+      {:ok, _} ->
         Logger.info("Removed Instagram token for user #{user_id}")
         :ok
 
-      {:error, _reason} ->
-        Logger.warning(fn -> "Failed to remove Instagram token for user #{user_id}, but Instagram API doesn't support direct token revocation anyway. Tokens will expire naturally." end)
+      error ->
+        Logger.warning(fn -> "Failed to remove Instagram token for user #{user_id}, but Instagram API doesn't support direct token revocation anyway. Tokens will expire naturally. Error: #{inspect(error)}" end)
         :ok  # Return :ok even if delete failed since Instagram doesn't support revocation
     end
   end

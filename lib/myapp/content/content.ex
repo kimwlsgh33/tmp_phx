@@ -11,23 +11,7 @@ defmodule Myapp.Content do
 
   # Helper functions for error handling
 
-  @doc """
-  Handles the result of a Repo operation, standardizing error handling.
-
-  ## Parameters
-
-  - `result`: The result of a Repo operation (insert, update, delete)
-  - `message`: A human-readable error message
-  - `details`: Additional details about the operation
-
-  ## Examples
-
-      iex> handle_repo_result({:ok, post}, "Failed to create post", %{attrs: attrs})
-      {:ok, post}
-
-      iex> handle_repo_result({:error, changeset}, "Failed to create post", %{attrs: attrs})
-      {:error, %{type: :validation_error, message: "Failed to create post", ...}}
-  """
+  # Handles the result of a Repo operation, standardizing error handling.
   defp handle_repo_result({:ok, _result} = success, _message, _details), do: success
 
   defp handle_repo_result({:error, %Ecto.Changeset{} = changeset}, message, details) do

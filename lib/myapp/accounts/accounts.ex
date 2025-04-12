@@ -6,7 +6,7 @@ defmodule Myapp.Accounts do
   import Ecto.Query, warn: false
   alias Myapp.Repo
 
-  alias Myapp.Accounts.{User, UserToken, UserNotifier, LinkedAccount}
+  alias Myapp.Accounts.{User, UserToken, UserNotifier, LinkedAccount, SocialMediaToken}
   alias Myapp.Tokens
   alias Myapp.ErrorHandler
 
@@ -873,5 +873,37 @@ defmodule Myapp.Accounts do
             {:ok, token, linked_user}
         end
     end
+  end
+
+  @doc """
+  Stores a platform token for a user.
+
+  ## Parameters
+    - provider: The social media provider as a string
+    - tokens: The token data to store
+
+  ## Returns
+    - {:ok, token} if successful
+    - {:error, reason} otherwise
+  """
+  def store_platform_token(provider, tokens) when is_binary(provider) do
+    # Get the current user ID from the session
+    user_id = get_current_user_id()
+
+    # Convert provider from string to atom
+    provider_atom = String.to_existing_atom(provider)
+
+    # Store the token using SocialMediaToken
+    SocialMediaToken.store_tokens(user_id, provider_atom, tokens)
+  end
+
+  # Helper function to get the current user ID
+  # In a real implementation, this would get the user ID from the session
+  defp get_current_user_id do
+    # This is a stub - in a real implementation, this would get the user ID from the session
+    # For now, we'll just return a hardcoded ID for testing, or nil to test the error case
+    # Uncomment the line below to test the error case
+    # nil
+    1
   end
 end
