@@ -19,8 +19,9 @@ defmodule Myapp.Tokens.Metrics do
   @social_token_get "token.social.get"
   @social_token_refresh "token.social.refresh"
   @social_token_revoke "token.social.revoke"
-  @cache_hit "token.cache.hit"
-  @cache_miss "token.cache.miss"
+  # These metrics will be used when implementing cache metrics
+  # @cache_hit "token.cache.hit"
+  # @cache_miss "token.cache.miss"
 
   # Session token metrics
 

@@ -1,7 +1,7 @@
 defmodule MyappWeb.Social.ThreadController do
   use MyappWeb, :controller
 
-  alias Myapp.Threads
+  # alias Myapp.Threads  # Uncomment when implementing thread functionality
 
   action_fallback MyappWeb.FallbackController
 
@@ -39,7 +39,7 @@ defmodule MyappWeb.Social.ThreadController do
     |> json(%{error: %{message: "Bad Request", type: "bad_request", details: %{}}})
   end
 
-  def reply(conn, %{"thread_id" => thread_id, "text" => ""}) do
+  def reply(conn, %{"thread_id" => _thread_id, "text" => ""}) do
     conn
     |> put_status(:bad_request)
     |> json(%{error: %{message: "Thread ID and text are required", type: "bad_request", details: %{}}})
@@ -53,14 +53,14 @@ defmodule MyappWeb.Social.ThreadController do
         conn
         |> put_status(:created)
         |> json(reply)
-      {:error, error} ->
+      {:error, _error} ->
         conn
         |> put_status(:unprocessable_entity)
         |> json(%{errors: %{detail: "Thread not found"}})
     end
   end
 
-  def reply(conn, %{"thread_id" => thread_id}) do
+  def reply(conn, %{"thread_id" => _thread_id}) do
     conn
     |> put_status(:bad_request)
     |> json(%{error: %{message: "Thread ID and text are required", type: "bad_request", details: %{}}})

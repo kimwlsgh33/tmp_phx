@@ -13,7 +13,8 @@ defmodule MyappWeb.Social.SocialMediaController do
   use MyappWeb, :controller
 
   alias Myapp.{Accounts, Content, SocialMediaConfig, Tokens}
-  alias Myapp.Content.{Post, ShortVideo, LongVideo}
+  # These will be used when implementing the actual content creation features
+  # alias Myapp.Content.{Post, ShortVideo, LongVideo}
 
   # Platform-specific constraints
   @twitter_max_size 15_000_000  # 15MB
@@ -296,10 +297,7 @@ defmodule MyappWeb.Social.SocialMediaController do
   end
 
   # Token expiration and refresh are now handled by the Tokens module
-  # These functions are kept as no-ops for backward compatibility
-  defp token_expired?(_token), do: false
-
-  defp refresh_token(_provider, _token), do: {:error, :not_implemented}
+  # These functions have been removed to avoid unused function warnings
 
   # Content Validation Functions
 
@@ -368,7 +366,7 @@ defmodule MyappWeb.Social.SocialMediaController do
     end
   end
 
-  defp validate_video_duration(path) do
+  defp validate_video_duration(_path) do
     # In a real application, you would use a video processing library
     # to check the actual duration of the video
     # For now, we'll assume the validation is successful

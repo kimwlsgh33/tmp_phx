@@ -2,7 +2,7 @@ defmodule MyappWeb.Legal.PrivacyPolicyController do
   use MyappWeb, :controller
 
   def page(conn, %{"version" => version}) do
-    case Myapp.PrivacyPolicy.get_privacy_policy(version) do
+    case Myapp.Legal.PrivacyPolicy.get_privacy_policy(version) do
       {:ok, privacy_policy} ->
         render(conn, :page, privacy_policy: privacy_policy)
 

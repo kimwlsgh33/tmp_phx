@@ -9,8 +9,8 @@ defmodule Myapp.SocialMedia.Twitter do
   @behaviour Myapp.SocialMedia
 
   require Logger
-  alias Myapp.Twitter
-  alias Myapp.SocialAuth.Twitter, as: TwitterAuth
+  alias Myapp.SocialMedia.Providers.Twitter, as: TwitterProvider
+  # alias Myapp.SocialAuth.Twitter, as: TwitterAuth  # Uncomment when needed
   alias Myapp.Tokens
 
   @doc """
@@ -30,10 +30,10 @@ defmodule Myapp.SocialMedia.Twitter do
   def authenticated?(user_id) do
     case get_conn_from_user_id(user_id) do
       {:ok, conn} ->
-        case Twitter.validate_token(conn) do
+        case TwitterProvider.validate_token(conn) do
           {:ok, true} ->
             # Get additional profile details if needed
-            case Twitter.get_authenticated_user_id(conn) do
+            case TwitterProvider.get_authenticated_user_id(conn) do
               {:ok, twitter_user_id} ->
                 {:ok, %{authenticated: true, details: %{twitter_user_id: twitter_user_id}}}
               {:error, _} ->
@@ -69,9 +69,9 @@ defmodule Myapp.SocialMedia.Twitter do
   def create_post(user_id, content, media_ids, _options \\ []) do
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
       if media_ids && length(media_ids) > 0 do
-        Twitter.post_tweet_with_media(conn, content, media_ids)
+        TwitterProvider.post_tweet_with_media(conn, content, media_ids)
       else
-        Twitter.post_tweet(conn, content)
+        TwitterProvider.post_tweet(conn, content)
       end
     end
   end
@@ -95,7 +95,7 @@ defmodule Myapp.SocialMedia.Twitter do
   def upload_media(user_id, media_path, mime_type, _options \\ []) do
     with {:ok, conn} <- get_conn_from_user_id(user_id),
          {:ok, media_binary} <- File.read(media_path) do
-      Twitter.upload_media(conn, media_binary, mime_type)
+      TwitterProvider.upload_media(conn, media_binary, mime_type)
     else
       {:error, :enoent} -> {:error, "File not found: #{media_path}"}
       {:error, reason} -> {:error, reason}
@@ -118,7 +118,7 @@ defmodule Myapp.SocialMedia.Twitter do
   @impl Myapp.SocialMedia
   def delete_post(user_id, post_id) do
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
-      Twitter.delete_tweet(conn, post_id)
+      TwitterProvider.delete_tweet(conn, post_id)
     end
   end
 
@@ -141,7 +141,7 @@ defmodule Myapp.SocialMedia.Twitter do
     opts = Enum.into(options, %{})
 
     with {:ok, conn} <- get_conn_from_user_id(user_id) do
-      Twitter.get_user_timeline(conn, opts)
+      TwitterProvider.get_user_timeline(conn, opts)
     end
   end
 
@@ -161,8 +161,8 @@ defmodule Myapp.SocialMedia.Twitter do
   def get_profile(user_id) do
     with {:ok, conn} <- get_conn_from_user_id(user_id),
          {:ok, token} <- get_access_token_from_conn(conn),
-         {:ok, twitter_user_id} <- Twitter.get_authenticated_user_id(token),
-         {:ok, response} <- Twitter.make_api_call(:get, "/users/#{twitter_user_id}", token, %{
+         {:ok, twitter_user_id} <- TwitterProvider.get_authenticated_user_id(token),
+         {:ok, response} <- TwitterProvider.make_api_call(:get, "/users/#{twitter_user_id}", token, %{
            "user.fields" => "name,username,profile_image_url,description,created_at,public_metrics"
          }) do
 
@@ -202,7 +202,7 @@ defmodule Myapp.SocialMedia.Twitter do
     # Twitter OAuth 2.0 implementation may not support token refresh
     # without involving the user. This is a placeholder implementation.
     with {:ok, conn} <- get_conn_from_user_id(user_id),
-         {:ok, true} <- Twitter.validate_token(conn) do
+         {:ok, true} <- TwitterProvider.validate_token(conn) do
       # Token is still valid, no refresh needed
       {:ok, :not_needed}
     else
@@ -250,8 +250,5 @@ defmodule Myapp.SocialMedia.Twitter do
   end
 
   # This function is no longer needed as we get both tokens from Tokens.get_social_token/2
-  # Keeping it as a no-op for backward compatibility
-  defp get_refresh_token(_user_id) do
-    {:ok, nil}
-  end
+  # Removed to avoid unused function warning
 end

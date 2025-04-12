@@ -486,7 +486,7 @@ defmodule Myapp.Accounts do
         )
 
         case user |> User.oauth_changeset(user_params) |> Repo.update() do
-          {:ok, updated_user} = result -> result
+          {:ok, _updated_user} = result -> result
           {:error, changeset} = error ->
             # Log the error with our error handler
             ErrorHandler.handle(
@@ -517,7 +517,7 @@ defmodule Myapp.Accounts do
         )
 
         case %User{} |> User.oauth_registration_changeset(user_params) |> Repo.insert() do
-          {:ok, new_user} = result -> result
+          {:ok, _new_user} = result -> result
           {:error, changeset} = error ->
             # Log the error with our error handler
             ErrorHandler.handle(

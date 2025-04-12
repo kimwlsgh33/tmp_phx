@@ -28,7 +28,7 @@ defmodule Myapp.Content do
       iex> handle_repo_result({:error, changeset}, "Failed to create post", %{attrs: attrs})
       {:error, %{type: :validation_error, message: "Failed to create post", ...}}
   """
-  defp handle_repo_result({:ok, result} = success, _message, _details), do: success
+  defp handle_repo_result({:ok, _result} = success, _message, _details), do: success
 
   defp handle_repo_result({:error, %Ecto.Changeset{} = changeset}, message, details) do
     ErrorHandler.handle(

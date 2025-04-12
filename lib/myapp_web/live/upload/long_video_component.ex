@@ -77,7 +77,7 @@ defmodule MyappWeb.Upload.LongVideoComponent do
             <p>Drag video file here or click to browse</p>
             <small class="text-gray-500">Max size: 500MB. Formats: MP4, MOV</small>
             <.live_file_input upload={@uploads.video} class="mt-2" />
-            
+
             <%= for entry <- @uploads.video.entries do %>
               <div class="mt-2 flex items-center">
                 <div class="text-sm"><%= entry.client_name %></div>
@@ -190,7 +190,7 @@ defmodule MyappWeb.Upload.LongVideoComponent do
 
   defp handle_progress(:video, entry, socket) do
     if entry.done? do
-      {:ok, path} = consume_uploaded_entry(socket, entry, &upload_file/2)
+      {:ok, _path} = consume_uploaded_entry(socket, entry, &upload_file/2)
       {:noreply, socket}
     else
       {:noreply, socket}
@@ -227,4 +227,3 @@ defmodule MyappWeb.Upload.LongVideoComponent do
     end
   end
 end
-

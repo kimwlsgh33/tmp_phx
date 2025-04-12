@@ -8,7 +8,7 @@ defmodule Myapp.SocialMedia.Tiktok do
 
   @behaviour Myapp.SocialMedia
 
-  alias Myapp.Tiktok
+  alias Myapp.SocialMedia.Providers.Tiktok, as: TiktokProvider
   alias Myapp.Accounts.SocialMediaToken
   alias Myapp.SocialAuth.TikTok, as: TikTokAuth
   alias HTTPoison
@@ -60,7 +60,7 @@ defmodule Myapp.SocialMedia.Tiktok do
   def upload_media(user_id, media_path, mime_type, options \\ []) do
     with {:ok, access_token} <- get_conn_from_user_id(user_id),
          :ok <- validate_video_file(media_path, mime_type),
-         {:ok, media_id} <- Myapp.Tiktok.upload_video(media_path, [access_token: access_token] ++ options) do
+         {:ok, media_id} <- TiktokProvider.upload_video(media_path, [access_token: access_token] ++ options) do
       {:ok, media_id}
     else
       {:error, :invalid_file} ->
@@ -112,7 +112,7 @@ defmodule Myapp.SocialMedia.Tiktok do
       disable_duet = Keyword.get(options, :disable_duet, false)
       disable_stitch = Keyword.get(options, :disable_stitch, false)
 
-      case Myapp.Tiktok.finalize_upload(
+      case TiktokProvider.finalize_upload(
         media_id,
         text,
         privacy_level,
@@ -157,7 +157,7 @@ defmodule Myapp.SocialMedia.Tiktok do
   @impl Myapp.SocialMedia
   def list_videos(user_id, options \\ []) do
     with {:ok, access_token} <- get_conn_from_user_id(user_id),
-         {:ok, response} <- Myapp.Tiktok.list_videos([access_token: access_token] ++ options) do
+         {:ok, response} <- TiktokProvider.list_videos([access_token: access_token] ++ options) do
       case response do
         %{"data" => %{"videos" => videos, "cursor" => cursor}} ->
           {:ok, %{
@@ -193,7 +193,7 @@ defmodule Myapp.SocialMedia.Tiktok do
   @impl Myapp.SocialMedia
   def delete_post(user_id, post_id) do
     with {:ok, access_token} <- get_conn_from_user_id(user_id),
-         {:ok, _result} <- Myapp.Tiktok.delete_video(post_id, [access_token: access_token]) do
+         {:ok, _result} <- TiktokProvider.delete_video(post_id, [access_token: access_token]) do
       {:ok, %{id: post_id}}
     else
       {:error, :post_not_found} ->
@@ -230,7 +230,7 @@ defmodule Myapp.SocialMedia.Tiktok do
   @impl Myapp.SocialMedia
   def get_profile(user_id) do
     with {:ok, access_token} <- get_conn_from_user_id(user_id),
-         {:ok, profile_data} <- Myapp.Tiktok.get_profile([access_token: access_token]) do
+         {:ok, profile_data} <- TiktokProvider.get_profile([access_token: access_token]) do
       # Map the response fields to our expected structure
       # TikTok API returns profile data as a map with string keys
       {:ok, %{
@@ -276,7 +276,7 @@ defmodule Myapp.SocialMedia.Tiktok do
   @impl Myapp.SocialMedia
   def get_timeline(user_id, options \\ []) do
     with {:ok, access_token} <- get_conn_from_user_id(user_id),
-         {:ok, result} <- Myapp.Tiktok.get_timeline([access_token: access_token] ++ options) do
+         {:ok, result} <- TiktokProvider.get_timeline([access_token: access_token] ++ options) do
       {:ok, result} # The result is already in the correct format: %{posts: posts, next_page_token: next_page_token}
     else
       {:error, :empty_timeline} ->

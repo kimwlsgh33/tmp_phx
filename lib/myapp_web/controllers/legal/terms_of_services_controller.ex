@@ -8,7 +8,7 @@ defmodule MyappWeb.Legal.TermsOfServicesController do
 
   use MyappWeb, :controller
 
-  alias Myapp.ErrorHandler
+  alias Myapp.Shared.ErrorHandler
   alias MyappWeb.ErrorHandler, as: WebErrorHandler
 
   @doc """
@@ -20,7 +20,7 @@ defmodule MyappWeb.Legal.TermsOfServicesController do
     * `%{"version" => version}` - The version of the terms of service to display
   """
   def page(conn, %{"version" => version}) do
-    case Myapp.TermsOfServices.get_terms_of_services(version) do
+    case Myapp.Legal.TermsOfServices.get_terms_of_services(version) do
       {:ok, terms_of_services} ->
         render(conn, :terms_of_services, terms_of_services: terms_of_services)
 
@@ -47,7 +47,7 @@ defmodule MyappWeb.Legal.TermsOfServicesController do
   """
   def page(conn, _params) do
     # Get the latest version and redirect to it
-    latest_version = List.last(Myapp.TermsOfServices.get_versions())
+    latest_version = List.last(Myapp.Legal.TermsOfServices.get_versions())
     redirect(conn, to: ~p"/legal/terms/#{latest_version}")
   end
 end

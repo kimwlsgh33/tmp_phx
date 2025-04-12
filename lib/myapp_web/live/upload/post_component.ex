@@ -54,7 +54,7 @@ defmodule MyappWeb.Upload.PostComponent do
             <p>Drag files here or click to browse</p>
             <small class="text-gray-500">Accepted formats: JPG, JPEG, PNG, PDF, DOC, DOCX (max 50MB)</small>
             <.live_file_input upload={@uploads.files} class="mt-2" />
-            
+
             <%= for entry <- @uploads.files.entries do %>
               <div class="mt-2 flex items-center">
                 <div class="text-sm"><%= entry.client_name %></div>
@@ -135,7 +135,7 @@ defmodule MyappWeb.Upload.PostComponent do
 
   defp handle_progress(:files, entry, socket) do
     if entry.done? do
-      {:ok, path} = consume_uploaded_entry(socket, entry, &upload_file/2)
+      {:ok, _path} = consume_uploaded_entry(socket, entry, &upload_file/2)
       {:noreply, socket}
     else
       {:noreply, socket}
@@ -201,7 +201,7 @@ defmodule MyappWeb.Upload.PostComponent do
           <div class="border-dashed border-2 border-gray-300 p-6 text-center rounded">
             <p>Drag files here or click to browse</p>
             <.live_file_input upload={@uploads.files} class="mt-2" />
-            
+
             <%= for entry <- @uploads.files.entries do %>
               <div class="mt-2 flex items-center">
                 <div class="text-sm"><%= entry.client_name %></div>

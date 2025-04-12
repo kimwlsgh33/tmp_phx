@@ -111,7 +111,7 @@ defmodule Myapp.Application do
       nil ->
         Logger.warning("⚠️ SENTRY_DSN not set. Error reporting to Sentry will be disabled.")
         :ok
-      dsn ->
+      _dsn ->
         # Set application environment
         Application.put_env(:myapp, :env, Mix.env())
 

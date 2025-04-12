@@ -8,10 +8,11 @@ defmodule Myapp.Tokens.Cache do
 
   use GenServer
   require Logger
-  alias Myapp.Tokens.Metrics
+  # alias Myapp.Tokens.Metrics  # Uncomment when implementing metrics
 
   @session_table :token_session_cache
   @social_table :token_social_cache
+  @email_table :token_email_cache
   @cleanup_interval 60_000 # 1 minute
 
   # Client API

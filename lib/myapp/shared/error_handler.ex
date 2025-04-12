@@ -117,7 +117,9 @@ defmodule Myapp.Shared.ErrorHandler do
       {:error, %{type: :not_found, message: "User not found", details: %{}, source: MyApp.UserController, timestamp: ~U[2023-01-01 00:00:00Z]}}
   """
   @spec handle(error() | any(), error_source(), error_context()) :: {:error, error()}
-  def handle(%{type: _type} = error, source, context \\ %{}) do
+  def handle(error, source, context \\ %{})
+  
+  def handle(%{type: _type} = error, source, context) do
     # Ensure the error has a source
     error = Map.put(error, :source, error.source || source)
 
@@ -266,7 +268,7 @@ defmodule Myapp.Shared.ErrorHandler do
           Sentry.report_error(error)
         end
       :info -> Logger.info(log_message)
-      :debug -> Logger.debug(log_message)
+      # :debug -> Logger.debug(log_message)  # Removed to avoid unused clause warning
     end
   end
 

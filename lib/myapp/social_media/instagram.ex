@@ -10,8 +10,9 @@ defmodule Myapp.SocialMedia.Instagram do
 
   require Logger
   alias Myapp.SocialAuth.Instagram, as: InstagramAuth
-  alias Myapp.SocialMediaToken
-  alias Myapp.{ErrorHandler, ApiError}
+  alias Myapp.Accounts.SocialMediaToken
+  alias Myapp.ErrorHandler
+  # alias Myapp.ApiError  # Uncomment when needed
 
   @doc """
   Checks if the user is authenticated with Instagram.

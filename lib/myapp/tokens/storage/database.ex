@@ -13,7 +13,7 @@ defmodule Myapp.Tokens.Storage.Database do
   import Ecto.Query
 
   @impl true
-  def store_session_token(token, user_id, metadata) do
+  def store_session_token(token, user_id, _metadata) do
     user = Repo.get(User, user_id)
 
     if user do

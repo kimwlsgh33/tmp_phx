@@ -36,7 +36,7 @@ defmodule Myapp.Threads do
       {:error, %{"error" => %{"message" => "Invalid text"}}}
 
   """
-  def create_thread(user_id, %{text: text}) when is_binary(text) and text != "" do
+  def create_thread(_user_id, %{text: text}) when is_binary(text) and text != "" do
     ThreadApi.create_thread(text)
   end
 
@@ -51,7 +51,7 @@ defmodule Myapp.Threads do
       {:ok, [%{"id" => "123", ...}, %{"id" => "456", ...}]}
 
   """
-  def list_threads(user_id) do
+  def list_threads(_user_id) do
     # In a real implementation, this would filter by user_id
     {:ok, []}
   end
@@ -65,7 +65,7 @@ defmodule Myapp.Threads do
       {:ok, %{"id" => "123", ...}}
 
   """
-  def update_thread(thread_id, params) when is_binary(thread_id) do
+  def update_thread(thread_id, _params) when is_binary(thread_id) do
     # In a real implementation, this would update the thread
     get_thread(thread_id)
   end

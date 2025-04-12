@@ -55,14 +55,15 @@ defmodule Myapp.Tokens do
   @behaviour Myapp.Tokens.API
 
   alias Myapp.Repo
-  alias Myapp.Accounts.{User, UserToken, SocialMediaToken}
+  alias Myapp.Accounts.User
   alias Myapp.Tokens.{Metrics, Common}
   alias Myapp.Tokens.Storage.Factory
 
   # Get the configured storage adapter
   @storage Factory.create_from_config()
 
-  import Ecto.Query
+  # Import Ecto.Query when needed
+  # import Ecto.Query
 
   @doc """
   Creates a session token for a user.
@@ -77,7 +78,7 @@ defmodule Myapp.Tokens do
       {:ok, "g3QAAAACZAAEZGF0YW0AAAAkNDI4M...", %{context: "session"}}
   """
   @impl Myapp.Tokens.API
-  def create_session_token(%User{} = user, opts \\ []) do
+  def create_session_token(%User{} = user, _opts \\ []) do
     # Generate a secure token
     token = Common.generate_url_safe_token()
 
@@ -114,7 +115,7 @@ defmodule Myapp.Tokens do
   """
   @impl Myapp.Tokens.API
   @impl Myapp.TokensBehaviour
-  def verify_session_token(token, opts \\ []) do
+  def verify_session_token(token, _opts \\ []) do
     do_verify_session_token(token)
   end
 
@@ -149,7 +150,7 @@ defmodule Myapp.Tokens do
       :ok
   """
   @impl Myapp.Tokens.API
-  def revoke_session_token(token, opts \\ []) do
+  def revoke_session_token(token, _opts \\ []) do
     # Delete the token using the storage adapter
     result = @storage.delete_session_token(token)
 
@@ -170,7 +171,7 @@ defmodule Myapp.Tokens do
       :ok
   """
   @impl Myapp.Tokens.API
-  def revoke_other_session_tokens(%User{id: user_id}, current_token, opts \\ []) do
+  def revoke_other_session_tokens(%User{id: user_id}, current_token, _opts \\ []) do
     # Delete all tokens for the user except the current one
     @storage.delete_user_session_tokens(user_id, current_token)
   end
@@ -189,7 +190,7 @@ defmodule Myapp.Tokens do
       {:ok, "g3QAAAACZAAEZGF0YW0AAAAkNDI4M..."}
   """
   @impl Myapp.Tokens.API
-  def create_email_token(%User{} = user, context, opts \\ []) do
+  def create_email_token(%User{} = user, context, _opts \\ []) do
     # Generate a secure token
     token = Common.generate_url_safe_token()
 
@@ -222,7 +223,7 @@ defmodule Myapp.Tokens do
       {:ok, %User{}}
   """
   @impl Myapp.Tokens.API
-  def verify_email_token(token, context, opts \\ []) do
+  def verify_email_token(token, context, _opts \\ []) do
     # Get the user ID from the storage adapter
     result = case @storage.get_email_token(token, context) do
       {:ok, user_id} ->
@@ -258,7 +259,7 @@ defmodule Myapp.Tokens do
       {:ok, %{...}}
   """
   @impl Myapp.Tokens.API
-  def store_social_token(user_id, provider, token_data, opts \\ []) when is_atom(provider) do
+  def store_social_token(user_id, provider, token_data, _opts \\ []) when is_atom(provider) do
     # Normalize the token data
     normalized_data = Common.normalize_oauth_response(token_data)
 
@@ -283,7 +284,7 @@ defmodule Myapp.Tokens do
       {:ok, %{access_token: "ACCESS_TOKEN", ...}}
   """
   @impl Myapp.Tokens.API
-  def get_social_token(user_id, provider, opts \\ []) when is_atom(provider) do
+  def get_social_token(user_id, provider, _opts \\ []) when is_atom(provider) do
     # Get the token using the configured storage adapter
     result = case @storage.get_social_token(user_id, provider) do
       {:ok, token_data} ->
@@ -316,7 +317,7 @@ defmodule Myapp.Tokens do
       {:ok, %{access_token: "NEW_ACCESS_TOKEN", ...}}
   """
   @impl Myapp.Tokens.API
-  def refresh_social_token(user_id, provider, opts \\ []) when is_atom(provider) do
+  def refresh_social_token(_user_id, provider, _opts \\ []) when is_atom(provider) do
     # This would call the appropriate auth module to refresh the token
     # For now, we'll just return an error
     result = {:error, :not_implemented}
@@ -344,7 +345,7 @@ defmodule Myapp.Tokens do
       :ok
   """
   @impl Myapp.Tokens.API
-  def revoke_social_token(user_id, provider, opts \\ []) when is_atom(provider) do
+  def revoke_social_token(user_id, provider, _opts \\ []) when is_atom(provider) do
     # Delete the token using the storage adapter
     result = @storage.delete_social_token(user_id, provider)
 

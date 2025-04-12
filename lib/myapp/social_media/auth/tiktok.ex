@@ -13,7 +13,7 @@ defmodule Myapp.SocialAuth.TikTok do
   def generate_auth_url(params \\ %{}) do
     scope = Map.get(params, :scope, "user.info.basic,video.upload,video.list")
     state = Map.get(params, :state, generate_state_param())
-    
+
     try do
       query_params = URI.encode_query(%{
         "client_key" => SocialMediaConfig.get(:tiktok, :client_key),
@@ -34,7 +34,7 @@ defmodule Myapp.SocialAuth.TikTok do
   @impl Myapp.SocialAuth
   def exchange_code_for_token(code, _params \\ %{}) do
     url = "https://open-api.tiktok.com/oauth/access_token/"
-    
+
     body = [
       client_key: SocialMediaConfig.get(:tiktok, :client_key),
       client_secret: SocialMediaConfig.get(:tiktok, :client_secret),
@@ -57,20 +57,20 @@ defmodule Myapp.SocialAuth.TikTok do
               "open_id" => token_data["open_id"],
               "scope" => token_data["scope"]
             }}
-          
+
           {:ok, %{"data" => %{"description" => error_msg}}} ->
             Logger.error("TikTok OAuth token exchange failed: #{error_msg}")
             {:error, {:token_exchange, "Failed to exchange code for token: #{error_msg}"}}
-          
+
           {:error, _} ->
             Logger.error("Failed to parse TikTok token response")
             {:error, {:token_parse, "Failed to parse token response"}}
         end
-      
+
       {:ok, %{status_code: status_code, body: body}} ->
         Logger.error("TikTok OAuth token exchange failed: HTTP #{status_code}, #{body}")
         {:error, {:token_exchange, "Failed to exchange code for token: HTTP #{status_code}"}}
-      
+
       {:error, %{reason: reason}} ->
         Logger.error("TikTok OAuth token exchange error: #{inspect(reason)}")
         {:error, {:network, "Error communicating with TikTok API"}}
@@ -80,7 +80,7 @@ defmodule Myapp.SocialAuth.TikTok do
   @impl Myapp.SocialAuth
   def refresh_token(refresh_token, _params \\ %{}) do
     url = "https://open-api.tiktok.com/oauth/refresh_token/"
-    
+
     body = [
       client_key: SocialMediaConfig.get(:tiktok, :client_key),
       client_secret: SocialMediaConfig.get(:tiktok, :client_secret),
@@ -100,20 +100,20 @@ defmodule Myapp.SocialAuth.TikTok do
               "refresh_token" => token_data["refresh_token"],
               "refresh_expires_in" => token_data["refresh_expires_in"]
             }}
-          
+
           {:ok, %{"data" => %{"description" => error_msg}}} ->
             Logger.error("TikTok OAuth token refresh failed: #{error_msg}")
             {:error, {:token_refresh, "Failed to refresh token: #{error_msg}"}}
-          
+
           {:error, _} ->
             Logger.error("Failed to parse TikTok token refresh response")
             {:error, {:token_parse, "Failed to parse token refresh response"}}
         end
-      
+
       {:ok, %{status_code: status_code, body: body}} ->
         Logger.error("TikTok OAuth token refresh failed: HTTP #{status_code}, #{body}")
         {:error, {:token_refresh, "Failed to refresh token: HTTP #{status_code}"}}
-      
+
       {:error, %{reason: reason}} ->
         Logger.error("TikTok OAuth token refresh error: #{inspect(reason)}")
         {:error, {:network, "Error communicating with TikTok API"}}
@@ -123,37 +123,37 @@ defmodule Myapp.SocialAuth.TikTok do
   @impl Myapp.SocialAuth
   def validate_token(access_token, params \\ %{}) do
     open_id = Map.get(params, :open_id)
-    
+
     # TikTok doesn't have a dedicated token validation endpoint
     # We'll use the user info endpoint to verify if the token is valid
     url = "https://open-api.tiktok.com/user/info/"
-    
+
     query_params = %{
       "access_token" => access_token
     }
     |> maybe_add_open_id(open_id)
-    
+
     case HttpClient.get(url, params: query_params) do
       {:ok, %{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"message" => "success"}} ->
             {:ok, true}
-          
+
           {:ok, %{"data" => %{"description" => _error_msg}}} ->
             {:ok, false}
-          
+
           {:error, _} ->
             Logger.error("Failed to parse TikTok API response during token validation")
             {:error, {:token_parse, "Failed to parse API response"}}
         end
-      
+
       {:ok, %{status_code: 401}} ->
         {:ok, false}
-      
+
       {:ok, %{status_code: status_code, body: body}} ->
         Logger.warning(fn -> "TikTok OAuth token validation failed: HTTP #{status_code}, #{body}" end)
         {:error, {:validation, "Token validation failed: HTTP #{status_code}"}}
-      
+
       {:error, %{reason: reason}} ->
         Logger.error("TikTok OAuth token validation error: #{inspect(reason)}")
         {:error, {:network, "Error communicating with TikTok API"}}
@@ -173,7 +173,7 @@ defmodule Myapp.SocialAuth.TikTok do
   @impl Myapp.SocialAuth
   def get_tokens(user_id, _params \\ %{}) do
     case SocialMediaToken.get_active_tokens(user_id, :tiktok) do
-      {:ok, token} -> 
+      {:ok, token} ->
         {:ok, %{
           "access_token" => token.access_token_text,
           "refresh_token" => token.refresh_token_text,
@@ -188,17 +188,17 @@ defmodule Myapp.SocialAuth.TikTok do
   @impl Myapp.SocialAuth
   def revoke_tokens(_access_token, params \\ %{}) do
     open_id = Map.get(params, :open_id)
-    
+
     # TikTok doesn't provide a dedicated token revocation endpoint
     # In a real application, you might want to delete the tokens from your database
     # or mark them as revoked
-    
+
     if open_id do
       Logger.info("Marking TikTok tokens as revoked for user with open_id: #{open_id}")
     else
       Logger.info("Marking TikTok tokens as revoked")
     end
-    
+
     # Return :ok to maintain API consistency with other providers
     :ok
   end
@@ -220,22 +220,24 @@ defmodule Myapp.SocialAuth.TikTok do
   defp maybe_add_open_id(params, nil), do: params
   defp maybe_add_open_id(params, open_id), do: Map.put(params, "open_id", open_id)
 
-  # Get the API key (client key) from configuration
-  defp api_key do
-    Application.get_env(:myapp, :tiktok_api)[:api_key] || 
-    System.get_env("TIKTOK_CLIENT_KEY")
-  end
+  # These functions are commented out to avoid unused function warnings
+  # They will be uncommented when implementing the actual TikTok authentication
 
-  # Get the API secret (client secret) from configuration
-  defp api_secret do
-    Application.get_env(:myapp, :tiktok_api)[:api_secret] || 
-    System.get_env("TIKTOK_CLIENT_SECRET")
-  end
-
-  # Get the redirect URI from configuration
-  defp redirect_uri do
-    Application.get_env(:myapp, :tiktok_api)[:redirect_uri] || 
-    System.get_env("TIKTOK_REDIRECT_URI")
-  end
+  # # Get the API key (client key) from configuration
+  # defp api_key do
+  #   Application.get_env(:myapp, :tiktok_api)[:api_key] ||
+  #   System.get_env("TIKTOK_CLIENT_KEY")
+  # end
+  #
+  # # Get the API secret (client secret) from configuration
+  # defp api_secret do
+  #   Application.get_env(:myapp, :tiktok_api)[:api_secret] ||
+  #   System.get_env("TIKTOK_CLIENT_SECRET")
+  # end
+  #
+  # # Get the redirect URI from configuration
+  # defp redirect_uri do
+  #   Application.get_env(:myapp, :tiktok_api)[:redirect_uri] ||
+  #   System.get_env("TIKTOK_REDIRECT_URI")
+  # end
 end
-

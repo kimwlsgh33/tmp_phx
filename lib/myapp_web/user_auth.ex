@@ -4,7 +4,7 @@ defmodule MyappWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias Myapp.Accounts
+  # alias Myapp.Accounts  # Uncomment when implementing account functionality
   alias Myapp.Tokens
   alias Myapp.ErrorHandler
 

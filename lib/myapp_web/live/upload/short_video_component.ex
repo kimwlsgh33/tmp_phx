@@ -4,7 +4,7 @@ defmodule MyappWeb.Upload.ShortVideoComponent do
   alias MyappWeb.SocialMediaController
 
   @max_file_size 100_000_000  # 100MB in bytes
-  @max_duration 60  # 60 seconds
+  # @max_duration 60  # 60 seconds - Uncomment when implementing duration validation
 
   @impl true
   def update(assigns, socket) do
@@ -53,7 +53,7 @@ defmodule MyappWeb.Upload.ShortVideoComponent do
             <p>Drag video file here or click to browse</p>
             <small class="text-gray-500">Max duration: 60 seconds. Max size: 100MB. Formats: MP4, MOV</small>
             <.live_file_input upload={@uploads.video} class="mt-2" />
-            
+
             <%= for entry <- @uploads.video.entries do %>
               <div class="mt-2 flex items-center">
                 <div class="text-sm"><%= entry.client_name %></div>
@@ -111,7 +111,7 @@ defmodule MyappWeb.Upload.ShortVideoComponent do
 
   # Private functions
 
-  defp validate_file(%{client_type: type} = entry, socket) do
+  defp validate_file(%{client_type: type} = entry, _socket) do
     with :ok <- validate_type(type),
          :ok <- validate_duration(entry) do
       :ok
@@ -128,7 +128,7 @@ defmodule MyappWeb.Upload.ShortVideoComponent do
     end
   end
 
-  defp validate_duration(entry) do
+  defp validate_duration(_entry) do
     # In a real application, you would use a video processing library
     # to check the actual duration of the video
     # For now, we'll assume the validation is successful
@@ -147,7 +147,7 @@ defmodule MyappWeb.Upload.ShortVideoComponent do
 
   defp handle_progress(:video, entry, socket) do
     if entry.done? do
-      {:ok, path} = consume_uploaded_entry(socket, entry, &upload_file/2)
+      {:ok, _path} = consume_uploaded_entry(socket, entry, &upload_file/2)
       {:noreply, socket}
     else
       {:noreply, socket}
@@ -189,4 +189,3 @@ defmodule MyappWeb.Upload.ShortVideoComponent do
     end
   end
 end
-

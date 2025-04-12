@@ -5,8 +5,9 @@ defmodule Myapp.SocialMedia.Providers.Twitter do
   """
 
   require Logger
-  alias Myapp.SocialAuth.Twitter, as: TwitterAuth
-  alias Myapp.{ErrorHandler, ApiError}
+  # alias Myapp.SocialAuth.Twitter, as: TwitterAuth  # Uncomment when needed
+  alias Myapp.Shared.ApiError
+  # alias Myapp.Shared.ErrorHandler  # Uncomment when needed
 
   @base_url "https://api.twitter.com/2"
 

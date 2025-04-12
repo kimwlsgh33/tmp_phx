@@ -29,7 +29,7 @@ defmodule Myapp.SocialMedia.Providers.Tiktok do
   """
 
   require Logger
-  alias Myapp.{ErrorHandler, ApiError}
+  alias Myapp.Shared.{ErrorHandler, ApiError}
 
   @base_url "https://open-api.tiktok.com/v2"
 
@@ -178,7 +178,7 @@ defmodule Myapp.SocialMedia.Providers.Tiktok do
     * `:ok` - Chunk uploaded successfully
     * `{:error, reason}` - Chunk upload failed
   """
-  def upload_chunk(upload_id, chunk_data, chunk_index, chunk_start, chunk_end, total_size, access_token) do
+  def upload_chunk(upload_id, chunk_data, _chunk_index, chunk_start, chunk_end, total_size, access_token) do
     url = "#{@base_url}/video/upload/#{upload_id}/"
 
     headers = [

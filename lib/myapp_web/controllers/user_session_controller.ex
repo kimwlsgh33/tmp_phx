@@ -2,7 +2,7 @@ defmodule MyappWeb.UserSessionController do
   use MyappWeb, :controller
   #
   alias Myapp.Accounts
-  alias Myapp.Accounts.LinkedAccount
+  # alias Myapp.Accounts.LinkedAccount  # Uncomment when implementing linked accounts
   alias MyappWeb.UserAuth
   alias Myapp.ErrorHandler
 

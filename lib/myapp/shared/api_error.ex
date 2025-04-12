@@ -20,7 +20,7 @@ defmodule Myapp.Shared.ApiError do
   ```
   """
 
-  alias Myapp.Shared.ErrorHandler
+  # alias Myapp.Shared.ErrorHandler  # Uncomment when needed
 
   @doc """
   Handles an HTTP response based on status code and body.

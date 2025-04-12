@@ -8,9 +8,10 @@ defmodule Myapp.SocialMedia.Youtube do
 
   @behaviour Myapp.SocialMedia
 
-  alias Myapp.SocialMediaToken
-  alias Myapp.SocialAuth.YouTube, as: YouTubeAuth
-  alias Myapp.{ErrorHandler, ApiError}
+  alias Myapp.Accounts.SocialMediaToken
+  # alias Myapp.SocialAuth.YouTube, as: YouTubeAuth  # Uncomment when needed
+  alias Myapp.ErrorHandler
+  # alias Myapp.ApiError  # Uncomment when needed
   require Logger
 
   @doc """
@@ -156,7 +157,7 @@ defmodule Myapp.SocialMedia.Youtube do
   @impl Myapp.SocialMedia
   def refresh_tokens(user_id) do
     case SocialMediaToken.refresh_token(user_id, :youtube) do
-      {:ok, token_info} ->
+      {:ok, _token_info} ->
         {:ok, "YouTube tokens refreshed successfully"}
       {:error, reason} ->
         # Use our standardized error handling
@@ -213,7 +214,7 @@ defmodule Myapp.SocialMedia.Youtube do
   end
 
   # Helper function to get profile from conn
-  defp get_profile_from_conn(conn) do
+  defp get_profile_from_conn(_conn) do
     # This would typically call the YouTube API to get profile info
     # For now, we'll just return a mock profile
 
