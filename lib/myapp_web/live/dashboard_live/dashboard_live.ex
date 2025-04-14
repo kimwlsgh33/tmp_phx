@@ -251,6 +251,12 @@ defmodule MyappWeb.DashboardLive do
   end
 
   @impl true
+  def handle_info({:social_accounts_loaded, _accounts}, socket) do
+    # This message is meant for ScheduleComponent, just ignore it if received by the LiveView
+    {:noreply, socket}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div id="dashboard" class="flex h-screen">
