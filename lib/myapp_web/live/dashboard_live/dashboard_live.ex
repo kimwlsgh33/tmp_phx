@@ -89,6 +89,21 @@ defmodule MyappWeb.DashboardLive do
   end
 
   @impl true
+  def handle_event("toggle-platform", %{"platform" => platform}, socket) do
+    platform = String.to_existing_atom(platform)
+    selected_platforms = socket.assigns.selected_platforms
+    
+    updated_platforms =
+      if platform in selected_platforms do
+        Enum.reject(selected_platforms, fn p -> p == platform end)
+      else
+        [platform | selected_platforms]
+      end
+    
+    {:noreply, assign(socket, :selected_platforms, updated_platforms)}
+  end
+
+  @impl true
   def handle_event("disconnect-platform", %{"platform" => platform}, socket) do
     platform = String.to_existing_atom(platform)
 
@@ -223,32 +238,6 @@ defmodule MyappWeb.DashboardLive do
      socket
      |> put_flash(:info, "Content scheduled for #{platform_names} at #{scheduled_time}")
      |> push_patch(to: ~p"/dashboard?tab=results")}
-  end
-
-  @impl true
-  def handle_info(:switch_to_upload_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=upload")}
-  end
-
-  @impl true
-  def handle_info({:update_form, form_data}, socket) do
-    {:noreply,
-     socket
-     |> assign(:upload_form, form_data)}
-  end
-
-  @impl true
-  def handle_info({:update_preview, preview_url}, socket) do
-    {:noreply,
-     socket
-     |> assign(:preview_url, preview_url)}
-  end
-
-  @impl true
-  def handle_info({:update_selected_platforms, platforms}, socket) do
-    {:noreply,
-     socket
-     |> assign(:selected_platforms, platforms)}
   end
 
   @impl true

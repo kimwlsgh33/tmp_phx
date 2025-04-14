@@ -58,27 +58,6 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
   end
 
   @impl true
-  def handle_event("toggle-platform", %{"platform" => platform}, socket) do
-    platform = String.to_existing_atom(platform)
-    selected_platforms = socket.assigns.selected_platforms
-
-    updated_platforms =
-      if platform in selected_platforms do
-        Enum.reject(selected_platforms, fn p -> p == platform end)
-      else
-        [platform | selected_platforms]
-      end
-
-    # Update local state
-    socket = assign(socket, :selected_platforms, updated_platforms)
-
-    # Notify parent to update its state
-    send(socket.assigns.parent_pid, {:update_selected_platforms, updated_platforms})
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
     {:noreply, cancel_upload(socket, :video, ref)}
   end
