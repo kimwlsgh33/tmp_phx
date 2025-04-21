@@ -25,7 +25,9 @@ const VideoUploader = {
         previewContainer.appendChild(videoEl);
       });
     });
+    
   }
+  
 };
 
 export default VideoUploader;
