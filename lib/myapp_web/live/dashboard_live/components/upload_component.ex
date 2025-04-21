@@ -15,7 +15,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
      })
      |> allow_upload(:video,
        accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
-       max_entries: 1,
+       max_entries: 5,
        max_file_size: 500_000_000,
        progress: &handle_progress/3
      )}
@@ -30,7 +30,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
       |> assign(assigns)
       |> allow_upload(:video,
          accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
-         max_entries: 1,
+         max_entries: 5,
          max_file_size: 500_000_000,
          progress: &handle_progress/3
       )
@@ -183,17 +183,23 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
     <!-- File Upload Area (Right Column) -->
           <div
             id="upload-area"
+            phx-update="ignore"
             phx-drop-target={@uploads.video.ref}
             phx-target={@myself}
             phx-hook="VideoUploader"
             class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors"
           >
-            <%= if @processing_filename do %>
-              <p class="text-gray-700 mb-2">Selected file: <strong><%= @processing_filename %></strong></p>
+            <%= if @uploads.video.entries != [] do %>
+              <p class="text-gray-700 mb-2">
+                Selected files:
+                <%= for entry <- @uploads.video.entries do %>
+                  <strong><%= entry.client_name %></strong><%= if entry != List.last(@uploads.video.entries), do: ", " %>
+                <% end %>
+              </p>
               <label for="video-upload" class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
                 Select Video
               </label>
-              <input id="video-upload" type="file" accept=".mp4,.mov,.avi,.wmv,.flv,.webm" class="sr-only" />
+              <input id="video-upload" type="file" multiple accept=".mp4,.mov,.avi,.wmv,.flv,.webm" class="sr-only" />
               <div class="w-full bg-gray-200 h-2 rounded mt-2">
                 <div class="bg-indigo-600 h-2 rounded" style={"width: #{@upload_progress}%"}></div>
               </div>
@@ -243,7 +249,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
                   </svg>
                   Select Video
                 </label>
-                <input id="video-upload" type="file" accept=".mp4,.mov,.avi,.wmv,.flv,.webm" class="sr-only" />
+                <input id="video-upload" type="file" multiple accept=".mp4,.mov,.avi,.wmv,.flv,.webm" class="sr-only" />
                 <%= if @processing_filename do %>
                   <div class="w-full bg-gray-200 h-2 rounded mt-2">
                     <div class="bg-indigo-600 h-2 rounded" style={"width: #{@upload_progress}%"}></div>
@@ -354,7 +360,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path
                         fill-rule="evenodd"
-                        d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.467.398.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                        d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
                         clip-rule="evenodd"
                       />
                     </svg>

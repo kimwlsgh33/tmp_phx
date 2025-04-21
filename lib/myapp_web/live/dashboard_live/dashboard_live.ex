@@ -41,7 +41,7 @@ defmodule MyappWeb.DashboardLive do
      })
      |> allow_upload(:video,
        accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
-       max_entries: 1,
+       max_entries: 5,
        max_file_size: 500_000_000
      )}
   end
@@ -97,14 +97,14 @@ defmodule MyappWeb.DashboardLive do
   def handle_event("toggle-platform", %{"platform" => platform}, socket) do
     platform = String.to_existing_atom(platform)
     selected_platforms = socket.assigns.selected_platforms
-    
+
     updated_platforms =
       if platform in selected_platforms do
         Enum.reject(selected_platforms, fn p -> p == platform end)
       else
         [platform | selected_platforms]
       end
-    
+
     {:noreply, assign(socket, :selected_platforms, updated_platforms)}
   end
 
@@ -271,7 +271,7 @@ defmodule MyappWeb.DashboardLive do
             <h1 class="text-2xl font-bold text-black">Social Media Dashboard</h1>
             <p class="text-gray-400">Manage your content across multiple platforms</p>
           </div>
-          
+
     <!-- Tabs Navigation -->
           <div class="mb-6">
             <nav class="flex border-b border-black">
@@ -292,7 +292,7 @@ defmodule MyappWeb.DashboardLive do
               </.tab_link>
             </nav>
           </div>
-          
+
     <!-- Tab Content -->
           <div class="bg-white rounded-lg shadow-md p-6">
             <%= case @active_tab do %>

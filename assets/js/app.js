@@ -67,37 +67,3 @@ window.liveSocket = liveSocket;
 // Enable debug mode to see detailed LiveView messages in console
 liveSocket.enableDebug();
 console.log("[LiveView] Debug mode enabled. Check browser console for detailed messages.");
-
-// spinner
-document.addEventListener("DOMContentLoaded", () => {
-  const spinner = document.getElementById("global-spinner");
-  const path = spinner.querySelector("path");
-  const content = document.getElementById("page-content");
-  const pathLength = path.getTotalLength();
-
-  path.style.setProperty("--path-length", pathLength);
-  path.style.strokeDasharray = pathLength;
-  path.style.strokeDashoffset = pathLength;
-
-  // 페이지 로딩 시작 시
-  window.addEventListener("phx:page-loading-start", () => {
-    spinner.style.display = "block";
-    content.style.display = "none";
-  });
-
-  // 페이지 로딩 완료 시
-  window.addEventListener("phx:page-loading-stop", () => {
-    spinner.style.display = "none";
-    content.style.display = "block";
-    content.classList.remove("hidden"); // 부드러운 전환을 위해
-  });
-  
-  console.log("[LiveView] Page initialization complete");
-  
-  // Debug helper functions for use in browser console
-  window.checkLiveSocket = () => {
-    console.log("[LiveView] Connection status:", liveSocket.isConnected() ? "CONNECTED" : "DISCONNECTED");
-    console.log("[LiveView] Socket object:", liveSocket.socket);
-    return liveSocket.isConnected();
-  };
-});
