@@ -23,6 +23,8 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import ThemeToggle from "./hooks/theme_toggle";
 import DocsNavigation from "./hooks/docs_navigation";
+import VideoUploader from "./hooks/video_uploader";
+import { VideoPlayer, VideoPreview } from "./hooks/video_preview";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -30,6 +32,9 @@ let csrfToken = document
 let Hooks = {
   ThemeToggle,
   DocsNavigation,
+  VideoUploader,
+  VideoPreview,
+  VideoPlayer,  
 };
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

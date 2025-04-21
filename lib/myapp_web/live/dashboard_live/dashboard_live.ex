@@ -38,7 +38,12 @@ defmodule MyappWeb.DashboardLive do
        "description" => "",
        "tags" => "",
        "schedule_at" => nil
-     })}
+     })
+     |> allow_upload(:video,
+       accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
+       max_entries: 1,
+       max_file_size: 500_000_000
+     )}
   end
 
   @impl true
