@@ -183,80 +183,30 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
     <!-- File Upload Area (Right Column) -->
           <div
             id="upload-area"
-            phx-update="ignore"
-            phx-drop-target={@uploads.video.ref}
-            phx-target={@myself}
-            phx-hook="VideoUploader"
+            phx-hook="FileUploader"
             class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors"
           >
-            <%= if @uploads.video.entries != [] do %>
-              <p class="text-gray-700 mb-2">
-                Selected files:
-                <%= for entry <- @uploads.video.entries do %>
-                  <strong><%= entry.client_name %></strong><%= if entry != List.last(@uploads.video.entries), do: ", " %>
-                <% end %>
-              </p>
-              <label for="video-upload" class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
-                Select Video
-              </label>
-              <input id="video-upload" type="file" multiple accept=".mp4,.mov,.avi,.wmv,.flv,.webm" class="sr-only" />
-              <div class="w-full bg-gray-200 h-2 rounded mt-2">
-                <div class="bg-indigo-600 h-2 rounded" style={"width: #{@upload_progress}%"}></div>
-              </div>
-            <% else %>
-              <%= if Enum.empty?(@uploads.video.entries) do %>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
+            <div id="file-input-container" class="w-full max-w-xs mx-auto mb-4">
+              <label for="client-upload-input" class="custom-file-label cursor-pointer flex flex-col items-center justify-center w-full px-6 py-4 bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-lg shadow hover:bg-indigo-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" />
                 </svg>
-                <p class="mt-2 text-sm text-gray-500">
-                  <span class="font-medium text-indigo-600 hover:text-indigo-500">
-                    Upload a video
-                  </span>
-                  or drag and drop
-                </p>
-                <p class="mt-1 text-xs text-gray-500">
-                  MP4, MOV, AVI, WMV, FLV, WEBM up to 500MB
-                </p>
+                <span class="text-indigo-700 font-semibold">Click to select files</span>
+                <span class="text-xs text-gray-500">(Images or videos, multiple allowed)</span>
+              </label>
+              <input type="file" id="client-upload-input" multiple accept="image/*,video/*" class="hidden" />
+            </div>
+            <!-- File count figure: This will be filled by JS (see file_uploader.js) -->
+            <figure id="file-count-figure" class="file-count w-full flex flex-col items-center mb-4" phx-update="ignore">
+              <div class="rounded-full bg-indigo-50 text-indigo-700 font-bold px-4 py-2 text-lg shadow mb-1 border border-indigo-200"></div>
+              <figcaption class="text-xs text-gray-500"></figcaption>
+            </figure>
+            <!-- Preview area: Previews before upload are handled by JS (see file_uploader.js). This div is ignored by LiveView updates. -->
+            <div id="preview-area" class="preview flex flex-wrap gap-4 justify-center mb-4" phx-update="ignore"></div>
+            <div class="resume-list mb-4"></div>
 
-                <label
-                  for="video-upload"
-                  class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="-ml-1 mr-2 h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                  Select Video
-                </label>
-                <input id="video-upload" type="file" multiple accept=".mp4,.mov,.avi,.wmv,.flv,.webm" class="sr-only" />
-                <%= if @processing_filename do %>
-                  <div class="w-full bg-gray-200 h-2 rounded mt-2">
-                    <div class="bg-indigo-600 h-2 rounded" style={"width: #{@upload_progress}%"}></div>
-                  </div>
-                <% end %>
-              <% else %>
-                <!-- Upload in progress or completed -->
+
+
                 <%= for entry <- @uploads.video.entries do %>
                   <div class="relative">
                     <!-- Video preview or placeholder -->
@@ -317,13 +267,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
                     <% end %>
                   </div>
                 <% end %>
-              <% end %>
-            <% end %>
           </div>
         </div>
         <!-- End of grid container -->
 
-                    <!-- Platform Selection -->
+                    <!-- Platform Selection: Select the SNS platform(s) to upload to. -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">Where to upload</label>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">

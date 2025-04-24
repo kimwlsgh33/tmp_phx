@@ -92,6 +92,12 @@ defmodule MyappWeb.Router do
   scope "/api", MyappWeb do
     pipe_through :api
 
+    # Chunked Upload API
+    post "/upload_chunk", UploadApiController, :upload_chunk
+    get "/upload_status/:file_id", UploadApiController, :upload_status
+    post "/complete_upload", UploadApiController, :complete_upload
+    post "/sns_post", UploadApiController, :sns_post
+
     # File operations
     scope "/files" do
       post "/upload", FileController, :upload
