@@ -29,10 +29,10 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
       |> assign_new(:processing_filename, fn -> nil end)
       |> assign(assigns)
       |> allow_upload(:video,
-         accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
-         max_entries: 5,
-         max_file_size: 500_000_000,
-         progress: &handle_progress/3
+        accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
+        max_entries: 5,
+        max_file_size: 500_000_000,
+        progress: &handle_progress/3
       )
 
     {:ok, socket}
@@ -98,6 +98,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
   def handle_event("client_upload_complete", %{"url" => url}, socket) do
     # update preview and mark progress complete
     send(socket.assigns.parent_pid, {:update_preview, url})
+
     {:noreply,
      socket
      |> assign(:preview_url, url)
@@ -184,94 +185,50 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
           <div
             id="upload-area"
             phx-hook="FileUploader"
-            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors"
+            class="border border-gray-300 rounded-lg p-8 text-center hover:border-gray-300 transition-colors flex flex-col justify-center items-center min-h-[320px]"
           >
-            <div id="file-input-container" class="w-full max-w-xs mx-auto mb-4">
-              <label for="client-upload-input" class="custom-file-label cursor-pointer flex flex-col items-center justify-center w-full px-6 py-4 bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-lg shadow hover:bg-indigo-100 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" />
-                </svg>
-                <span class="text-indigo-700 font-semibold">Click to select files</span>
+            <div id="file-input-container" class="w-full flex justify-center mb-6">
+              <label
+                for="client-upload-input"
+                class="custom-file-label cursor-pointer flex flex-col items-center justify-center max-w-xs w-full px-8 py-6 bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-xl shadow-lg hover:bg-indigo-100 transition-colors text-center"
+              >
+                <span class="text-indigo-700 font-bold text-base mb-1">Click to select files</span>
                 <span class="text-xs text-gray-500">(Images or videos, multiple allowed)</span>
               </label>
-              <input type="file" id="client-upload-input" multiple accept="image/*,video/*" class="hidden" />
+              <input
+                type="file"
+                id="client-upload-input"
+                multiple
+                accept="image/*,video/*"
+                class="hidden"
+              />
             </div>
-            <!-- File count figure: This will be filled by JS (see file_uploader.js) -->
-            <figure id="file-count-figure" class="file-count w-full flex flex-col items-center mb-4" phx-update="ignore">
-              <div class="rounded-full bg-indigo-50 text-indigo-700 font-bold px-4 py-2 text-lg shadow mb-1 border border-indigo-200"></div>
-              <figcaption class="text-xs text-gray-500"></figcaption>
-            </figure>
-            <!-- Preview area: Previews before upload are handled by JS (see file_uploader.js). This div is ignored by LiveView updates. -->
-            <div id="preview-area" class="preview flex flex-wrap gap-4 justify-center mb-4" phx-update="ignore"></div>
-            <div class="resume-list mb-4"></div>
 
-
-
-                <%= for entry <- @uploads.video.entries do %>
-                  <div class="relative">
-                    <!-- Video preview or placeholder -->
-                    <div class="flex items-center justify-center h-32 bg-gray-100 rounded">
-                      <%= if @preview_url do %>
-                        <img
-                          src={@preview_url}
-                          alt="Video thumbnail"
-                          class="h-full object-cover rounded"
-                        />
-                      <% else %>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-10 w-10 text-gray-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
-                        </svg>
-                      <% end %>
-                    </div>
-
-    <!-- Progress bar -->
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                      <div
-                        class="bg-indigo-600 h-2.5 rounded-full"
-                        style={"width: #{@upload_progress}%"}
-                      >
-                      </div>
-                    </div>
-
-                    <div class="flex items-center justify-between mt-2">
-                      <span class="text-sm text-gray-500">
-                        {entry.client_name} ({Number.Delimit.number_to_delimited(
-                          div(entry.client_size, 1024 * 1024),
-                          precision: 1
-                        )} MB)
-                      </span>
-
-                      <button
-                        phx-click="cancel-upload"
-                        phx-value-ref={entry.ref}
-                        class="text-red-500 hover:text-red-700 text-sm"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-
-    <!-- Entry errors -->
-                    <%= for err <- upload_errors(@uploads.video, entry) do %>
-                      <div class="text-red-500 text-sm mt-1">{err}</div>
-                    <% end %>
-                  </div>
-                <% end %>
+    <!-- Preview area: Previews before upload are handled by JS (see file_uploader.js). This div is ignored by LiveView updates. -->
+            <div class="w-full flex flex-col items-center">
+              <div class="relative w-full">
+                <div
+                  id="preview-area"
+                  class="preview flex flex-wrap gap-4 justify-center mb-4"
+                  phx-update="ignore"
+                >
+                </div>
+              </div>
+              <figure
+                id="file-count-figure"
+                class="file-count flex flex-col items-center mt-2"
+                phx-update="ignore"
+                style="display:none"
+              >
+                <div class="rounded bg-gray-100 text-gray-600 font-semibold px-2 py-1 text-xs shadow border border-gray-200">
+                </div>
+                <figcaption class="text-[10px] text-gray-400"></figcaption>
+              </figure>
+            </div>
           </div>
         </div>
-        <!-- End of grid container -->
 
-                    <!-- Platform Selection: Select the SNS platform(s) to upload to. -->
+    <!-- Platform Selection: Select the SNS platform(s) to upload to. -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">Where to upload</label>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -302,11 +259,19 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                      />
                     </svg>
                   <% :instagram -> %>
                     <!-- Official Instagram Glyph from brand.instagram.com, monochrome adaptation -->
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg
+                      class="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
                       <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
                       <circle cx="12" cy="12" r="5" />
                       <circle cx="18" cy="6" r="1.3" />
@@ -323,14 +288,14 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
                     <!-- Official YouTube Brand Icon from youtube.com/about/brand-resources -->
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <g>
-                        <path d="M23.498 6.186a2.998 2.998 0 0 0-2.11-2.117C19.507 3.5 12 3.5 12 3.5s-7.507 0-9.388.569a2.998 2.998 0 0 0-2.11 2.117A31.566 31.566 0 0 0 0 12c-.057 1.801-.061 3.597.502 5.814a2.998 2.998 0 0 0 2.11 2.117C4.493 20.5 12 20.5 12 20.5s7.507 0 9.388-.569a2.988 2.988 0 0 0 2.11-2.117C24 15.597 24 12 24 12s0-3.597-.502-5.814zM9.545 15.568V8.432l6.55 3.568-6.55 3.568z"></path>
+                        <path d="M23.498 6.186a2.998 2.998 0 0 0-2.11-2.117C19.507 3.5 12 3.5 12 3.5s-7.507 0-9.388.569a2.998 2.998 0 0 0-2.11 2.117A31.566 31.566 0 0 0 0 12c-.057 1.801-.061 3.597.502 5.814a2.998 2.998 0 0 0 2.11 2.117C4.493 20.5 12 20.5 12 20.5s7.507 0 9.388-.569a2.988 2.988 0 0 0 2.11-2.117C24 15.597 24 12 24 12s0-3.597-.502-5.814zM9.545 15.568V8.432l6.55 3.568-6.55 3.568z">
+                        </path>
                       </g>
                     </svg>
                   <% :tiktok -> %>
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
                     </svg>
-
                 <% end %>
                 <%= if platform in @selected_platforms do %>
                   <svg
@@ -365,7 +330,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
     <!-- Action Buttons -->
         <div class="flex items-center space-x-3">
           <button
-            type="submit"
+            type="button"
             class="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             disabled={
               Enum.empty?(@uploads.video.entries) || @upload_progress < 100 ||
@@ -391,10 +356,6 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
             type="button"
             phx-click={JS.patch(~p"/dashboard?tab=schedule")}
             class="inline-flex justify-center items-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            disabled={
-              Enum.empty?(@uploads.video.entries) || @upload_progress < 100 ||
-                Enum.empty?(@selected_platforms)
-            }
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

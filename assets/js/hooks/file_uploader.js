@@ -42,38 +42,162 @@ function getFileId(file) {
   ).replace(/[^a-zA-Z0-9_-]/g, '');
 }
 
+// --- IndexedDB helpers for full file persistence ---
+async function saveFilesToIndexedDB(files) {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  for (const file of files) {
+    const fileId = getFileId(file);
+    const metadata = {
+      fileId,
+      name: file.name,
+      size: file.size,
+      lastModified: file.lastModified,
+      type: file.type,
+      previewUrl: URL.createObjectURL(file),
+      fileBlob: file
+    };
+    tx.objectStore(STORE_NAME).put(metadata);
+  }
+  return tx.complete;
+}
+
+async function loadFilesFromIndexedDB() {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  return new Promise((resolve) => {
+    const files = [];
+    store.openCursor().onsuccess = (event) => {
+      const cursor = event.target.result;
+      if (cursor) {
+        files.push(cursor.value);
+        cursor.continue();
+      } else {
+        resolve(files);
+      }
+    };
+  });
+}
+
+async function clearAllFilesFromIndexedDB() {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  tx.objectStore(STORE_NAME).clear();
+  return tx.complete;
+}
+
+function isDashboardInternalLink(href) {
+  // Adjust this logic to match your dashboard tab URLs
+  // Example: all dashboard tabs start with '/dashboard'
+  try {
+    const url = new URL(href, window.location.origin);
+    return url.pathname.startsWith('/dashboard');
+  } catch {
+    return false;
+  }
+}
+
+
+
 const FileUploader = {
-  mounted() {
+  async mounted() {
     this.input = this.el.querySelector('input[type="file"]');
     this.inputContainer = this.el.querySelector('#file-input-container');
     this.preview = this.el.querySelector('.preview');
-    this.snsSelect = this.el.querySelector('.sns-select');
-    this.uploadBtn = this.el.querySelector('.upload-btn');
-    // Use the static file count figure in the DOM
     this.fileCountDisplay = document.getElementById('file-count-figure');
     if (this.fileCountDisplay) {
       this.fileCountFig = this.fileCountDisplay.querySelector('div');
       this.fileCountCaption = this.fileCountDisplay.querySelector('figcaption');
     }
+    // Use the overlay reset button in the DOM
 
-    // Create and insert reset button
-    this.resetBtn = document.createElement('button');
-    this.resetBtn.textContent = 'Reset';
-    this.resetBtn.className = 'reset-btn inline-flex items-center px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 ml-2 mb-2 hidden';
-    this.resetBtn.onclick = () => this.resetUpload();
-    this.preview.parentNode.insertBefore(this.resetBtn, this.fileCountDisplay.nextSibling);
     this.input.addEventListener('change', (e) => this.handleFiles(e.target.files));
-    this.uploadBtn.addEventListener('click', () => this.startUpload());
+
+    // On mount, always check persistent storage for files and hide input if needed
+    setTimeout(() => {
+      loadFilesFromIndexedDB().then((persistedFiles) => {
+        if (this.inputContainer) {
+          if (persistedFiles && persistedFiles.length > 0) {
+            this.inputContainer.style.display = 'none';
+          } else {
+            this.inputContainer.style.display = 'flex';
+          }
+        }
+      });
+    }, 50);
+
+    // Intercept navigation away from dashboard (not tab switches)
+    this._navHandler = (e) => {
+      // Only handle anchor clicks
+      let anchor = e.target.closest('a');
+      if (!anchor || !anchor.href) return;
+      // Ignore dashboard-internal tab switches
+      if (isDashboardInternalLink(anchor.href)) return;
+      // If no files, allow navigation
+      if (!this.files || this.files.length === 0) return;
+      // Show confirmation dialog
+      e.preventDefault();
+      showSaveConfirmDialog(
+        () => { window.location.href = anchor.href; },
+        async () => {
+          // Clear files and IndexedDB, then navigate
+          this.files = [];
+          await clearAllFilesFromIndexedDB();
+          window.location.href = anchor.href;
+        }
+      );
+    };
+    document.addEventListener('click', this._navHandler, true);
+
+    // Also handle browser navigation (back/forward/refresh)
+    this._beforeUnloadHandler = (e) => {
+      if (this.files && this.files.length > 0) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+    window.addEventListener('beforeunload', this._beforeUnloadHandler);
+
     this.files = [];
     this.currentIndex = 0;
     this.progress = {};
+    // Restore files from IndexedDB on mount
+    const savedFiles = await loadFilesFromIndexedDB();
+    if (savedFiles.length > 0) {
+      this.files = savedFiles.map(f => {
+        try {
+          const file = new File([f.fileBlob], f.name, {
+            type: f.type,
+            lastModified: f.lastModified,
+          });
+          file.previewUrl = f.previewUrl;
+          return file;
+        } catch {
+          f.fileBlob.previewUrl = f.previewUrl;
+          return f.fileBlob;
+        }
+      });
+      this.renderPreview();
+      if (this.inputContainer) this.inputContainer.style.display = 'none';
+      if (this.fileCountDisplay && this.fileCountFig && this.fileCountCaption) {
+        this.fileCountFig.textContent = `${this.files.length}`;
+        this.fileCountCaption.textContent = this.files.length === 1
+          ? '1 file selected'
+          : `${this.files.length} files selected`;
+        this.fileCountDisplay.style.display = 'flex';
+      }
+    } else {
+      if (this.inputContainer) this.inputContainer.style.display = 'flex';
+    }
     this.renderResumeList();
   },
   async handleFiles(fileList) {
     this.files = Array.from(fileList);
     this.currentIndex = 0;
+    await saveFilesToIndexedDB(this.files);
     this.renderPreview();
-    // Show file count
     if (this.fileCountDisplay && this.fileCountFig && this.fileCountCaption) {
       this.fileCountFig.textContent = `${this.files.length}`;
       this.fileCountCaption.textContent = this.files.length === 1
@@ -81,17 +205,11 @@ const FileUploader = {
         : `${this.files.length} files selected`;
       this.fileCountDisplay.style.display = 'flex';
     }
-    // Show reset button
-    if (this.resetBtn) {
-      this.resetBtn.style.display = 'inline-block';
-    }
     // Hide file input and upload button after selection
     if (this.inputContainer) {
       this.inputContainer.style.display = 'none';
     }
-    if (this.uploadBtn) {
-      this.uploadBtn.style.display = 'none';
-    }
+
   },
 
   renderPreview() {
@@ -123,6 +241,32 @@ const FileUploader = {
     // Aspect-ratio box
     const wrapper = document.createElement('div');
     wrapper.className = 'aspect-w-16 aspect-h-9 flex justify-center items-center relative min-w-[320px] max-w-[480px] w-full';
+    // Add delete button (top right of preview)
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✕';
+    deleteBtn.title = 'Remove this file';
+    deleteBtn.className = 'absolute top-2 right-2 z-20 bg-red-500 text-white rounded-full px-2 py-1 shadow hover:bg-red-600 transition';
+    deleteBtn.onclick = async (e) => {
+      e.stopPropagation();
+      // Remove file at currentIndex
+      const removedFile = this.files[this.currentIndex];
+      this.files.splice(this.currentIndex, 1);
+      // Remove from IndexedDB (progress store)
+      if (removedFile) {
+        const fileId = getFileId(removedFile);
+        await deleteProgress(fileId);
+      }
+      await saveFilesToIndexedDB(this.files);
+      if (this.currentIndex >= this.files.length) {
+        this.currentIndex = Math.max(0, this.files.length - 1);
+      }
+      this.renderPreview();
+      // Show file input if all files gone
+      if (this.files.length === 0) {
+        if (this.inputContainer) this.inputContainer.style.display = 'flex';
+      }
+    };
+    wrapper.appendChild(deleteBtn);
     let el;
     if (file.type.startsWith('video')) {
       el = document.createElement('video');
@@ -160,27 +304,25 @@ const FileUploader = {
     }
   },
 
-  resetUpload() {
-    // Reset file input
+  async resetUpload() {
+    await clearAllFilesFromIndexedDB();
     this.files = [];
     this.currentIndex = 0;
-    this.preview.innerHTML = '';
-    if (this.input) {
-      this.input.value = '';
-    }
-    if (this.inputContainer) {
-      this.inputContainer.style.display = 'block';
-    }
-    if (this.uploadBtn) {
-      this.uploadBtn.style.display = 'inline-block';
-    }
+    this.renderPreview();
     if (this.fileCountDisplay && this.fileCountFig && this.fileCountCaption) {
       this.fileCountFig.textContent = '';
       this.fileCountCaption.textContent = '';
       this.fileCountDisplay.style.display = 'none';
     }
-    if (this.resetBtn) {
-      this.resetBtn.style.display = 'none';
+    if (this.input) {
+      this.input.value = '';
+    }
+    if (this.uploadBtn) {
+      this.uploadBtn.style.display = 'inline-block';
+    }
+
+    if (this.inputContainer) {
+      this.inputContainer.style.display = 'flex';
     }
   },
   async startUpload() {
@@ -219,15 +361,7 @@ const FileUploader = {
     });
     await deleteProgress(fileId);
     // SNS trigger
-    const sns = this.snsSelect.value;
-    if (sns) {
-      await fetch('/api/sns_post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fileId, sns })
-      });
-    }
-    alert('Upload complete: ' + file.name);
+    
   },
   async renderResumeList() {
     // On mount, show incomplete uploads to resume

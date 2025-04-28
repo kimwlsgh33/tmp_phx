@@ -23,7 +23,6 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import ThemeToggle from "./hooks/theme_toggle";
 import DocsNavigation from "./hooks/docs_navigation";
-import VideoUploader from "./hooks/video_uploader";
 import FileUploader from "./hooks/file_uploader";
 
 let csrfToken = document
@@ -32,7 +31,6 @@ let csrfToken = document
 let Hooks = {
   ThemeToggle,
   DocsNavigation,
-  VideoUploader,
   FileUploader,
 };
 let liveSocket = new LiveSocket("/live", Socket, {
