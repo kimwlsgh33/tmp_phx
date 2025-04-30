@@ -5,7 +5,6 @@ defmodule MyappWeb.DashboardLive do
     UploadComponent,
     PreviewComponent,
     ResultsComponent,
-    ScheduleComponent,
     SettingsComponent
   }
 
@@ -51,14 +50,15 @@ defmodule MyappWeb.DashboardLive do
     {:noreply, push_patch(socket, to: ~p"/dashboard?tab=upload")}
   end
 
-  @impl true
-  def handle_info(:switch_to_schedule_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=schedule")}
-  end
 
   @impl true
   def handle_info(:switch_to_preview_tab, socket) do
     {:noreply, push_patch(socket, to: ~p"/dashboard?tab=preview")}
+  end
+
+  @impl true
+  def handle_info({:update_preview, preview_url}, socket) do
+    {:noreply, assign(socket, :preview_url, preview_url)}
   end
 
   @impl true
@@ -281,9 +281,7 @@ defmodule MyappWeb.DashboardLive do
               <.tab_link patch={~p"/dashboard?tab=settings"} active={@active_tab == "settings"}>
                 SNS Settings
               </.tab_link>
-              <.tab_link patch={~p"/dashboard?tab=schedule"} active={@active_tab == "schedule"}>
-                Schedule
-              </.tab_link>
+
               <.tab_link patch={~p"/dashboard?tab=results"} active={@active_tab == "results"}>
                 Results
               </.tab_link>
@@ -313,17 +311,6 @@ defmodule MyappWeb.DashboardLive do
                   id="preview"
                   current_user={@current_user}
                   parent_pid={self()}
-                  selected_platforms={@selected_platforms}
-                  upload_form={@upload_form}
-                  preview_url={@preview_url}
-                />
-              <% "schedule" -> %>
-                <.live_component
-                  module={ScheduleComponent}
-                  id="schedule"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  social_accounts={@social_accounts}
                   selected_platforms={@selected_platforms}
                   upload_form={@upload_form}
                   preview_url={@preview_url}

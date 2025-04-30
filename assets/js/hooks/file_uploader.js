@@ -243,6 +243,7 @@ const FileUploader = {
     wrapper.className = 'aspect-w-16 aspect-h-9 flex justify-center items-center relative min-w-[320px] max-w-[480px] w-full';
     // Add delete button (top right of preview)
     const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button'; // Prevent form submission/navigation
     deleteBtn.textContent = '✕';
     deleteBtn.title = 'Remove this file';
     deleteBtn.className = 'absolute top-2 right-2 z-20 bg-red-500 text-white rounded-full px-2 py-1 shadow hover:bg-red-600 transition';

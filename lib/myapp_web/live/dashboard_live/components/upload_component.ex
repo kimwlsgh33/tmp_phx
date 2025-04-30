@@ -8,10 +8,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
      |> assign(:upload_progress, 0)
      |> assign(:processing_filename, nil)
      |> assign(:preview_url, nil)
+     |> assign(:scheduled_upload, false)
      |> assign(:upload_form, %{
        "title" => "",
        "description" => "",
-       "tags" => ""
+       "tags" => "",
+       "schedule_at" => ""
      })
      |> allow_upload(:video,
        accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
@@ -27,6 +29,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
     socket =
       socket
       |> assign_new(:processing_filename, fn -> nil end)
+      |> assign_new(:scheduled_upload, fn -> false end)
       |> assign(assigns)
       |> allow_upload(:video,
         accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
@@ -56,16 +59,32 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
        socket
        |> put_flash(:error, "Please select at least one social media platform")}
     else
-      # In real implementation, we would handle the upload here
-      Process.send_after(
-        socket.assigns.parent_pid,
-        {:upload_complete, socket.assigns.selected_platforms},
-        1000
-      )
-
-      {:noreply,
-       socket
-       |> put_flash(:info, "Content uploading to selected platforms...")}
+      if socket.assigns.scheduled_upload do
+        # Handle scheduled upload
+        scheduled_time = form_params["schedule_at"]
+        
+        if scheduled_time == "" do
+          {:noreply, socket |> put_flash(:error, "Please select a scheduled time")}
+        else
+          # Save the schedule to the database here (in a real implementation)
+          send(socket.assigns.parent_pid, {:schedule_complete, socket.assigns.selected_platforms, scheduled_time})
+          
+          {:noreply,
+           socket
+           |> put_flash(:info, "Content scheduled for upload at #{scheduled_time}")}
+        end
+      else
+        # In real implementation, we would handle the immediate upload here
+        Process.send_after(
+          socket.assigns.parent_pid,
+          {:upload_complete, socket.assigns.selected_platforms},
+          1000
+        )
+        
+        {:noreply,
+         socket
+         |> put_flash(:info, "Content uploading to selected platforms...")}
+      end
     end
   end
 
@@ -74,10 +93,23 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
     {:noreply, cancel_upload(socket, :video, ref)}
   end
 
+
+
   @impl true
-  def handle_event("goto-schedule", _params, socket) do
-    send(socket.assigns.parent_pid, :switch_to_schedule_tab)
-    {:noreply, socket}
+  def handle_event("schedule", %{"upload_form" => form_params}, socket) do
+    scheduled_time = form_params["schedule_at"]
+
+    if socket.assigns.selected_platforms == [] do
+      {:noreply,
+       socket
+       |> put_flash(:error, "Please select at least one social media platform")}
+    else
+      # In a real implementation, save the schedule to the database here
+      send(socket.assigns.parent_pid, {:schedule_complete, socket.assigns.selected_platforms, scheduled_time})
+      {:noreply,
+       socket
+       |> put_flash(:info, "Content scheduled for upload at #{scheduled_time}")}
+    end
   end
 
   @impl true
@@ -187,7 +219,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
             phx-hook="FileUploader"
             class="border border-gray-300 rounded-lg p-8 text-center hover:border-gray-300 transition-colors flex flex-col justify-center items-center min-h-[320px]"
           >
-            <div id="file-input-container" class="w-full flex justify-center mb-6">
+            <div id="file-input-container" class="w-full flex justify-center mb-6" phx-update="ignore">
               <label
                 for="client-upload-input"
                 class="custom-file-label cursor-pointer flex flex-col items-center justify-center max-w-xs w-full px-8 py-6 bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-xl shadow-lg hover:bg-indigo-100 transition-colors text-center"
@@ -327,6 +359,43 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
           <% end %>
         </div>
 
+        <!-- Scheduled Upload Option -->
+        <div class="mb-6">
+          <div class="flex items-center">
+            <input
+              id="scheduled-upload"
+              type="checkbox"
+              phx-click="toggle-scheduled-upload"
+              phx-value-value={!@scheduled_upload}
+              phx-target={@myself}
+              checked={@scheduled_upload}
+              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            />
+            <label for="scheduled-upload" class="ml-2 block text-sm text-gray-700">
+              Schedule upload for later
+            </label>
+          </div>
+
+          <%= if @scheduled_upload do %>
+            <div class="mt-3">
+              <label for="schedule_at" class="block text-sm font-medium text-gray-700">
+                Select date and time
+              </label>
+              <input
+                type="datetime-local"
+                id="schedule_at"
+                name="upload_form[schedule_at]"
+                value={@upload_form["schedule_at"]}
+                class="mt-1 block w-full sm:w-96 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                min={DateTime.utc_now() |> DateTime.add(60, :second) |> DateTime.to_iso8601()}
+              />
+              <p class="mt-1 text-xs text-gray-500">
+                Select when you want this content to be uploaded
+              </p>
+            </div>
+          <% end %>
+        </div>
+
     <!-- Action Buttons -->
         <div class="flex items-center space-x-3">
           <button
@@ -349,28 +418,13 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
                 clip-rule="evenodd"
               />
             </svg>
-            Upload Now
+            <%= if @scheduled_upload do %>
+              Schedule Upload
+            <% else %>
+              Upload Now
+            <% end %>
           </button>
 
-          <button
-            type="button"
-            phx-click={JS.patch(~p"/dashboard?tab=schedule")}
-            class="inline-flex justify-center items-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="-ml-1 mr-2 h-5 w-5 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Schedule For Later
-          </button>
 
           <button
             type="button"
