@@ -264,8 +264,8 @@ defmodule MyappWeb.DashboardLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="dashboard" class="flex h-screen">
-      <div class="flex-1 bg-white overflow-y-auto">
+    <div id="dashboard" class="flex flex-col min-h-screen bg-white">
+      <div class="flex-1">
         <div class="p-6">
           <div class="mb-6">
             <h1 class="text-2xl font-bold text-black">Social Media Dashboard</h1>

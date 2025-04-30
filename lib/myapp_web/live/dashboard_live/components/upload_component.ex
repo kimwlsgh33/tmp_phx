@@ -53,14 +53,19 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
   end
 
   @impl true
-  def handle_event("toggle-scheduled-upload", %{"value" => value}, socket) do
-    # Toggle the scheduled_upload state
-    scheduled_upload = case value do
-      "on" -> true  # Checkbox checked
-      "true" -> true
-      "false" -> false
-      _ -> !socket.assigns.scheduled_upload  # Toggle current value as fallback
-    end
+  def handle_event("toggle-scheduled-upload", params, socket) do
+    value = Map.get(params, "value", nil)
+    scheduled_upload =
+      cond do
+        is_nil(value) ->
+          !socket.assigns.scheduled_upload
+        value in ["on", "true"] ->
+          true
+        value == "false" ->
+          false
+        true ->
+          socket.assigns.scheduled_upload
+      end
     
     {:noreply, assign(socket, :scheduled_upload, scheduled_upload)}
   end
