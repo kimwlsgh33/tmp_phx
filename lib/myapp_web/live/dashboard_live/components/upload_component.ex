@@ -53,6 +53,19 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
   end
 
   @impl true
+  def handle_event("toggle-scheduled-upload", %{"value" => value}, socket) do
+    # Toggle the scheduled_upload state
+    scheduled_upload = case value do
+      "on" -> true  # Checkbox checked
+      "true" -> true
+      "false" -> false
+      _ -> !socket.assigns.scheduled_upload  # Toggle current value as fallback
+    end
+    
+    {:noreply, assign(socket, :scheduled_upload, scheduled_upload)}
+  end
+
+  @impl true
   def handle_event("save", %{"upload_form" => form_params}, socket) do
     if socket.assigns.selected_platforms == [] do
       {:noreply,
@@ -366,10 +379,9 @@ defmodule MyappWeb.DashboardLive.Components.UploadComponent do
               id="scheduled-upload"
               type="checkbox"
               phx-click="toggle-scheduled-upload"
-              phx-value-value={!@scheduled_upload}
+              phx-click="toggle-scheduled-upload"
               phx-target={@myself}
               checked={@scheduled_upload}
-              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
             />
             <label for="scheduled-upload" class="ml-2 block text-sm text-gray-700">
               Schedule upload for later
