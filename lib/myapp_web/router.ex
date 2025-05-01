@@ -167,7 +167,7 @@ defmodule MyappWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       live "/users/sign_out", UserLogoutLive, :show
       live "/users/link_account", UserLoginLive, :link
-      
+
       # Dashboard route
       live "/dashboard", DashboardLive, :index
     end
@@ -180,7 +180,7 @@ defmodule MyappWeb.Router do
   # Routes available to all users
   scope "/", MyappWeb do
     pipe_through [:browser]
-    
+
     # Special route for linking accounts that bypasses authentication checks
     get "/users/link_account_form", UserSessionController, :new_link
 

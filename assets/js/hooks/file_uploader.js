@@ -1,6 +1,9 @@
 // Chunked file upload with IndexedDB resume, previews, and SNS trigger
 // This is a Phoenix LiveView JS hook, but works with plain JS as well
 
+// Custom modal dialog for unsaved uploads
+import { showSaveLeaveDialog } from "../components/SaveLeaveDialog";
+
 const CHUNK_SIZE = 1024 * 1024 * 2; // 2MB
 const DB_NAME = 'chunked_uploads';
 const STORE_NAME = 'progress';
@@ -138,15 +141,19 @@ const FileUploader = {
       if (!this.files || this.files.length === 0) return;
       // Show confirmation dialog
       e.preventDefault();
-      showSaveConfirmDialog(
-        () => { window.location.href = anchor.href; },
-        async () => {
-          // Clear files and IndexedDB, then navigate
+      showSaveLeaveDialog({
+        onLeave: async () => {
+          // Discard files and clear storage, then navigate
           this.files = [];
           await clearAllFilesFromIndexedDB();
           window.location.href = anchor.href;
+        },
+        onSaveAndLeave: async () => {
+          // Persist files for resume, then navigate
+          await saveFilesToIndexedDB(this.files);
+          window.location.href = anchor.href;
         }
-      );
+      });
     };
     document.addEventListener('click', this._navHandler, true);
 
