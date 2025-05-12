@@ -139,6 +139,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
               <h3 class="text-sm font-medium text-yellow-800">YouTube 업로드 제한</h3>
               <div class="mt-1 text-sm text-yellow-700">
                 <p>YouTube를 선택한 경우, 다음 파일 형식만 업로드할 수 있습니다: MOV, MP4, MPG, MPEG, AVI, WEBM</p>
+                <p class="text-xs text-gray-500 mt-1">Selected platforms: <%= inspect(@selected_platforms) %></p>
               </div>
             </div>
           </div>

@@ -54,6 +54,7 @@ defmodule MyappWeb.DashboardLive do
 
   @impl true
   def handle_info(:switch_to_upload_tab, socket) do
+    # 변경: upload 탭이 제거되었으므로 photo_selection 탭으로 리디렉션 (파일 업로드 탭)
     {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
   end
 
@@ -80,7 +81,8 @@ defmodule MyappWeb.DashboardLive do
 
   @impl true
   def handle_info(:switch_to_preview_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=preview")}
+    # 변경: preview 탭이 제거되었으므로 description 탭으로 리디렉션
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
   end
 
   @impl true
@@ -90,7 +92,8 @@ defmodule MyappWeb.DashboardLive do
 
   @impl true
   def handle_info(:switch_to_results_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=results")}
+    # 변경: results 탭이 제거되었으므로 description 탭으로 리디렉션
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
   end
 
   @impl true
