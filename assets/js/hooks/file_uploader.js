@@ -4,6 +4,7 @@
 // Custom modal dialog for unsaved uploads
 import { showSaveLeaveDialog } from "../components/SaveLeaveDialog";
 
+
 const CHUNK_SIZE = 1024 * 1024 * 2; // 2MB
 const DB_NAME = 'chunked_uploads';
 const STORE_NAME = 'progress';
@@ -194,6 +195,10 @@ const FileUploader = {
           ? '1 file selected'
           : `${this.files.length} files selected`;
         this.fileCountDisplay.style.display = 'flex';
+        // Notify LiveView of restored files
+        this.pushEventTo(this.el, "file_selected", { count: this.files.length });
+      } else {
+        if (this.inputContainer) this.inputContainer.style.display = 'flex';
       }
     } else {
       if (this.inputContainer) this.inputContainer.style.display = 'flex';
@@ -203,6 +208,8 @@ const FileUploader = {
   async handleFiles(fileList) {
     this.files = Array.from(fileList);
     this.currentIndex = 0;
+    // Notify LiveView that files are selected
+    this.pushEventTo(this.el, "file_selected", { count: this.files.length });
     await saveFilesToIndexedDB(this.files);
     this.renderPreview();
     if (this.fileCountDisplay && this.fileCountFig && this.fileCountCaption) {
@@ -247,7 +254,7 @@ const FileUploader = {
 
     // Aspect-ratio box
     const wrapper = document.createElement('div');
-    wrapper.className = 'aspect-w-16 aspect-h-9 flex justify-center items-center relative min-w-[320px] max-w-[480px] w-full';
+    wrapper.className = 'flex justify-center items-center relative min-w-[320px] max-w-[480px] w-full overflow-hidden';
     // Add delete button (top right of preview)
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button'; // Prevent form submission/navigation
@@ -273,6 +280,8 @@ const FileUploader = {
       if (this.files.length === 0) {
         if (this.inputContainer) this.inputContainer.style.display = 'flex';
       }
+      // Notify LiveView about updated file count
+      this.pushEventTo(this.el, "file_selected", { count: this.files.length });
     };
     wrapper.appendChild(deleteBtn);
     let el;
@@ -286,6 +295,7 @@ const FileUploader = {
     }
     el.src = url;
     wrapper.appendChild(el);
+   
     flexRow.appendChild(wrapper);
 
     // Right button

@@ -1,11 +1,18 @@
 defmodule MyappWeb.DashboardLive do
   use MyappWeb, :live_view
+  import Phoenix.LiveView.JS
 
   alias MyappWeb.DashboardLive.Components.{
     UploadComponent,
     PreviewComponent,
     ResultsComponent,
     SettingsComponent
+  }
+
+  alias MyappWeb.DashboardLive.Components.UploadTabs.{
+    PhotoSelectionComponent,
+    DescriptionComponent,
+    SnsSelectionComponent
   }
 
   alias Myapp.Accounts
@@ -25,7 +32,7 @@ defmodule MyappWeb.DashboardLive do
     {:ok,
      socket
      |> assign(:page_title, "Social Media Dashboard")
-     |> assign(:active_tab, "upload")
+     |> assign(:active_tab, "sns_selection")
      |> assign(:social_accounts, %{})
      |> assign(:loading_accounts, true)
      |> assign(:loading_uploads, true)
@@ -47,7 +54,22 @@ defmodule MyappWeb.DashboardLive do
 
   @impl true
   def handle_info(:switch_to_upload_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=upload")}
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
+  end
+
+  @impl true
+  def handle_info(:switch_to_photo_selection_tab, socket) do
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
+  end
+
+  @impl true
+  def handle_info(:switch_to_description_tab, socket) do
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
+  end
+
+  @impl true
+  def handle_info(:switch_to_sns_selection_tab, socket) do
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=sns_selection")}
   end
 
 
@@ -274,26 +296,57 @@ defmodule MyappWeb.DashboardLive do
 
     <!-- Tabs Navigation -->
           <div class="mb-6">
-            <nav class="flex border-b border-black">
-              <.tab_link patch={~p"/dashboard?tab=upload"} active={@active_tab == "upload"}>
-                Upload
-              </.tab_link>
-              <.tab_link patch={~p"/dashboard?tab=settings"} active={@active_tab == "settings"}>
-                SNS Settings
-              </.tab_link>
-
-              <.tab_link patch={~p"/dashboard?tab=results"} active={@active_tab == "results"}>
-                Results
-              </.tab_link>
-              <.tab_link patch={~p"/dashboard?tab=preview"} active={@active_tab == "preview"}>
-                Preview
-              </.tab_link>
+            <nav class="flex items-center justify-center space-x-6 mb-6">
+              <%= for {step, idx, label} <- [
+                {"sns_selection", 1, "Choose Platforms"},
+                {"photo_selection", 2, "Select Files"},
+                {"description", 3, "Add Details"}
+              ] do %>
+                <button type="button" phx-click={JS.patch(~p"/dashboard?tab=#{step}")} class="flex items-center space-x-2">
+                  <div class={"w-8 h-8 rounded-full flex items-center justify-center " <> if @active_tab == step, do: "bg-black text-white", else: "bg-gray-200 text-gray-500"}>
+                    <%= idx %>
+                  </div>
+                  <span class={"text-sm uppercase " <> if @active_tab == step, do: "text-black font-semibold", else: "text-gray-500"}>
+                    <%= label %>
+                  </span>
+                </button>
+                <%= if idx < 3 do %>
+                  <div class="flex-1 h-px bg-gray-200 mx-2"></div>
+                <% end %>
+              <% end %>
             </nav>
           </div>
 
     <!-- Tab Content -->
           <div class="bg-white rounded-lg shadow-md p-6">
             <%= case @active_tab do %>
+              <% "photo_selection" -> %>
+                <.live_component
+                  module={PhotoSelectionComponent}
+                  id="photo-selection"
+                  current_user={@current_user}
+                  parent_pid={self()}
+                  upload_progress={0}
+                  preview_url={@preview_url}
+                />
+              <% "description" -> %>
+                <.live_component
+                  module={DescriptionComponent}
+                  id="description"
+                  current_user={@current_user}
+                  parent_pid={self()}
+                  upload_form={@upload_form}
+                />
+              <% "sns_selection" -> %>
+                <.live_component
+                  module={SnsSelectionComponent}
+                  id="sns-selection"
+                  current_user={@current_user}
+                  parent_pid={self()}
+                  social_accounts={@social_accounts}
+                  selected_platforms={@selected_platforms}
+                  upload_form={@upload_form}
+                />
               <% "upload" -> %>
                 <.live_component
                   module={UploadComponent}

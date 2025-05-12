@@ -1,0 +1,284 @@
+defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
+  use MyappWeb, :live_component
+
+  @impl true
+  def mount(socket) do
+    {:ok,
+     socket
+     |> assign(:scheduled_upload, false)}
+  end
+
+  @impl true
+  def update(assigns, socket) do
+    socket =
+      socket
+      |> assign_new(:scheduled_upload, fn -> false end)
+      |> assign(assigns)
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("toggle-platform", %{"platform" => platform}, socket) do
+    platform = String.to_existing_atom(platform)
+    selected_platforms = socket.assigns.selected_platforms
+
+    updated_platforms =
+      if platform in selected_platforms do
+        Enum.reject(selected_platforms, fn p -> p == platform end)
+      else
+        [platform | selected_platforms]
+      end
+
+    # Update parent component
+    send(socket.assigns.parent_pid, {:update_selected_platforms, updated_platforms})
+
+    {:noreply, assign(socket, :selected_platforms, updated_platforms)}
+  end
+
+  @impl true
+  def handle_event("toggle-scheduled-upload", params, socket) do
+    value = Map.get(params, "value", nil)
+    scheduled_upload =
+      cond do
+        is_nil(value) ->
+          !socket.assigns.scheduled_upload
+        value in ["on", "true"] ->
+          true
+        value == "false" ->
+          false
+        true ->
+          socket.assigns.scheduled_upload
+      end
+    
+    {:noreply, assign(socket, :scheduled_upload, scheduled_upload)}
+  end
+
+  @impl true
+  def handle_event("validate-form", %{"upload_form" => form_params}, socket) do
+    # Update local state
+    socket = assign(socket, :upload_form, form_params)
+
+    # Notify parent of the form change
+    send(socket.assigns.parent_pid, {:update_form, form_params})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("goto-description", _params, socket) do
+    # Notify parent to switch back to the description tab
+    send(socket.assigns.parent_pid, :switch_to_description_tab)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("save", _params, socket) do
+    if socket.assigns.selected_platforms == [] do
+      {:noreply,
+       socket
+       |> put_flash(:error, "Please select at least one social media platform")}
+    else
+      if socket.assigns.scheduled_upload do
+        # Handle scheduled upload
+        scheduled_time = socket.assigns.upload_form["schedule_at"]
+        
+        if scheduled_time == "" do
+          {:noreply, socket |> put_flash(:error, "Please select a scheduled time")}
+        else
+          # Save the schedule to the database here (in a real implementation)
+          send(socket.assigns.parent_pid, {:schedule_complete, socket.assigns.selected_platforms, scheduled_time})
+          
+          {:noreply, socket}
+        end
+      else
+        # In real implementation, we would handle the immediate upload here
+        Process.send_after(
+          socket.assigns.parent_pid,
+          {:upload_complete, socket.assigns.selected_platforms},
+          1000
+        )
+        
+        {:noreply, socket}
+      end
+    end
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Platform Selection</h2>
+      <p class="text-gray-600 mb-6">Choose where to publish your content and set scheduling options.</p>
+
+      <form phx-submit="save" phx-change="validate-form" phx-target={@myself}>
+        <!-- Platform Selection: Select the SNS platform(s) to upload to. -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Where to upload</label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <%= for {platform, status} <- @social_accounts do %>
+              <button
+                type="button"
+                phx-click="toggle-platform"
+                phx-target={@myself}
+                phx-value-platform={platform}
+                disabled={!status.connected}
+                aria-label={"#{Atom.to_string(platform) |> String.capitalize()} - #{if platform in @selected_platforms, do: "Selected", else: "Not selected"}"}
+                class={
+                  "flex items-center justify-center py-2 px-3 border rounded-md text-sm font-medium transition-colors " <>
+                  if(!status.connected) do
+                    "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  else
+                    if(platform in @selected_platforms) do
+                      "bg-indigo-100 text-indigo-700 border-indigo-300 hover:bg-indigo-200"
+                    else
+                      "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    end
+                  end
+                }
+              >
+                <%= case platform do %>
+                  <% :twitter -> %>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                      />
+                    </svg>
+                  <% :instagram -> %>
+                    <!-- Official Instagram Glyph from brand.instagram.com, monochrome adaptation -->
+                    <svg
+                      class="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
+                      <circle cx="12" cy="12" r="5" />
+                      <circle cx="18" cy="6" r="1.3" />
+                    </svg>
+                  <% :facebook -> %>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        fill-rule="evenodd"
+                        d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  <% :youtube -> %>
+                    <!-- Official YouTube Brand Icon from youtube.com/about/brand-resources -->
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <g>
+                        <path d="M23.498 6.186a2.998 2.998 0 0 0-2.11-2.117C19.507 3.5 12 3.5 12 3.5s-7.507 0-9.388.569a2.998 2.998 0 0 0-2.11 2.117A31.566 31.566 0 0 0 0 12c-.057 1.801-.061 3.597.502 5.814a2.998 2.998 0 0 0 2.11 2.117C4.493 20.5 12 20.5 12 20.5s7.507 0 9.388-.569a2.988 2.988 0 0 0 2.11-2.117C24 15.597 24 12 24 12s0-3.597-.502-5.814zM9.545 15.568V8.432l6.55 3.568-6.55 3.568z">
+                        </path>
+                      </g>
+                    </svg>
+                  <% :tiktok -> %>
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+                    </svg>
+                <% end %>
+                <%= if platform in @selected_platforms do %>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="ml-2 h-4 w-4 text-indigo-500"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                <% end %>
+              </button>
+            <% end %>
+          </div>
+          <%= if !Enum.empty?(@selected_platforms) do %>
+            <p class="mt-2 text-sm text-gray-600">
+              Selected: {@selected_platforms
+              |> Enum.map(&(Atom.to_string(&1) |> String.capitalize()))
+              |> Enum.join(", ")}
+            </p>
+          <% else %>
+            <p class="mt-2 text-sm text-red-500">
+              Please select at least one platform
+            </p>
+          <% end %>
+        </div>
+
+        <!-- Scheduled Upload Option -->
+        <div class="mb-6">
+          <div class="flex items-center">
+            <input
+              id="scheduled-upload"
+              type="checkbox"
+              phx-click="toggle-scheduled-upload"
+              phx-target={@myself}
+              checked={@scheduled_upload}
+              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            />
+            <label for="scheduled-upload" class="ml-2 block text-sm text-gray-700">
+              Schedule upload for later
+            </label>
+          </div>
+
+          <%= if @scheduled_upload do %>
+            <div class="mt-3">
+              <label for="schedule_at" class="block text-sm font-medium text-gray-700">
+                Select date and time
+              </label>
+              <input
+                type="datetime-local"
+                id="schedule_at"
+                name="upload_form[schedule_at]"
+                value={@upload_form["schedule_at"]}
+                class="mt-1 block w-full sm:w-96 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                min={DateTime.utc_now() |> DateTime.add(60, :second) |> DateTime.to_iso8601()}
+              />
+              <p class="mt-1 text-xs text-gray-500">
+                Select when you want this content to be uploaded
+              </p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Navigation and Action Buttons -->
+        <div class="flex justify-between mt-8">
+          <button
+            type="button"
+            phx-click="goto-description"
+            phx-target={@myself}
+            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            Back to Description
+          </button>
+          <button
+            type="submit"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            disabled={Enum.empty?(@selected_platforms) || (@scheduled_upload && (@upload_form["schedule_at"] == "" || is_nil(@upload_form["schedule_at"])))}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+            </svg>
+            <%= if @scheduled_upload do %>
+              Schedule Upload
+            <% else %>
+              Upload Now
+            <% end %>
+          </button>
+        </div>
+      </form>
+    </div>
+    """
+  end
+end
+

@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
+    "cropperjs": "^1.6.2",
     "localforage": "^1.10.0"
   }
 }
