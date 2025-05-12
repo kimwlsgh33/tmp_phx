@@ -66,7 +66,7 @@ defmodule MyappWeb.DashboardLive do
   def handle_info(:switch_to_description_tab, socket) do
     {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
   end
-  
+
   @impl true
   def handle_info(:switch_to_file_selection_tab, socket) do
     {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
@@ -179,7 +179,7 @@ defmodule MyappWeb.DashboardLive do
         # Generate multiple accounts per platform (for demo purposes)
         accounts = if Enum.random([true, false]) do
           account_count = Enum.random(1..3)
-          Enum.map(1..account_count, fn i -> 
+          Enum.map(1..account_count, fn i ->
             %{
               id: "#{platform}-#{i}",
               username: "#{platform}_user_#{i}",
@@ -191,7 +191,7 @@ defmodule MyappWeb.DashboardLive do
         else
           []
         end
-        
+
         {platform, accounts}
       end)
 
@@ -364,6 +364,7 @@ defmodule MyappWeb.DashboardLive do
                   parent_pid={self()}
                   upload_progress={0}
                   preview_url={@preview_url}
+                  selected_platforms={@selected_platforms}
                 />
               <% "description" -> %>
                 <.live_component
@@ -383,43 +384,6 @@ defmodule MyappWeb.DashboardLive do
                   social_accounts={@social_accounts}
                   selected_platforms={@selected_platforms}
                   upload_form={@upload_form}
-                />
-              <% "upload" -> %>
-                <.live_component
-                  module={UploadComponent}
-                  id="upload-form"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  social_accounts={@social_accounts}
-                  selected_platforms={@selected_platforms}
-                  upload_form={@upload_form}
-                  preview_url={@preview_url}
-                />
-              <% "preview" -> %>
-                <.live_component
-                  module={PreviewComponent}
-                  id="preview"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  selected_platforms={@selected_platforms}
-                  upload_form={@upload_form}
-                  preview_url={@preview_url}
-                />
-              <% "results" -> %>
-                <.live_component
-                  module={ResultsComponent}
-                  id="results"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  recent_uploads={@recent_uploads}
-                />
-              <% "settings" -> %>
-                <.live_component
-                  module={SettingsComponent}
-                  id="settings"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  social_accounts={@social_accounts}
                 />
             <% end %>
           </div>

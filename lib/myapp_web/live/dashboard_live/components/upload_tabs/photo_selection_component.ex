@@ -1,6 +1,11 @@
 defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent do
   use MyappWeb, :live_component
 
+  # Define YouTube specific formats
+  @youtube_formats ~w(.mov .mp4 .mpg .mpeg .avi .webm)
+  # Define general video formats
+  @general_formats ~w(.mp4 .mov .avi .wmv .flv .webm)
+
   @impl true
   def mount(socket) do
     {:ok,
@@ -10,7 +15,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
      |> assign(:preview_url, nil)
      |> assign(:files_selected, false)
      |> allow_upload(:video,
-       accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
+       accept: @general_formats,
        max_entries: 5,
        max_file_size: 500_000_000,
        progress: &handle_progress/3
@@ -19,13 +24,19 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
 
   @impl true
   def update(assigns, socket) do
-    # Update the component state and allow uploads on each render
-    socket =
-      socket
+    # Assign default value for selected_platforms if not provided
+    socket = socket
       |> assign_new(:processing_filename, fn -> nil end)
       |> assign(assigns)
+      |> assign_new(:selected_platforms, fn -> [] end)
+      
+    # Determine which formats to accept based on selected platforms
+    accepted_formats = get_accepted_formats(socket.assigns.selected_platforms)
+
+    # Update the component state and allow uploads on each render
+    socket = socket
       |> allow_upload(:video,
-        accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
+        accept: accepted_formats,
         max_entries: 5,
         max_file_size: 500_000_000,
         progress: &handle_progress/3
@@ -79,6 +90,17 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
     {:noreply, assign(socket, :files_selected, count_int > 0)}
   end
 
+  # Get the appropriate file formats based on selected platforms
+  defp get_accepted_formats(selected_platforms) do
+    if :youtube in selected_platforms do
+      # If YouTube is selected, only allow YouTube supported formats
+      @youtube_formats
+    else
+      # Otherwise, allow all general formats
+      @general_formats
+    end
+  end
+
   defp handle_progress(:video, entry, socket) do
     if entry.done? do
       # When upload is complete, we can display a preview
@@ -105,6 +127,24 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
       <h2 class="text-xl font-semibold mb-4">Select Photos & Videos</h2>
       <p class="text-gray-600 mb-6">Choose the content you want to share to your social media accounts.</p>
 
+      <%= if is_list(@selected_platforms) and :youtube in @selected_platforms do %>
+        <div class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-md">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-yellow-800">YouTube 업로드 제한</h3>
+              <div class="mt-1 text-sm text-yellow-700">
+                <p>YouTube를 선택한 경우, 다음 파일 형식만 업로드할 수 있습니다: MOV, MP4, MPG, MPEG, AVI, WEBM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
       <div class="mb-6">
         <!-- File Upload Area -->
         <div
@@ -125,7 +165,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
               type="file"
               id="client-upload-input"
               multiple
-              accept="image/*,video/*"
+              accept={if is_list(@selected_platforms) and :youtube in @selected_platforms, do: "video/mp4,.mp4,video/x-m4v,.m4v,video/quicktime,.mov,video/x-msvideo,.avi,video/mpeg,.mpg,.mpeg,video/webm,.webm", else: "image/*,video/*"}
               class="hidden"
             />
           </div>
