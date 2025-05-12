@@ -110,6 +110,11 @@ defmodule MyappWeb.DashboardLive do
   end
 
   @impl true
+  def handle_info({:update_social_accounts, accounts}, socket) do
+    {:noreply, assign(socket, social_accounts: accounts)}
+  end
+
+  @impl true
   def handle_params(params, _uri, socket) do
     active_tab = Map.get(params, "tab", socket.assigns.active_tab)
     {:noreply, assign(socket, :active_tab, active_tab)}
@@ -166,10 +171,23 @@ defmodule MyappWeb.DashboardLive do
     # for each platform from the database or API
     social_accounts =
       Enum.into(@social_platforms, %{}, fn platform ->
-        # This is just a placeholder. In a real app, you would check if the
-        # user is authenticated with each platform
-        connected = Enum.random([true, false])
-        {platform, %{connected: connected}}
+        # Generate multiple accounts per platform (for demo purposes)
+        accounts = if Enum.random([true, false]) do
+          account_count = Enum.random(1..3)
+          Enum.map(1..account_count, fn i -> 
+            %{
+              id: "#{platform}-#{i}",
+              username: "#{platform}_user_#{i}",
+              avatar: "/images/avatar-placeholder.png",
+              connected: true,
+              selected: i == 1 # Default select the first account for each platform
+            }
+          end)
+        else
+          []
+        end
+        
+        {platform, accounts}
       end)
 
     {:noreply,
@@ -289,9 +307,22 @@ defmodule MyappWeb.DashboardLive do
     <div id="dashboard" class="flex flex-col min-h-screen bg-white">
       <div class="flex-1">
         <div class="p-6">
-          <div class="mb-6">
-            <h1 class="text-2xl font-bold text-black">Social Media Dashboard</h1>
-            <p class="text-gray-400">Manage your content across multiple platforms</p>
+          <div class="mb-6 flex justify-between items-center">
+            <div>
+              <h1 class="text-2xl font-bold text-black">Social Media Dashboard</h1>
+              <p class="text-gray-400">Manage your content across multiple platforms</p>
+            </div>
+            <div>
+              <.link
+                navigate={~p"/sns-accounts"}
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                </svg>
+                Manage SNS Accounts
+              </.link>
+            </div>
           </div>
 
     <!-- Tabs Navigation -->

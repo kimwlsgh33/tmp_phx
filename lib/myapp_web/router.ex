@@ -170,6 +170,9 @@ defmodule MyappWeb.Router do
 
       # Dashboard route
       live "/dashboard", DashboardLive, :index
+      
+      # SNS Accounts management
+      live "/sns-accounts", SnsAccountsLive, :index
     end
 
     # Routes for linked accounts
