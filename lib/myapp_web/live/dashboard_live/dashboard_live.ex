@@ -66,6 +66,11 @@ defmodule MyappWeb.DashboardLive do
   def handle_info(:switch_to_description_tab, socket) do
     {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
   end
+  
+  @impl true
+  def handle_info(:switch_to_file_selection_tab, socket) do
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
+  end
 
   @impl true
   def handle_info(:switch_to_sns_selection_tab, socket) do
@@ -367,6 +372,7 @@ defmodule MyappWeb.DashboardLive do
                   current_user={@current_user}
                   parent_pid={self()}
                   upload_form={@upload_form}
+                  selected_platforms={@selected_platforms}
                 />
               <% "sns_selection" -> %>
                 <.live_component

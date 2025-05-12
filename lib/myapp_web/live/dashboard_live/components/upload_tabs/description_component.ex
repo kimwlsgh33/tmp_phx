@@ -47,12 +47,25 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
     end
   end
 
-  # Simple validation to ensure title and description are not empty
+  # Validation logic that takes selected platforms into account
   defp valid_form?(form) do
-    title = Map.get(form, "title", "")
+    # Description is always required
     description = Map.get(form, "description", "")
-
-    String.trim(title) != "" && String.trim(description) != ""
+    title = Map.get(form, "title", "")
+    selected_platforms = Map.get(form, "_selected_platforms", [])
+    
+    # 유튜브가 선택되었을 때만 제목이 필수
+    youtube_selected = :youtube in selected_platforms || "youtube" in selected_platforms
+    
+    # 기본 필수 필드 검증
+    base_valid = String.trim(description) != ""
+    
+    # 유튜브가 선택된 경우 제목도 필수
+    if youtube_selected do
+      base_valid && String.trim(title) != ""
+    else
+      base_valid
+    end
   end
 
   @impl true
@@ -64,21 +77,29 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
 
       <form phx-change="validate-form" phx-target={@myself}>
         <div class="space-y-4 max-w-2xl">
+          <% youtube_selected = :youtube in @selected_platforms || "youtube" in @selected_platforms %>
+          
+          <!-- Title field - only shown when YouTube is selected -->
+          <%= if youtube_selected do %>
           <div>
-            <label for="title" class="block text-sm font-medium text-gray-700">Title <span class="text-red-500">*</span></label>
+            <label for="title" class="block text-sm font-medium text-gray-700">
+              Title <span class="text-red-500">*</span>
+              <span class="text-xs text-indigo-600 ml-1">(Required for YouTube)</span>
+            </label>
             <input
               type="text"
               id="title"
               name="upload_form[title]"
               value={@upload_form["title"]}
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Enter a title for your post"
-              required
+              placeholder="Enter a title for your YouTube video"
+              required={youtube_selected}
             />
-            <%= if Map.get(@upload_form, "title", "") == "" do %>
-              <p class="mt-1 text-xs text-red-500">Title is required</p>
+            <%= if youtube_selected && Map.get(@upload_form, "title", "") == "" do %>
+              <p class="mt-1 text-xs text-red-500">Title is required for YouTube</p>
             <% end %>
           </div>
+          <% end %>
 
           <div>
             <label for="description" class="block text-sm font-medium text-gray-700">

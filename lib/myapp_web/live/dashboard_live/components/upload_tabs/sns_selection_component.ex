@@ -45,69 +45,84 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
     # Update parent component
     send(socket.assigns.parent_pid, {:update_selected_platforms, updated_platforms})
 
-    {:noreply, 
-     socket 
+    {:noreply,
+     socket
      |> assign(:selected_platforms, updated_platforms)
      |> assign(:platform_dropdowns, updated_dropdowns)}
   end
-  
+
   @impl true
   def handle_event("toggle-dropdown", %{"platform" => platform}, socket) do
     platform = String.to_existing_atom(platform)
     platform_dropdowns = socket.assigns.platform_dropdowns
-    
+
     # Toggle dropdown visibility
-    updated_dropdowns = 
+    updated_dropdowns =
       if Map.get(platform_dropdowns, platform, false) do
         Map.put(platform_dropdowns, platform, false)
       else
         Map.put(platform_dropdowns, platform, true)
       end
-      
+
     {:noreply, assign(socket, :platform_dropdowns, updated_dropdowns)}
   end
-  
+
   @impl true
   def handle_event("select-account", %{"platform" => platform, "account_id" => account_id}, socket) do
     platform = String.to_existing_atom(platform)
     social_accounts = socket.assigns.social_accounts
-    
-    # Update the selected status for the accounts of this platform
-    updated_accounts = 
-      Map.update!(social_accounts, platform, fn accounts -> 
-        Enum.map(accounts, fn account -> 
-          Map.put(account, :selected, account.id == account_id)
+    selected_platforms = socket.assigns.selected_platforms
+
+    # Toggle selection status for this account (enabling multiple selections)
+    updated_accounts =
+      Map.update!(social_accounts, platform, fn accounts ->
+        Enum.map(accounts, fn account ->
+          if account.id == account_id do
+            # Toggle the selected status for this account
+            Map.put(account, :selected, !Map.get(account, :selected, false))
+          else
+            account
+          end
         end)
       end)
-    
-    # Close the dropdown
-    platform_dropdowns = Map.put(socket.assigns.platform_dropdowns, platform, false)
-    
-    # Send update to parent for account selection
+
+    # 계정 선택 후, 해당 플랫폼에 선택된 계정이 있는지 확인
+    platform_accounts = updated_accounts[platform]
+    has_selected_accounts = Enum.any?(platform_accounts, &Map.get(&1, :selected, false))
+
+    # 선택된 계정이 없으면 플랫폼도 선택 해제
+    updated_platforms =
+      if has_selected_accounts do
+        # 계정이 선택되어 있으면 플랫폼도 선택에 추가
+        if platform not in selected_platforms do
+          [platform | selected_platforms]
+        else
+          selected_platforms
+        end
+      else
+        # 계정이 하나도 선택되지 않았으면 플랫폼도 선택 해제
+        Enum.reject(selected_platforms, fn p -> p == platform end)
+      end
+
+    # 부모 컴포넌트에 계정 및 플랫폼 선택 업데이트 알림
     send(socket.assigns.parent_pid, {:update_social_accounts, updated_accounts})
-    
-    {:noreply, 
-     socket 
+    send(socket.assigns.parent_pid, {:update_selected_platforms, updated_platforms})
+
+    {:noreply,
+     socket
      |> assign(:social_accounts, updated_accounts)
-     |> assign(:platform_dropdowns, platform_dropdowns)}
+     |> assign(:selected_platforms, updated_platforms)}
   end
 
   @impl true
   def handle_event("toggle-scheduled-upload", params, socket) do
-    value = Map.get(params, "value", nil)
-    scheduled_upload =
-      cond do
-        is_nil(value) ->
-          !socket.assigns.scheduled_upload
-        value in ["on", "true"] ->
-          true
-        value == "false" ->
-          false
-        true ->
-          socket.assigns.scheduled_upload
-      end
-    
-    {:noreply, assign(socket, :scheduled_upload, scheduled_upload)}
+    # phx-change에서는 체크박스가 체크되었을 때만 키가 포함됩니다
+    scheduled_upload = Map.has_key?(params, "scheduled_upload")
+
+    # 상태 업데이트 및 알림
+    socket = assign(socket, :scheduled_upload, scheduled_upload)
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -121,11 +136,25 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
     {:noreply, socket}
   end
 
+
   @impl true
   def handle_event("goto-description", _params, socket) do
     # Notify parent to switch back to the description tab
     send(socket.assigns.parent_pid, :switch_to_description_tab)
     {:noreply, socket}
+  end
+  
+  @impl true
+  # 기본 파라미터 형태
+  def handle_event("goto-file-selection", _params, socket) do
+    # SNS 플랫폼 선택이 유효한지 확인
+    if Enum.empty?(socket.assigns.selected_platforms) do
+      {:noreply, socket |> put_flash(:error, "Please select at least one social media platform")}
+    else
+      # 부모 컴포넌트에 파일 선택 탭으로 전환하라는 이벤트 전송
+      send(socket.assigns.parent_pid, :switch_to_file_selection_tab)
+      {:noreply, socket}
+    end
   end
 
   @impl true
@@ -138,13 +167,13 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
       if socket.assigns.scheduled_upload do
         # Handle scheduled upload
         scheduled_time = socket.assigns.upload_form["schedule_at"]
-        
+
         if scheduled_time == "" do
           {:noreply, socket |> put_flash(:error, "Please select a scheduled time")}
         else
           # Save the schedule to the database here (in a real implementation)
           send(socket.assigns.parent_pid, {:schedule_complete, socket.assigns.selected_platforms, scheduled_time})
-          
+
           {:noreply, socket}
         end
       else
@@ -154,7 +183,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
           {:upload_complete, socket.assigns.selected_platforms},
           1000
         )
-        
+
         {:noreply, socket}
       end
     end
@@ -255,61 +284,106 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                     </svg>
                   <% end %>
                 </button>
-                
+
                 <!-- Account selection dropdown when platform is selected -->
                 <%= if platform in @selected_platforms and !Enum.empty?(accounts) do %>
                   <div class="mt-2 relative">
-                     <% selected_account = Enum.find(accounts, &(&1.selected)) %>
-                     <button 
-                       type="button" 
+                     <% selected_accounts = Enum.filter(accounts, &(&1.selected)) %>
+                     <% selected_count = length(selected_accounts) %>
+                     <button
+                       type="button"
                        phx-click="toggle-dropdown"
                        phx-target={@myself}
                        phx-value-platform={platform}
-                       class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                     >
-                       <span class="truncate"><%= if selected_account, do: selected_account.username, else: "Select account" %></span>
-                      <svg class="h-4 w-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                       class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium bg-white border rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
+                       >
+                       <div class="flex items-center">
+                         <%= if selected_count > 0 do %>
+                           <div class="flex -space-x-2 mr-2">
+                             <%= for account <- Enum.take(selected_accounts, 2) do %>
+                               <div class="h-6 w-6 rounded-full bg-indigo-100 ring-2 ring-white overflow-hidden">
+                                 <img src={account.avatar} alt={account.username} class="h-full w-full object-cover" />
+                               </div>
+                             <% end %>
+                             <%= if selected_count > 2 do %>
+                               <div class="h-6 w-6 rounded-full bg-indigo-100 ring-2 ring-white flex items-center justify-center text-xs font-medium text-indigo-800">+<%= selected_count - 2 %></div>
+                             <% end %>
+                           </div>
+                           <span class="truncate"><%= selected_count %> Account<%= if selected_count > 1, do: "s" %></span>
+                         <% else %>
+                           <span class="truncate">Select accounts</span>
+                         <% end %>
+                       </div>
+                      <svg class="h-4 w-4 ml-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                       </svg>
                     </button>
-                    
+
                     <!-- Dropdown menu for account selection -->
                     <%= if Map.get(@platform_dropdowns, platform, false) do %>
-                      <div class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                      <div class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm max-h-60">
+                        <div class="sticky top-0 bg-gray-50 px-4 py-2 text-xs font-medium text-gray-500 border-b">
+                          Select multiple accounts
+                        </div>
                         <%= for account <- accounts do %>
-                          <button 
+                          <button
                             type="button"
                             phx-click="select-account"
                             phx-target={@myself}
                             phx-value-platform={platform}
                             phx-value-account_id={account.id}
-                            class={"w-full text-left px-4 py-2 hover:bg-gray-100 #{if account.selected, do: "bg-indigo-50 text-indigo-600", else: "text-gray-900"}"}
+                            class={"w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors duration-150 #{if account.selected, do: "bg-indigo-50", else: ""}"}
                           >
                             <div class="flex items-center">
-                              <div class="w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-2">
-                                <img src={account.avatar} alt="" />
+                              <div class="relative flex-shrink-0">
+                                <div class={"w-10 h-10 rounded-full overflow-hidden bg-gray-200 mr-3 ring-2 #{if account.selected, do: "ring-indigo-500", else: "ring-gray-200"}"}>
+                                  <img src={account.avatar} alt="" class="h-full w-full object-cover" />
+                                </div>
+                                <%= if account.selected do %>
+                                  <div class="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-0.5">
+                                    <svg class="h-3.5 w-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                  </div>
+                                <% end %>
                               </div>
-                              <span class="truncate"><%= account.username %></span>
-                              <%= if account.selected do %>
-                                <svg class="ml-auto h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                              <% end %>
+                              <div>
+                                <p class={"font-medium #{if account.selected, do: "text-indigo-700", else: "text-gray-900"}"}>@<%= account.username %></p>
+                                <p class="text-xs text-gray-500"><%= platform |> Atom.to_string() |> String.capitalize() %> Account</p>
+                              </div>
                             </div>
                           </button>
                         <% end %>
-                        <div class="border-t border-gray-100 mt-1 pt-1">
-                          <.link 
-                            navigate={~p"/sns-accounts"}
-                            class="block px-4 py-2 text-sm text-indigo-600 hover:bg-gray-100"
-                          >
-                            <div class="flex items-center">
-                              <svg class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                              </svg>
-                              <span>Manage SNS Accounts</span>
-                            </div>
-                          </.link>
+                        <div class="border-t border-gray-100 divide-y divide-gray-100">
+                          <div class="py-2 px-3">
+                            <button
+                              type="button"
+                              phx-click="toggle-dropdown"
+                              phx-target={@myself}
+                              phx-value-platform={platform}
+                              class="w-full text-center py-2 px-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-md text-sm font-medium transition-colors"
+                            >
+                              <div class="flex items-center justify-center">
+                                <svg class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Done</span>
+                              </div>
+                            </button>
+                          </div>
+                          <div class="py-2">
+                            <.link
+                              navigate={~p"/sns-accounts"}
+                              class="block px-4 py-2 text-sm text-indigo-600 hover:bg-gray-50"
+                            >
+                              <div class="flex items-center">
+                                <svg class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                                </svg>
+                                <span>Manage SNS Accounts</span>
+                              </div>
+                            </.link>
+                          </div>
                         </div>
                       </div>
                     <% end %>
@@ -336,8 +410,9 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
           <div class="flex items-center">
             <input
               id="scheduled-upload"
+              name="scheduled_upload"
               type="checkbox"
-              phx-click="toggle-scheduled-upload"
+              phx-change="toggle-scheduled-upload"
               phx-target={@myself}
               checked={@scheduled_upload}
               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
@@ -369,30 +444,19 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
 
         <!-- Navigation and Action Buttons -->
         <div class="flex justify-between mt-8">
+          <div>
+          </div>
           <button
             type="button"
-            phx-click="goto-description"
+            phx-click="goto-file-selection"
             phx-target={@myself}
-            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-            </svg>
-            Back to Description
-          </button>
-          <button
-            type="submit"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            disabled={Enum.empty?(@selected_platforms) || (@scheduled_upload && (@upload_form["schedule_at"] == "" || is_nil(@upload_form["schedule_at"])))}
+            disabled={Enum.empty?(@selected_platforms)}
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+              <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
-            <%= if @scheduled_upload do %>
-              Schedule Upload
-            <% else %>
-              Upload Now
-            <% end %>
+            <span>Select Files</span>
           </button>
         </div>
       </form>
@@ -400,4 +464,3 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
     """
   end
 end
-
