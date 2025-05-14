@@ -2,17 +2,12 @@ defmodule MyappWeb.DashboardLive do
   use MyappWeb, :live_view
   import Phoenix.LiveView.JS
 
-  alias MyappWeb.DashboardLive.Components.{
-    UploadComponent,
-    PreviewComponent,
-    ResultsComponent,
-    SettingsComponent
-  }
 
   alias MyappWeb.DashboardLive.Components.UploadTabs.{
     PhotoSelectionComponent,
     DescriptionComponent,
-    SnsSelectionComponent
+    SnsSelectionComponent,
+    PreviewComponent
   }
 
   alias Myapp.Accounts
@@ -52,11 +47,7 @@ defmodule MyappWeb.DashboardLive do
      )}
   end
 
-  @impl true
-  def handle_info(:switch_to_upload_tab, socket) do
-    # 변경: upload 탭이 제거되었으므로 photo_selection 탭으로 리디렉션 (파일 업로드 탭)
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
-  end
+
 
   @impl true
   def handle_info(:switch_to_photo_selection_tab, socket) do
@@ -78,23 +69,12 @@ defmodule MyappWeb.DashboardLive do
     {:noreply, push_patch(socket, to: ~p"/dashboard?tab=sns_selection")}
   end
 
-
   @impl true
   def handle_info(:switch_to_preview_tab, socket) do
-    # 변경: preview 탭이 제거되었으므로 description 탭으로 리디렉션
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
+    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=preview")}
   end
 
-  @impl true
-  def handle_info({:update_preview, preview_url}, socket) do
-    {:noreply, assign(socket, :preview_url, preview_url)}
-  end
 
-  @impl true
-  def handle_info(:switch_to_results_tab, socket) do
-    # 변경: results 탭이 제거되었으므로 description 탭으로 리디렉션
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
-  end
 
   @impl true
   def handle_info({:update_form, form_data}, socket) do
@@ -105,6 +85,7 @@ defmodule MyappWeb.DashboardLive do
 
   @impl true
   def handle_info({:update_preview, preview_url}, socket) do
+    IO.puts("Updating preview URL to: #{preview_url}")
     {:noreply,
      socket
      |> assign(:preview_url, preview_url)}
@@ -339,7 +320,8 @@ defmodule MyappWeb.DashboardLive do
               <%= for {step, idx, label} <- [
                 {"sns_selection", 1, "Choose Platforms"},
                 {"photo_selection", 2, "Select Files"},
-                {"description", 3, "Add Details"}
+                {"description", 3, "Add Details"},
+                {"preview", 4, "Preview"}
               ] do %>
                 <button type="button" phx-click={JS.patch(~p"/dashboard?tab=#{step}")} class="flex items-center space-x-2">
                   <div class={"w-8 h-8 rounded-full flex items-center justify-center " <> if @active_tab == step, do: "bg-black text-white", else: "bg-gray-200 text-gray-500"}>
@@ -349,7 +331,7 @@ defmodule MyappWeb.DashboardLive do
                     <%= label %>
                   </span>
                 </button>
-                <%= if idx < 3 do %>
+                <%= if idx < 4 do %>
                   <div class="flex-1 h-px bg-gray-200 mx-2"></div>
                 <% end %>
               <% end %>
@@ -386,6 +368,16 @@ defmodule MyappWeb.DashboardLive do
                   parent_pid={self()}
                   social_accounts={@social_accounts}
                   selected_platforms={@selected_platforms}
+                  upload_form={@upload_form}
+                />
+              <% "preview" -> %>
+                <.live_component
+                  module={PreviewComponent}
+                  id="preview"
+                  current_user={@current_user}
+                  parent_pid={self()}
+                  selected_platforms={@selected_platforms}
+                  preview_url={@preview_url}
                   upload_form={@upload_form}
                 />
             <% end %>

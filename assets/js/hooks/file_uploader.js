@@ -124,6 +124,11 @@ const FileUploader = {
         if (this.inputContainer) {
           if (persistedFiles && persistedFiles.length > 0) {
             this.inputContainer.style.display = 'none';
+            
+            // When we load files from storage, send preview URL to server for preview tab
+            if (persistedFiles[0] && persistedFiles[0].previewUrl) {
+              this.pushEventTo(this.el, "client_upload_complete", { url: persistedFiles[0].previewUrl });
+            }
           } else {
             this.inputContainer.style.display = 'flex';
           }
@@ -234,6 +239,9 @@ const FileUploader = {
     }
     const file = this.files[this.currentIndex];
     const url = URL.createObjectURL(file);
+    
+    // Send preview URL to the server for preview tab
+    this.pushEventTo(this.el, "client_upload_complete", { url });  
 
     // Create main flex container
     const flexRow = document.createElement('div');
