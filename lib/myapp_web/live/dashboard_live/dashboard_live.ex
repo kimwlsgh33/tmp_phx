@@ -116,10 +116,10 @@ defmodule MyappWeb.DashboardLive do
 
   @impl true
   def handle_info(:switch_to_preview_tab, socket) do
-    # Mark sns_selection as completed when moving to preview
+    # Mark description as completed when moving to preview
     completed_tabs =
-      if socket.assigns.active_tab == "sns_selection" && "sns_selection" not in socket.assigns.completed_tabs do
-        ["sns_selection" | socket.assigns.completed_tabs]
+      if socket.assigns.active_tab == "description" && "description" not in socket.assigns.completed_tabs do
+        ["description" | socket.assigns.completed_tabs]
       else
         socket.assigns.completed_tabs
       end
