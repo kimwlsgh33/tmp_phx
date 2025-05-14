@@ -34,11 +34,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
   end
 
   @impl true
-  def handle_event("goto-sns-selection", _params, socket) do
+  def handle_event("goto-preview", _params, socket) do
     # Validate form before proceeding
     if valid_form?(socket.assigns.upload_form) do
-      # Notify parent to switch to the next tab
-      send(socket.assigns.parent_pid, :switch_to_sns_selection_tab)
+      # Notify parent to switch to the preview tab
+      send(socket.assigns.parent_pid, :switch_to_preview_tab)
       {:noreply, socket}
     else
       {:noreply,
@@ -149,11 +149,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
           </button>
           <button
             type="button"
-            phx-click="goto-sns-selection"
+            phx-click="goto-preview"
             phx-target={@myself}
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Continue to Platform Selection
+            Continue to Preview
             <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>

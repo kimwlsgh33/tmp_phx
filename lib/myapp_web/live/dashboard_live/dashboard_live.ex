@@ -34,6 +34,7 @@ defmodule MyappWeb.DashboardLive do
      |> assign(:recent_uploads, [])
      |> assign(:selected_platforms, [])
      |> assign(:preview_url, nil)
+     |> assign(:completed_tabs, [])  # Track completed tabs for checkmarks
      |> assign(:upload_form, %{
        "title" => "",
        "description" => "",
@@ -51,27 +52,82 @@ defmodule MyappWeb.DashboardLive do
 
   @impl true
   def handle_info(:switch_to_photo_selection_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
+    # Mark sns_selection as completed when moving to photo_selection
+    completed_tabs =
+      if socket.assigns.active_tab == "sns_selection" && "sns_selection" not in socket.assigns.completed_tabs do
+        ["sns_selection" | socket.assigns.completed_tabs]
+      else
+        socket.assigns.completed_tabs
+      end
+        
+    {:noreply, 
+      socket
+      |> assign(:completed_tabs, completed_tabs)
+      |> push_patch(to: ~p"/dashboard?tab=photo_selection")}
   end
 
   @impl true
   def handle_info(:switch_to_description_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=description")}
+    # Mark photo_selection as completed when moving to description
+    completed_tabs =
+      if socket.assigns.active_tab == "photo_selection" && "photo_selection" not in socket.assigns.completed_tabs do
+        ["photo_selection" | socket.assigns.completed_tabs]
+      else
+        socket.assigns.completed_tabs
+      end
+      
+    {:noreply, 
+      socket
+      |> assign(:completed_tabs, completed_tabs)
+      |> push_patch(to: ~p"/dashboard?tab=description")}
   end
 
   @impl true
   def handle_info(:switch_to_file_selection_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=photo_selection")}
+    # Mark sns_selection as completed when moving to photo_selection
+    completed_tabs =
+      if socket.assigns.active_tab == "sns_selection" && "sns_selection" not in socket.assigns.completed_tabs do
+        ["sns_selection" | socket.assigns.completed_tabs]
+      else
+        socket.assigns.completed_tabs
+      end
+        
+    {:noreply, 
+      socket
+      |> assign(:completed_tabs, completed_tabs)
+      |> push_patch(to: ~p"/dashboard?tab=photo_selection")}
   end
 
   @impl true
   def handle_info(:switch_to_sns_selection_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=sns_selection")}
+    # Mark description as completed when moving to sns_selection
+    completed_tabs =
+      if socket.assigns.active_tab == "description" && "description" not in socket.assigns.completed_tabs do
+        ["description" | socket.assigns.completed_tabs]
+      else
+        socket.assigns.completed_tabs
+      end
+      
+    {:noreply, 
+      socket
+      |> assign(:completed_tabs, completed_tabs)
+      |> push_patch(to: ~p"/dashboard?tab=sns_selection")}
   end
 
   @impl true
   def handle_info(:switch_to_preview_tab, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dashboard?tab=preview")}
+    # Mark sns_selection as completed when moving to preview
+    completed_tabs =
+      if socket.assigns.active_tab == "sns_selection" && "sns_selection" not in socket.assigns.completed_tabs do
+        ["sns_selection" | socket.assigns.completed_tabs]
+      else
+        socket.assigns.completed_tabs
+      end
+      
+    {:noreply, 
+      socket
+      |> assign(:completed_tabs, completed_tabs)
+      |> push_patch(to: ~p"/dashboard?tab=preview")}
   end
 
 
@@ -325,7 +381,14 @@ defmodule MyappWeb.DashboardLive do
               ] do %>
                 <button type="button" phx-click={JS.patch(~p"/dashboard?tab=#{step}")} class="flex items-center space-x-2">
                   <div class={"w-8 h-8 rounded-full flex items-center justify-center " <> if @active_tab == step, do: "bg-black text-white", else: "bg-gray-200 text-gray-500"}>
-                    <%= idx %>
+                    <%= if step in @completed_tabs do %>
+                      <!-- Check mark icon -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      </svg>
+                    <% else %>
+                      <%= idx %>
+                    <% end %>
                   </div>
                   <span class={"text-sm uppercase " <> if @active_tab == step, do: "text-black font-semibold", else: "text-gray-500"}>
                     <%= label %>

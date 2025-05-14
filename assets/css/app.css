@@ -29,7 +29,6 @@
   0% {
     stroke-dashoffset: 0;
   }
-
   100% {
     stroke-dashoffset: calc(var(--path-length) * 2);
   }

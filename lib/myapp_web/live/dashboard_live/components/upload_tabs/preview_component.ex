@@ -47,10 +47,9 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
     def render(assigns) do
       ~H"""
       <div>
-        <h2 class="text-xl font-semibold mb-4">Platform Preview</h2>
-        <p class="text-gray-600 mb-6">This is how your content will appear on each selected platform.</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <%= for platform <- @selected_platforms do %>
             <%= case platform do %>
               <% :tiktok -> %>
@@ -128,12 +127,13 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
 
               <% :youtube -> %>
                 <!-- YouTube Preview with tabs for standard and Shorts -->
-                <div class="border border-gray-300 rounded-lg overflow-hidden bg-white shadow-lg" style="max-width: 560px;">
+                <div class="border border-gray-300 rounded-lg overflow-hidden bg-white shadow-lg" style="max-width: 302px;">
                   <!-- YouTube format selector tabs -->
                   <div class="flex border-b border-gray-200">
                     <button type="button"
                       phx-click={JS.add_class("hidden", to: "#shorts-view")
                         |> JS.remove_class("hidden", to: "#standard-view")
+                        |> JS.remove_class("hidden", to: "#youtube-info-section")
                         |> JS.add_class("border-b-2 border-red-600 text-red-600", to: "#standard-tab")
                         |> JS.remove_class("border-b-2 border-red-600 text-red-600", to: "#shorts-tab")
                         |> JS.add_class("text-gray-500", to: "#shorts-tab")}
@@ -144,6 +144,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                     <button type="button"
                       phx-click={JS.remove_class("hidden", to: "#shorts-view")
                         |> JS.add_class("hidden", to: "#standard-view")
+                        |> JS.add_class("hidden", to: "#youtube-info-section")
                         |> JS.add_class("border-b-2 border-red-600 text-red-600", to: "#shorts-tab")
                         |> JS.remove_class("border-b-2 border-red-600 text-red-600", to: "#standard-tab")
                         |> JS.add_class("text-gray-500", to: "#standard-tab")}
@@ -156,7 +157,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                   <!-- Standard YouTube View -->
                   <div id="standard-view">
                     <!-- Video player area -->
-                    <div class="relative bg-black" style="height: 315px;">
+                    <div class="relative bg-black" style="height: 320px;">
                       <%= if @preview_url do %>
                         <video src={@preview_url} controls class="w-full h-full object-contain" />
                       <% else %>
@@ -224,8 +225,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                     </div>
                   </div>
 
-                  <!-- Video info section -->
-                  <div class="p-4">
+                  <!-- Video info section (only shown on standard view) -->
+                  <div id="youtube-info-section" class="p-4">
                     <!-- Title -->
                     <h3 class="text-lg font-bold leading-tight mb-1">
                       <%= if @upload_form["title"] && @upload_form["title"] != "" do %>
@@ -289,6 +290,200 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                       <%= raw highlight_hashtags(@upload_form["description"]) %>
                     </div>
                     <button class="text-sm text-gray-500 font-medium">SHOW MORE</button>
+                  </div>
+                </div>
+
+              <% :instagram -> %>
+                <!-- Instagram Preview -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden bg-white shadow-lg" style="width: 300px;">
+                  <!-- Instagram format selector tabs -->
+                  <div class="flex border-b border-gray-200">
+                    <button type="button"
+                      phx-click={JS.add_class("hidden", to: "#instagram-reels-view")
+                        |> JS.remove_class("hidden", to: "#instagram-feed-view")
+                        |> JS.remove_class("hidden", to: "#instagram-info-section")
+                        |> JS.add_class("border-b-2 border-pink-600 text-pink-600", to: "#instagram-feed-tab")
+                        |> JS.remove_class("border-b-2 border-pink-600 text-pink-600", to: "#instagram-reels-tab")
+                        |> JS.add_class("text-gray-500", to: "#instagram-reels-tab")}
+                      class="flex-1 py-2 px-4 text-center border-b-2 border-pink-600 text-pink-600 font-medium"
+                      id="instagram-feed-tab">
+                      Feed Post
+                    </button>
+                    <button type="button"
+                      phx-click={JS.remove_class("hidden", to: "#instagram-reels-view")
+                        |> JS.add_class("hidden", to: "#instagram-feed-view")
+                        |> JS.add_class("hidden", to: "#instagram-info-section")
+                        |> JS.add_class("border-b-2 border-pink-600 text-pink-600", to: "#instagram-reels-tab")
+                        |> JS.remove_class("border-b-2 border-pink-600 text-pink-600", to: "#instagram-feed-tab")
+                        |> JS.add_class("text-gray-500", to: "#instagram-feed-tab")}
+                      class="flex-1 py-2 px-4 text-center text-gray-500 hover:text-gray-700 font-medium"
+                      id="instagram-reels-tab">
+                      Reels
+                    </button>
+                  </div>
+
+                  <!-- Instagram Feed View -->
+                  <div id="instagram-feed-view">
+                    <!-- Instagram header -->
+                    <div class="p-3 border-b border-gray-100 flex items-center">
+                      <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 flex items-center justify-center">
+                        <div class="w-7 h-7 rounded-full bg-white flex items-center justify-center">
+                          <div class="w-6 h-6 rounded-full bg-gray-200"></div>
+                        </div>
+                      </div>
+                      <div class="ml-2">
+                        <p class="text-sm font-bold"><%= generate_username(:instagram) %></p>
+                      </div>
+                      <div class="ml-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <!-- Post image/video -->
+                    <div class="aspect-w-1 aspect-h-1 w-full bg-black">
+                      <%= if @preview_url do %>
+                        <video src={@preview_url} controls class="w-full h-full object-contain" />
+                      <% else %>
+                        <div class="w-full h-full bg-gray-900 flex items-center justify-center">
+                          <p class="text-gray-400">No preview available</p>
+                        </div>
+                      <% end %>
+                    </div>
+
+                    <!-- Instagram info section (only shown on feed view) -->
+                    <div id="instagram-info-section">
+                      <!-- Action buttons -->
+                      <div class="p-3 flex justify-between">
+                        <div class="flex space-x-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          </svg>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <!-- Likes count -->
+                      <div class="px-3 py-1">
+                        <p class="text-sm font-bold">1,234 likes</p>
+                      </div>
+
+                      <!-- Caption -->
+                      <div class="px-3 py-1">
+                        <p class="text-sm">
+                          <span class="font-bold"><%= generate_username(:instagram) %></span>
+                          <%= raw highlight_hashtags(@upload_form["description"]) %>
+                        </p>
+                      </div>
+
+                      <!-- Comments teaser -->
+                      <div class="px-3 py-1">
+                        <p class="text-sm text-gray-500">View all 42 comments</p>
+                      </div>
+
+                      <!-- Timestamp -->
+                      <div class="px-3 py-1">
+                        <p class="text-xs text-gray-400">2 HOURS AGO</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Instagram Reels View -->
+                  <div id="instagram-reels-view" class="hidden">
+                    <div class="bg-black">
+                      <!-- Mobile-style frame for Reels -->
+                      <div class="relative" style="width: 300px; height: 580px;">
+                        <div class="bg-black rounded-lg overflow-hidden h-full">
+                          <%= if @preview_url do %>
+                            <video src={@preview_url} loop autoplay muted class="h-full w-full object-cover" />
+                          <% else %>
+                            <div class="w-full h-full bg-gray-900 flex items-center justify-center">
+                              <p class="text-gray-400">No video preview available</p>
+                            </div>
+                          <% end %>
+
+                          <!-- Reels interface elements -->
+                          <div class="absolute top-0 left-0 right-0 p-4 flex justify-between">
+                            <span class="text-white font-bold">Reels</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
+                          </div>
+
+                          <!-- Username and description overlay -->
+                          <div class="absolute bottom-20 left-2 right-2 p-2 text-white z-10">
+                            <div class="flex items-center">
+                              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 mr-2 flex items-center justify-center">
+                                <div class="w-9 h-9 rounded-full bg-black flex items-center justify-center">
+                                  <div class="w-8 h-8 rounded-full bg-gray-400"></div>
+                                </div>
+                              </div>
+                              <span class="font-bold"><%= generate_username(:instagram) %></span>
+                              <button class="ml-2 text-xs border border-white rounded px-2 py-1">Follow</button>
+                            </div>
+                            <p class="text-sm mt-2"><%= raw highlight_hashtags(@upload_form["description"]) %></p>
+                          </div>
+
+                          <!-- Instagram Reels controls -->
+                          <div class="absolute right-2 bottom-24 flex flex-col items-center space-y-5">
+                            <div class="flex flex-col items-center">
+                              <div class="w-9 h-9 rounded-full bg-transparent flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                </svg>
+                              </div>
+                              <span class="text-xs text-white mt-1">256K</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                              <div class="w-9 h-9 rounded-full bg-transparent flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd" />
+                                </svg>
+                              </div>
+                              <span class="text-xs text-white mt-1">1,024</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                              <div class="w-9 h-9 rounded-full bg-transparent flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                                </svg>
+                              </div>
+                              <span class="text-xs text-white mt-1">Share</span>
+                            </div>
+                            <div class="flex flex-col items-center mt-2">
+                              <div class="w-9 h-9 relative flex items-center justify-center">
+                                <div class="absolute w-7 h-7 rounded bg-white opacity-30"></div>
+                                <div class="absolute w-6 h-6 rounded-sm border-2 border-white transform rotate-45"></div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Music playing indicator -->
+                          <div class="absolute bottom-5 left-2 right-2 flex items-center">
+                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-purple-700 to-pink-500 flex items-center justify-center animate-spin-slow">
+                              <div class="h-8 w-8 rounded-full bg-black flex items-center justify-center">
+                                <div class="h-3 w-3 rounded-full bg-white"></div>
+                              </div>
+                            </div>
+                            <div class="ml-2 text-white flex-1">
+                              <div class="h-4 text-xs font-bold whitespace-nowrap overflow-hidden overflow-ellipsis">Original Audio • Song Name</div>
+                              <div class="text-xs">Artist Name</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
