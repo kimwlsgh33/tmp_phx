@@ -53,13 +53,13 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
     description = Map.get(form, "description", "")
     title = Map.get(form, "title", "")
     selected_platforms = Map.get(form, "_selected_platforms", [])
-    
+
     # 유튜브가 선택되었을 때만 제목이 필수
     youtube_selected = :youtube in selected_platforms || "youtube" in selected_platforms
-    
+
     # 기본 필수 필드 검증
     base_valid = String.trim(description) != ""
-    
+
     # 유튜브가 선택된 경우 제목도 필수
     if youtube_selected do
       base_valid && String.trim(title) != ""
@@ -71,14 +71,14 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="min-h-[600px]">
       <h2 class="text-xl font-semibold mb-4">Post Description</h2>
       <p class="text-gray-600 mb-6">Add details about your content to improve discovery and engagement.</p>
 
       <form phx-change="validate-form" phx-target={@myself}>
         <div class="space-y-4 max-w-2xl">
           <% youtube_selected = :youtube in @selected_platforms || "youtube" in @selected_platforms %>
-          
+
           <!-- Title field - only shown when YouTube is selected -->
           <%= if youtube_selected do %>
           <div>

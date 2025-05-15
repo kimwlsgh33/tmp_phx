@@ -143,7 +143,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
     send(socket.assigns.parent_pid, :switch_to_description_tab)
     {:noreply, socket}
   end
-  
+
   @impl true
   # 기본 파라미터 형태
   def handle_event("goto-file-selection", _params, socket) do
@@ -192,7 +192,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="min-h-[600px]">
       <h2 class="text-xl font-semibold mb-4">Platform Selection</h2>
       <p class="text-gray-600 mb-6">Choose where to publish your content and set scheduling options.</p>
 

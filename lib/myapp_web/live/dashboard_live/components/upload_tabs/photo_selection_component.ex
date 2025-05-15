@@ -29,7 +29,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
       |> assign_new(:processing_filename, fn -> nil end)
       |> assign(assigns)
       |> assign_new(:selected_platforms, fn -> [] end)
-      
+
     # Determine which formats to accept based on selected platforms
     accepted_formats = get_accepted_formats(socket.assigns.selected_platforms)
 
@@ -123,7 +123,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="min-h-[600px]">
       <h2 class="text-xl font-semibold mb-4">Select Photos & Videos</h2>
       <p class="text-gray-600 mb-6">Choose the content you want to share to your social media accounts.</p>
 
