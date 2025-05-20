@@ -10,6 +10,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
       |> assign_new(:selected_platforms, fn -> [] end)
       |> assign_new(:preview_url, fn -> nil end)
       |> assign_new(:upload_form, fn -> %{} end)
+      |> assign_new(:advanced_settings, fn -> %{} end)
 
     {:ok, socket}
   end
@@ -39,6 +40,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                 id="tiktok-preview"
                 preview_url={@preview_url}
                 upload_form={@upload_form}
+                advanced_settings={Map.get(@advanced_settings, "tiktok", %{})}
               />
             <% :youtube -> %>
               <.live_component
@@ -46,6 +48,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                 id="youtube-preview"
                 preview_url={@preview_url}
                 upload_form={@upload_form}
+                advanced_settings={Map.get(@advanced_settings, "youtube", %{})}
               />
             <% :instagram -> %>
               <.live_component
@@ -53,6 +56,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                 id="instagram-preview"
                 preview_url={@preview_url}
                 upload_form={@upload_form}
+                advanced_settings={Map.get(@advanced_settings, "instagram", %{})}
               />
             <% :twitter -> %>
               <.live_component
@@ -60,6 +64,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                 id="twitter-preview"
                 preview_url={@preview_url}
                 upload_form={@upload_form}
+                advanced_settings={Map.get(@advanced_settings, "twitter", %{})}
               />
             <% :facebook -> %>
               <.live_component
@@ -67,6 +72,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
                 id="facebook-preview"
                 preview_url={@preview_url}
                 upload_form={@upload_form}
+                advanced_settings={Map.get(@advanced_settings, "facebook", %{})}
               />
           <% end %>
         <% end %>

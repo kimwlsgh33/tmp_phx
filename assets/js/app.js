@@ -24,6 +24,7 @@ import topbar from "../vendor/topbar";
 import ThemeToggle from "./hooks/theme_toggle";
 import DocsNavigation from "./hooks/docs_navigation";
 import FileUploader from "./hooks/file_uploader";
+import SettingsStorage from "./hooks/settings_storage";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -32,6 +33,7 @@ let Hooks = {
   ThemeToggle,
   DocsNavigation,
   FileUploader,
+  SettingsStorage,
 };
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

@@ -22,6 +22,8 @@ defmodule MyappWeb.DashboardLive do
     if connected?(socket) do
       send(self(), :load_social_accounts)
       send(self(), :load_recent_uploads)
+      # Load saved settings from local storage
+      send(self(), :load_saved_settings)
     end
 
     {:ok,
@@ -41,6 +43,7 @@ defmodule MyappWeb.DashboardLive do
        "tags" => "",
        "schedule_at" => nil
      })
+     |> assign(:advanced_settings, %{})
      |> allow_upload(:video,
        accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
        max_entries: 5,
@@ -140,11 +143,79 @@ defmodule MyappWeb.DashboardLive do
   end
 
   @impl true
+  def handle_info({:update_advanced_settings, settings}, socket) do
+    # Merge the new settings with existing settings
+    updated_settings = Map.merge(socket.assigns.advanced_settings, settings)
+    
+    # Save to local storage
+    if socket.assigns.current_user do
+      user_id = socket.assigns.current_user.id
+      push_event(socket, "save_settings", %{
+        key: "user_#{user_id}_advanced_settings", 
+        value: Jason.encode!(updated_settings)
+      })
+    end
+    
+    {:noreply,
+     socket
+     |> assign(:advanced_settings, updated_settings)}
+  end
+  
+  @impl true
+  def handle_info({:advanced_settings_updated, %{platform: platform, settings: settings}}, socket) do
+    # This is our new handler for messages sent by the Facebook/Twitter components
+    # Convert the new format to existing format and use the existing handler
+    
+    # Create a map with the platform as key and settings as value
+    # This matches the format expected by the original update_advanced_settings
+    platform_settings = %{platform => settings}
+    
+    # Log what we're updating to help with debugging
+    IO.inspect(platform_settings, label: "SNS Advanced Settings Update")
+    
+    # Merge the new settings with existing settings
+    updated_settings = Map.merge(socket.assigns.advanced_settings, platform_settings)
+    
+    # Save to local storage
+    if socket.assigns.current_user do
+      user_id = socket.assigns.current_user.id
+      push_event(socket, "save_settings", %{
+        key: "user_#{user_id}_advanced_settings", 
+        value: Jason.encode!(updated_settings)
+      })
+    end
+    
+    {:noreply,
+     socket
+     |> assign(:advanced_settings, updated_settings)}
+  end
+
+  @impl true
   def handle_info({:update_preview, preview_url}, socket) do
     IO.puts("Updating preview URL to: #{preview_url}")
     {:noreply,
      socket
      |> assign(:preview_url, preview_url)}
+  end
+  
+  @impl true
+  def handle_info(:load_saved_settings, socket) do
+    if socket.assigns.current_user do
+      user_id = socket.assigns.current_user.id
+      push_event(socket, "load_settings", %{key: "user_#{user_id}_advanced_settings"})
+    end
+    
+    {:noreply, socket}
+  end
+  
+  @impl true
+  def handle_event("settings_loaded", %{"value" => settings_json}, socket) do
+    case Jason.decode(settings_json) do
+      {:ok, settings} -> 
+        {:noreply, assign(socket, :advanced_settings, settings)}
+      {:error, _} -> 
+        {:noreply, socket}
+    end
   end
 
   @impl true
@@ -349,7 +420,7 @@ defmodule MyappWeb.DashboardLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="dashboard" class="flex flex-col min-h-screen bg-white">
+    <div id="dashboard" class="flex flex-col min-h-screen bg-white" phx-hook="SettingsStorage">
       <div class="flex-1">
         <div class="p-6">
           <div class="mb-6 flex justify-between items-center">
@@ -422,6 +493,7 @@ defmodule MyappWeb.DashboardLive do
                   parent_pid={self()}
                   upload_form={@upload_form}
                   selected_platforms={@selected_platforms}
+                  advanced_settings={@advanced_settings}
                 />
               <% "sns_selection" -> %>
                 <.live_component
@@ -437,11 +509,11 @@ defmodule MyappWeb.DashboardLive do
                 <.live_component
                   module={PreviewComponent}
                   id="preview"
-                  current_user={@current_user}
-                  parent_pid={self()}
                   selected_platforms={@selected_platforms}
                   preview_url={@preview_url}
                   upload_form={@upload_form}
+                  advanced_settings={@advanced_settings}
+                  parent_pid={self()}
                 />
             <% end %>
           </div>

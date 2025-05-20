@@ -1,6 +1,8 @@
 defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
   use MyappWeb, :live_component
 
+  alias MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.SnsAdvancedSettingsComponent
+
   @impl true
   def mount(socket) do
     {:ok, socket}
@@ -11,6 +13,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
     socket =
       socket
       |> assign(assigns)
+      |> assign_new(:advanced_settings, fn -> %{} end)
 
     {:ok, socket}
   end
@@ -23,6 +26,14 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
     # Notify parent of the form change
     send(socket.assigns.parent_pid, {:update_form, form_params})
 
+    {:noreply, socket}
+  end
+  
+  @impl true
+  def handle_event("update-advanced-settings", %{"platform" => platform, "settings" => settings}, socket) do
+    # Update the parent with the advanced settings
+    send(socket.assigns.parent_pid, {:update_advanced_settings, %{platform => settings}})
+    
     {:noreply, socket}
   end
 
@@ -72,11 +83,13 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
   def render(assigns) do
     ~H"""
     <div class="min-h-[600px]">
-      <h2 class="text-xl font-semibold mb-4">Post Description</h2>
-      <p class="text-gray-600 mb-6">Add details about your content to improve discovery and engagement.</p>
+      <div class="flex">
+        <div class="w-1/2 pr-6">
+          <h2 class="text-xl font-semibold mb-4">Post Description</h2>
+          <p class="text-gray-600 mb-6">Add details about your content to improve discovery and engagement.</p>
 
-      <form phx-change="validate-form" phx-target={@myself}>
-        <div class="space-y-4 max-w-2xl">
+          <form phx-change="validate-form" phx-target={@myself}>
+            <div class="space-y-4">
           <% youtube_selected = :youtube in @selected_platforms || "youtube" in @selected_platforms %>
 
           <!-- Title field - only shown when YouTube is selected -->
@@ -132,10 +145,10 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
               Add relevant tags to help people discover your content
             </p>
           </div>
-        </div>
+            </div>
 
-        <!-- Navigation buttons -->
-        <div class="flex justify-between mt-8">
+            <!-- Navigation buttons -->
+            <div class="flex justify-between mt-8">
           <button
             type="button"
             phx-click="goto-photo-selection"
@@ -158,8 +171,21 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
               <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
           </button>
+            </div>
+          </form>
         </div>
-      </form>
+        
+        <!-- Advanced Settings Column -->
+        <div class="w-1/2 pl-6 border-l border-gray-200">
+          <.live_component
+            module={SnsAdvancedSettingsComponent}
+            id="sns-advanced-settings"
+            parent_pid={@myself}
+            selected_platforms={@selected_platforms}
+            advanced_settings={@advanced_settings}
+          />
+        </div>
+      </div>
     </div>
     """
   end

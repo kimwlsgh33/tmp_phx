@@ -8,8 +8,25 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
       |> assign(assigns)
       |> assign_new(:preview_url, fn -> nil end)
       |> assign_new(:upload_form, fn -> %{} end)
+      |> assign_new(:advanced_settings, fn -> %{
+        "privacy" => "public",
+        "allow_comments" => true,
+        "content_type" => "video",
+        "category" => "Entertainment",
+        "made_for_kids" => false
+      } end)
+      |> assign_initial_view_state()
 
     {:ok, socket}
+  end
+  
+  # Helper for setting initial view based on content_type
+  defp assign_initial_view_state(socket) do
+    content_type = socket.assigns.advanced_settings["content_type"] || "video"
+    
+    socket
+    |> assign(:show_shorts_view, content_type == "shorts")
+    |> assign(:show_standard_view, content_type == "video")
   end
 
   # Helper function to parse hashtags in description
@@ -35,7 +52,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
             |> JS.add_class("border-b-2 border-red-600 text-red-600", to: "#standard-tab")
             |> JS.remove_class("border-b-2 border-red-600 text-red-600", to: "#shorts-tab")
             |> JS.add_class("text-gray-500", to: "#shorts-tab")}
-          class="flex-1 py-2 px-4 text-center border-b-2 border-red-600 text-red-600 font-medium"
+          class={"flex-1 py-2 px-4 text-center font-medium #{if @advanced_settings["content_type"] == "video", do: "border-b-2 border-red-600 text-red-600", else: "text-gray-500"}"}
           id="standard-tab">
           <div class="flex justify-center items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -53,7 +70,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
             |> JS.add_class("border-b-2 border-red-600 text-red-600", to: "#shorts-tab")
             |> JS.remove_class("border-b-2 border-red-600 text-red-600", to: "#standard-tab")
             |> JS.add_class("text-gray-500", to: "#standard-tab")}
-          class="flex-1 py-2 px-4 text-center text-gray-500 font-medium"
+          class={"flex-1 py-2 px-4 text-center font-medium #{if @advanced_settings["content_type"] == "shorts", do: "border-b-2 border-red-600 text-red-600", else: "text-gray-500"}"}
           id="shorts-tab">
           <div class="flex justify-center items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -65,7 +82,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
       </div>
 
       <!-- Standard YouTube View -->
-      <div id="standard-view">
+      <div id="standard-view" class={@advanced_settings["content_type"] != "video" && "hidden"}>
         <!-- Video player area -->
         <div class="relative bg-black" style="height: 320px;">
           <%= if @preview_url do %>
@@ -83,8 +100,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
         </div>
       </div>
 
-      <!-- Shorts YouTube View (hidden by default, would be toggled with JS in a real implementation) -->
-      <div id="shorts-view" class="hidden">
+      <!-- Shorts YouTube View -->
+      <div id="shorts-view" class={@advanced_settings["content_type"] != "shorts" && "hidden"}>
         <div class="flex justify-center p-2 bg-black">
           <!-- Mobile-style frame for Shorts -->
           <div class="relative" style="width: 302px; height: 580px;">
@@ -157,7 +174,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
                   </div>
-                  <span class="text-xs text-white">962</span>
+                  <%= if @advanced_settings["allow_comments"] do %>
+                    <span class="text-xs text-white">962</span>
+                  <% else %>
+                    <span class="text-xs text-white">Off</span>
+                  <% end %>
                 </div>
 
                 <!-- 공유 버튼 -->
@@ -193,7 +214,52 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
           1.2M views • 3 days ago
         </div>
 
-        <!-- Channel info -->
+          <!-- Privacy status -->
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center gap-2">
+            <%= case @advanced_settings["privacy"] do %>
+              <% "public" -> %>
+                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                  Public
+                </span>
+              <% "unlisted" -> %>
+                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                  Unlisted
+                </span>
+              <% "private" -> %>
+                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  Private
+                </span>
+              <% _ -> %>
+                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                  Public
+                </span>
+            <% end %>
+            
+            <%= if @advanced_settings["made_for_kids"] == true do %>
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                For Kids
+              </span>
+            <% end %>
+          </div>
+        </div>
+          
+          <!-- Channel info -->
         <div class="flex items-center mb-4">
           <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white mr-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -242,6 +308,60 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
           <%= raw highlight_hashtags(@upload_form["description"]) %>
         </div>
         <button class="text-sm text-gray-500 font-medium">SHOW MORE</button>
+        
+        <!-- Comments section (conditionally rendered based on settings) -->
+        <%= if @advanced_settings["allow_comments"] do %>
+          <div class="mt-4 border-t border-gray-200 pt-3">
+            <h4 class="text-md font-bold mb-3">Comments • 483</h4>
+            <div class="flex">
+              <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <input type="text" placeholder="Add a comment..." class="w-full border-b border-gray-300 pb-1 text-sm focus:outline-none" />
+              </div>
+            </div>
+            
+            <!-- Example comment -->
+            <div class="flex mt-4">
+              <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white mr-3">
+                YT
+              </div>
+              <div>
+                <div class="flex items-center">
+                  <span class="text-xs font-bold">Youtube Fan</span>
+                  <span class="text-xs text-gray-500 ml-2">2 days ago</span>
+                </div>
+                <p class="text-sm">Great video! Looking forward to more content like this.</p>
+                <div class="flex items-center space-x-3 mt-1">
+                  <div class="flex items-center text-gray-500 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                    </svg>
+                    32
+                  </div>
+                  <div class="flex items-center text-gray-500 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2" />
+                    </svg>
+                  </div>
+                  <span class="text-gray-500 text-xs">Reply</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <div class="mt-4 border-t border-gray-200 pt-3">
+            <div class="flex items-center justify-center py-4 text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <span>Comments are turned off</span>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
     """

@@ -8,6 +8,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
       |> assign(assigns)
       |> assign_new(:preview_url, fn -> nil end)
       |> assign_new(:upload_form, fn -> %{} end)
+      |> assign_new(:advanced_settings, fn -> %{
+        "privacy" => "public",
+        "allow_comments" => true,
+        "location" => "",
+        "feeling" => ""
+      } end)
 
     {:ok, socket}
   end
@@ -21,6 +27,33 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
   defp generate_username do
     "Facebook User"
   end
+  
+  # Helper to show appropriate privacy icon
+  defp privacy_icon("public") do
+    """
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
+    </svg>
+    """
+  end
+  
+  defp privacy_icon("friends") do
+    """
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+    </svg>
+    """
+  end
+  
+  defp privacy_icon("private") do
+    """
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+    </svg>
+    """
+  end
+  
+  defp privacy_icon(_), do: nil
 
   @impl true
   def render(assigns) do
@@ -38,10 +71,21 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
           <p class="font-semibold text-sm"><%= generate_username() %></p>
           <div class="flex items-center text-xs text-gray-500">
             <span><%= DateTime.utc_now |> Calendar.strftime("%b %d at %I:%M %p") %></span>
-            <span class="mx-1">&bull;</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
-            </svg>
+            
+            <%= if privacy_icon(@advanced_settings["privacy"]) do %>
+              <span class="mx-1">&bull;</span>
+              <%= privacy_icon(@advanced_settings["privacy"]) %>
+            <% end %>
+            
+            <%= if @advanced_settings["location"] && @advanced_settings["location"] != "" do %>
+              <span class="mx-1">&bull;</span>
+              <span class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-0.5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                </svg>
+                <%= @advanced_settings["location"] %>
+              </span>
+            <% end %>
           </div>
         </div>
         <div class="ml-auto">
@@ -53,6 +97,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
 
       <!-- Post content -->
       <div class="px-4 pb-2">
+        <%= if @advanced_settings["feeling"] && @advanced_settings["feeling"] != "" do %>
+          <p class="text-sm mb-2">
+            <span class="font-medium"><%= generate_username() %></span> is feeling 
+            <span class="font-medium"><%= @advanced_settings["feeling"] %></span>
+          </p>
+        <% end %>
         <p class="text-sm mb-3"><%= raw highlight_hashtags(@upload_form["description"] || "") %></p>
       </div>
 
@@ -85,7 +135,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
           <span class="ml-1">1.5K</span>
         </div>
         <div>
-          <span>234 comments • 45 shares</span>
+          <%= if @advanced_settings["allow_comments"] do %>
+            <span>234 comments • 45 shares</span>
+          <% else %>
+            <span>Comments disabled • 45 shares</span>
+          <% end %>
         </div>
       </div>
 
@@ -99,11 +153,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
           Like
         </button>
         <!-- Comment -->
-        <button class="flex items-center justify-center text-gray-600 font-medium text-sm">
+        <button class={"flex items-center justify-center font-medium text-sm #{if @advanced_settings["allow_comments"], do: "text-gray-600", else: "text-gray-400 cursor-not-allowed"}"} disabled={!@advanced_settings["allow_comments"]}>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
           </svg>
-          Comment
+          <%= if @advanced_settings["allow_comments"], do: "Comment", else: "Comments off" %>
         </button>
         <!-- Share -->
         <button class="flex items-center justify-center text-gray-600 font-medium text-sm">

@@ -8,8 +8,25 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
       |> assign(assigns)
       |> assign_new(:preview_url, fn -> nil end)
       |> assign_new(:upload_form, fn -> %{} end)
+      |> assign_new(:advanced_settings, fn -> %{
+        "hide_like_count" => false,
+        "turn_off_comments" => false,
+        "share_to_facebook" => false,
+        "content_type" => "feed"
+      } end)
+      |> assign_initial_view_state()
 
     {:ok, socket}
+  end
+  
+  # Helper for setting initial view based on content_type
+  defp assign_initial_view_state(socket) do
+    content_type = socket.assigns.advanced_settings["content_type"] || "feed"
+    
+    socket
+    |> assign(:show_reels_view, content_type == "reel")
+    |> assign(:show_feed_view, content_type == "feed")
+    |> assign(:show_story_view, content_type == "story")
   end
 
   # Helper function to parse hashtags in description
@@ -30,12 +47,15 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
       <div class="flex border-b border-gray-200">
         <button type="button"
           phx-click={JS.add_class("hidden", to: "#instagram-reels-view")
+            |> JS.add_class("hidden", to: "#instagram-story-view")
             |> JS.remove_class("hidden", to: "#instagram-feed-view")
             |> JS.remove_class("hidden", to: "#instagram-info-section")
             |> JS.add_class("border-b-2 border-black text-black", to: "#instagram-feed-tab")
             |> JS.remove_class("border-b-2 border-black text-black", to: "#instagram-reels-tab")
-            |> JS.add_class("text-gray-500", to: "#instagram-reels-tab")}
-          class="flex-1 py-2 px-4 text-center border-b-2 border-black text-black font-medium"
+            |> JS.remove_class("border-b-2 border-black text-black", to: "#instagram-story-tab")
+            |> JS.add_class("text-gray-500", to: "#instagram-reels-tab")
+            |> JS.add_class("text-gray-500", to: "#instagram-story-tab")}
+          class={"flex-1 py-2 px-4 text-center font-medium #{if @advanced_settings["content_type"] == "feed", do: "border-b-2 border-black text-black", else: "text-gray-500"}"}
           id="instagram-feed-tab">
           <div class="flex justify-center items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -49,11 +69,14 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
         <button type="button"
           phx-click={JS.remove_class("hidden", to: "#instagram-reels-view")
             |> JS.add_class("hidden", to: "#instagram-feed-view")
+            |> JS.add_class("hidden", to: "#instagram-story-view")
             |> JS.add_class("hidden", to: "#instagram-info-section")
             |> JS.add_class("border-b-2 border-black text-black", to: "#instagram-reels-tab")
             |> JS.remove_class("border-b-2 border-black text-black", to: "#instagram-feed-tab")
-            |> JS.add_class("text-gray-500", to: "#instagram-feed-tab")}
-          class="flex-1 py-2 px-4 text-center text-gray-500 font-medium"
+            |> JS.remove_class("border-b-2 border-black text-black", to: "#instagram-story-tab")
+            |> JS.add_class("text-gray-500", to: "#instagram-feed-tab")
+            |> JS.add_class("text-gray-500", to: "#instagram-story-tab")}
+          class={"flex-1 py-2 px-4 text-center font-medium #{if @advanced_settings["content_type"] == "reel", do: "border-b-2 border-black text-black", else: "text-gray-500"}"}
           id="instagram-reels-tab">
           <div class="flex justify-center items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -63,10 +86,31 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
             <span>Reels</span>
           </div>
         </button>
+        <button type="button"
+          phx-click={JS.remove_class("hidden", to: "#instagram-story-view")
+            |> JS.add_class("hidden", to: "#instagram-feed-view")
+            |> JS.add_class("hidden", to: "#instagram-reels-view")
+            |> JS.add_class("hidden", to: "#instagram-info-section")
+            |> JS.add_class("border-b-2 border-black text-black", to: "#instagram-story-tab")
+            |> JS.remove_class("border-b-2 border-black text-black", to: "#instagram-feed-tab")
+            |> JS.remove_class("border-b-2 border-black text-black", to: "#instagram-reels-tab")
+            |> JS.add_class("text-gray-500", to: "#instagram-feed-tab")
+            |> JS.add_class("text-gray-500", to: "#instagram-reels-tab")}
+          class={"flex-1 py-2 px-4 text-center font-medium #{if @advanced_settings["content_type"] == "story", do: "border-b-2 border-black text-black", else: "text-gray-500"}"}
+          id="instagram-story-tab">
+          <div class="flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v8" />
+              <path d="M8 12h8" />
+            </svg>
+            <span>Story</span>
+          </div>
+        </button>
       </div>
 
       <!-- Instagram Feed View -->
-      <div id="instagram-feed-view">
+      <div id="instagram-feed-view" class={@advanced_settings["content_type"] != "feed" && "hidden"}>
         <!-- Instagram header -->
         <div class="p-2 flex items-center border-b border-gray-100">
           <!-- 프로필 이미지 -->
@@ -150,7 +194,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
 
           <!-- 좋아요 카운트 -->
           <div class="px-3 py-1">
-            <p class="text-sm font-medium">좋아요 136개</p>
+            <%= if @advanced_settings["hide_like_count"] != true do %>
+              <p class="text-sm font-medium">좋아요 136개</p>
+            <% else %>
+              <p class="text-sm font-medium">좋아요 수 숨김</p>
+            <% end %>
           </div>
 
           <!-- 캡션 및 해시태그 -->
@@ -163,14 +211,18 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
 
           <!-- 댓글 미리보기 -->
           <div class="px-3 py-1">
-            <p class="text-xs text-gray-500">댓글 7개 모두 보기</p>
+            <%= if @advanced_settings["turn_off_comments"] != true do %>
+              <p class="text-xs text-gray-500">댓글 7개 모두 보기</p>
+            <% else %>
+              <p class="text-xs text-gray-500">댓글 기능이 꺼져 있습니다</p>
+            <% end %>
             <p class="text-xs text-gray-500">5시간 전</p>
           </div>
         </div>
       </div>
 
       <!-- Instagram Reels View -->
-      <div id="instagram-reels-view" class="hidden">
+      <div id="instagram-reels-view" class={@advanced_settings["content_type"] != "reel" && "hidden"}>
         <div class="bg-black">
           <!-- 릴스 영상 프레임 -->
           <div class="relative" style="width: 300px; height: 580px;">
@@ -217,8 +269,52 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                   </svg>
-                  <span class="text-xs text-white mt-1">495</span>
+                  <%= if @advanced_settings["turn_off_comments"] != true do %>
+                    <span class="text-xs text-white mt-1">495</span>
+                  <% else %>
+                    <span class="text-xs text-white mt-1">꺼짐</span>
+                  <% end %>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Instagram Story View -->
+      <div id="instagram-story-view" class={@advanced_settings["content_type"] != "story" && "hidden"}>
+        <div class="bg-gray-800 relative">
+          <!-- 스토리 프레임 -->
+          <div class="relative" style="width: 300px; height: 500px;">
+            <!-- 스토리 배경 -->
+            <div class="w-full h-full bg-gradient-to-b from-purple-500 via-pink-500 to-yellow-500">
+              <%= if @preview_url do %>
+                <video src={@preview_url} class="w-full h-full object-cover" autoplay muted loop />
+              <% end %>
+              
+              <!-- 상단 스토리 헤더 -->
+              <div class="absolute top-0 left-0 right-0 p-3 flex items-center">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 rounded-full border-2 border-white overflow-hidden">
+                    <div class="w-full h-full bg-gradient-to-r from-pink-500 to-purple-500"></div>
+                  </div>
+                  <div class="ml-2 text-white">
+                    <span class="text-sm font-semibold"><%= generate_username() %></span>
+                    <span class="text-xs text-gray-200 ml-2">12m</span>
+                  </div>
+                </div>
+                
+                <div class="ml-auto text-white">
+                  <!-- more options -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <!-- 하단 설명 -->
+              <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
+                <p class="text-white text-sm"><%= @upload_form["description"] || "Instagram Story 미리보기" %></p>
               </div>
             </div>
           </div>
