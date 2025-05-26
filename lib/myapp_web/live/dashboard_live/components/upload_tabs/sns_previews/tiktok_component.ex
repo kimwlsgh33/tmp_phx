@@ -1,6 +1,6 @@
 defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TiktokComponent do
   use MyappWeb, :live_component
-  
+
   @impl true
   def update(assigns, socket) do
     socket =
@@ -95,7 +95,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TiktokComponen
                 </div>
               <% end %>
             </div>
-            
+
             <%= if @advanced_settings["allow_comments"] == false do %>
               <div class="mt-2 flex items-center text-xs text-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,7 +116,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TiktokComponen
                 Duet Off
               </span>
             <% end %>
-            
+
             <%= if @advanced_settings["allow_stitch"] == false do %>
               <span class="px-2 py-1 bg-gray-800 text-white rounded-md text-xs font-medium flex items-center bg-opacity-80">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,7 +126,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TiktokComponen
               </span>
             <% end %>
           </div>
-          
+
           <!-- 오른쪽 사이드 컨트롤 -->
           <div class="absolute right-2 bottom-20 flex flex-col items-center space-y-4">
             <!-- 좋아요(하트) 버튼 -->

@@ -1,6 +1,6 @@
 defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookComponent do
   use MyappWeb, :live_component
-  
+
   @impl true
   def update(assigns, socket) do
     socket =
@@ -27,7 +27,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
   defp generate_username do
     "Facebook User"
   end
-  
+
   # Helper to show appropriate privacy icon
   defp privacy_icon("public") do
     """
@@ -36,7 +36,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
     </svg>
     """
   end
-  
+
   defp privacy_icon("friends") do
     """
     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
@@ -44,7 +44,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
     </svg>
     """
   end
-  
+
   defp privacy_icon("private") do
     """
     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
@@ -52,7 +52,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
     </svg>
     """
   end
-  
+
   defp privacy_icon(_), do: nil
 
   @impl true
@@ -71,12 +71,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
           <p class="font-semibold text-sm"><%= generate_username() %></p>
           <div class="flex items-center text-xs text-gray-500">
             <span><%= DateTime.utc_now |> Calendar.strftime("%b %d at %I:%M %p") %></span>
-            
+
             <%= if privacy_icon(@advanced_settings["privacy"]) do %>
               <span class="mx-1">&bull;</span>
               <%= privacy_icon(@advanced_settings["privacy"]) %>
             <% end %>
-            
+
             <%= if @advanced_settings["location"] && @advanced_settings["location"] != "" do %>
               <span class="mx-1">&bull;</span>
               <span class="flex items-center">
@@ -99,7 +99,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
       <div class="px-4 pb-2">
         <%= if @advanced_settings["feeling"] && @advanced_settings["feeling"] != "" do %>
           <p class="text-sm mb-2">
-            <span class="font-medium"><%= generate_username() %></span> is feeling 
+            <span class="font-medium"><%= generate_username() %></span> is feeling
             <span class="font-medium"><%= @advanced_settings["feeling"] %></span>
           </p>
         <% end %>

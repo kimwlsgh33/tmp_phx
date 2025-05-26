@@ -52,7 +52,7 @@ defmodule MyappWeb.CoreComponents do
     >
       <div
         id={"#{@id}-bg"}
-        class="bg-zinc-50/90 dark:bg-gray-800/90 fixed inset-0 transition-opacity"
+        class="bg-black/50 dark:bg-black/70 fixed inset-0 transition-opacity"
         aria-hidden="true"
       />
       <div
@@ -70,7 +70,7 @@ defmodule MyappWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white dark:bg-zinc-900 p-14 shadow-lg ring-1 transition"
+              class="relative hidden rounded-2xl bg-white dark:bg-dark-900 p-14 shadow-xl ring-1 ring-light-300 dark:ring-dark-800 transition"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -104,7 +104,7 @@ defmodule MyappWeb.CoreComponents do
   attr :id, :string, doc: "the optional id of flash container"
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
-  attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+  attr :kind, :atom, values: [:info, :error, :warning, :success], doc: "used for styling and flash lookup"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -121,7 +121,11 @@ defmodule MyappWeb.CoreComponents do
       class={[
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
         @kind == :info &&
-          "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-100 ring-emerald-500 fill-cyan-900",
+          "bg-primary-50 dark:bg-primary-900 text-primary-800 dark:text-primary-100 ring-primary-500 fill-primary-900",
+        @kind == :success &&
+          "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-100 ring-emerald-500 fill-emerald-900",
+        @kind == :warning &&
+          "bg-amber-50 dark:bg-amber-900 text-amber-800 dark:text-amber-100 ring-amber-500 fill-amber-900",
         @kind == :error &&
           "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-100 shadow-md ring-rose-500 fill-rose-900"
       ]}
@@ -153,7 +157,9 @@ defmodule MyappWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
+      <.flash kind={:info} title={gettext("Information")} flash={@flash} />
+      <.flash kind={:success} title={gettext("Success!")} flash={@flash} />
+      <.flash kind={:warning} title={gettext("Warning")} flash={@flash} />
       <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
       <.flash
         id="client-error"
@@ -208,7 +214,7 @@ defmodule MyappWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white dark:bg-black">
+      <div class="mt-10 space-y-8 bg-white dark:bg-dark-950">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -237,8 +243,10 @@ defmodule MyappWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-gray-400 active:text-white/80 dark:text-gray-300 dark:hover:text-white",
+        "phx-submit-loading:opacity-75 rounded-lg py-2 px-4 transition-colors duration-200",
+        "text-sm font-semibold leading-6",
+        "bg-primary-600 hover:bg-primary-700 text-white",
+        "dark:bg-primary-700 dark:hover:bg-primary-800 dark:text-white", 
         @class
       ]}
       {@rest}
@@ -316,7 +324,7 @@ defmodule MyappWeb.CoreComponents do
 
     ~H"""
     <div>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600 dark:text-gray-400">
+      <label class="flex items-center gap-4 text-sm leading-6 text-gray-700 dark:text-gray-300">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
         <input
           type="checkbox"
@@ -324,7 +332,7 @@ defmodule MyappWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 dark:border-zinc-600 text-zinc-900 focus:ring-0"
+          class="rounded border-light-300 dark:border-dark-800 text-primary-600 dark:text-primary-500 focus:ring-0 focus:ring-offset-0"
         />
         {@label}
       </label>
@@ -359,9 +367,10 @@ defmodule MyappWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-white focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
+          "mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem] transition-colors duration-200",
+          "text-gray-800 bg-white dark:text-white dark:bg-dark-900",
           @errors == [] &&
-            "border-zinc-300 dark:border-gray-300 dark:bg-zinc-800 focus:border-zinc-400",
+            "border-light-300 focus:border-primary-500 dark:border-dark-800 dark:focus:border-primary-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -382,9 +391,10 @@ defmodule MyappWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg bg-zinc-900 text-gray-200 focus:ring-0 sm:text-sm sm:leading-6",
-          "placeholder-gray-400 border-gray-400",
-          @errors == [] && "border-gray-400 focus:border-[#FD4F00]",
+          "mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6 transition-colors duration-200",
+          "text-gray-800 bg-white dark:text-white dark:bg-dark-900",
+          "placeholder-gray-400 dark:placeholder-gray-500",
+          @errors == [] && "border-light-300 focus:border-primary-500 dark:border-dark-800 dark:focus:border-primary-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -402,7 +412,7 @@ defmodule MyappWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-gray-300">
+    <label for={@for} class="block text-sm font-semibold leading-6 text-gray-800 dark:text-gray-200">
       {render_slot(@inner_block)}
     </label>
     """

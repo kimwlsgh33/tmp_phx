@@ -43,24 +43,24 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Tikto
       # Skip target and unused parameters
       {"_target", _}, acc -> acc
       {"_unused_" <> _, _}, acc -> acc
-      
+
       # Handle select/dropdown values (key=field&value format)
       {key, value}, acc when is_binary(key) and binary_part(key, 0, min(4, byte_size(key))) == "key=" ->
         case String.split(key, "&") do
-          [param_key, "value"] -> 
+          [param_key, "value"] ->
             # For select inputs, just use the value directly
             real_key = String.replace_prefix(param_key, "key=", "")
             Map.put(acc, real_key, value)
-            
-          [param_key, "checked"] -> 
+
+          [param_key, "checked"] ->
             # For checkbox inputs, convert to boolean
             real_key = String.replace_prefix(param_key, "key=", "")
             is_checked = value == "on" || value == "true"
             Map.put(acc, real_key, is_checked)
-            
+
           _ -> acc  # Skip unknown formats
         end
-        
+
       # Skip any other parameters
       _, acc -> acc
     end)
@@ -70,12 +70,6 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Tikto
   def render(assigns) do
     ~H"""
     <div class="tiktok-advanced-settings">
-      <h4 class="text-md font-medium text-black mb-3 flex items-center">
-        <svg class="w-5 h-5 mr-1" viewBox="0 0 24 24">
-          <path fill="#000000" d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
-        </svg>
-      </h4>
-
       <div class="space-y-3">
         <form phx-change="update_setting" phx-target={@myself}>
           <div>

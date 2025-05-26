@@ -1,6 +1,6 @@
 defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramComponent do
   use MyappWeb, :live_component
-  
+
   @impl true
   def update(assigns, socket) do
     socket =
@@ -18,11 +18,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
 
     {:ok, socket}
   end
-  
+
   # Helper for setting initial view based on content_type
   defp assign_initial_view_state(socket) do
     content_type = socket.assigns.advanced_settings["content_type"] || "feed"
-    
+
     socket
     |> assign(:show_reels_view, content_type == "reel")
     |> assign(:show_feed_view, content_type == "feed")
@@ -280,7 +280,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
           </div>
         </div>
       </div>
-      
+
       <!-- Instagram Story View -->
       <div id="instagram-story-view" class={@advanced_settings["content_type"] != "story" && "hidden"}>
         <div class="bg-gray-800 relative">
@@ -291,7 +291,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
               <%= if @preview_url do %>
                 <video src={@preview_url} class="w-full h-full object-cover" autoplay muted loop />
               <% end %>
-              
+
               <!-- 상단 스토리 헤더 -->
               <div class="absolute top-0 left-0 right-0 p-3 flex items-center">
                 <div class="flex items-center">
@@ -303,7 +303,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
                     <span class="text-xs text-gray-200 ml-2">12m</span>
                   </div>
                 </div>
-                
+
                 <div class="ml-auto text-white">
                   <!-- more options -->
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -311,7 +311,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
                   </svg>
                 </div>
               </div>
-              
+
               <!-- 하단 설명 -->
               <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
                 <p class="text-white text-sm"><%= @upload_form["description"] || "Instagram Story 미리보기" %></p>

@@ -11,10 +11,10 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Faceb
     platform_key = assigns.platform_key
     # Extract platform-specific settings from the complete settings map
     # Support both string and atom keys for backward compatibility
-    platform_settings = 
-      Map.get(assigns.advanced_settings, platform_key, %{}) || 
+    platform_settings =
+      Map.get(assigns.advanced_settings, platform_key, %{}) ||
       Map.get(assigns.advanced_settings, String.to_existing_atom(platform_key), %{})
-    
+
     # Ensure default values for facebook settings
     default_settings = %{
       "privacy" => "public",
@@ -22,10 +22,10 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Faceb
       "location" => "",
       "feeling" => ""
     }
-    
+
     # Merge defaults with existing settings
     merged_settings = Map.merge(default_settings, platform_settings)
-    
+
     socket =
       socket
       |> assign(assigns)
@@ -38,12 +38,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Faceb
   def handle_event("update_setting", params, socket) do
     # Log incoming params to help with debugging
     IO.inspect(params, label: "Facebook Settings update_setting params")
-    
+
     updated_settings = update_settings(socket.assigns.platform_settings, params)
 
     # Store updated settings locally
     socket = assign(socket, :platform_settings, updated_settings)
-    
+
     # Send event to the root LiveView instead of directly to parent component
     # This will enable us to bypass the problematic CID parent_pid
     send(self(), {:advanced_settings_updated, %{
@@ -69,14 +69,14 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Faceb
       _ -> settings # If no valid key format, return settings unchanged
     end
   end
-  
+
   # Handle direct key-value pairs (fallback for other formats)
   defp update_settings(settings, %{"value" => value}) do
     # For direct value updates without a key, just return the original settings
     # This is a fallback for when we receive unexpected data format
     settings
   end
-  
+
   # Fallback clause to prevent crashes
   defp update_settings(settings, _params) do
     # If we get an unexpected parameter format, just return the original settings
@@ -87,12 +87,6 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Faceb
   def render(assigns) do
     ~H"""
     <div class="facebook-advanced-settings">
-      <h4 class="text-md font-medium text-blue-700 mb-3 flex items-center">
-        <svg class="w-5 h-5 mr-1" fill="#1877F2" viewBox="0 0 24 24">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-        </svg>
-      </h4>
-
       <div class="space-y-3">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Privacy</label>

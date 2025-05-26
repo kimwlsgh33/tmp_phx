@@ -25,6 +25,7 @@ import ThemeToggle from "./hooks/theme_toggle";
 import DocsNavigation from "./hooks/docs_navigation";
 import FileUploader from "./hooks/file_uploader";
 import SettingsStorage from "./hooks/settings_storage";
+import ValidationHooks from "./hooks/validation_hooks";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -34,6 +35,7 @@ let Hooks = {
   DocsNavigation,
   FileUploader,
   SettingsStorage,
+  ...ValidationHooks,
 };
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

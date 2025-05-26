@@ -21,54 +21,42 @@
     </script>
   </head>
   <body
-    class="h-full flex flex-col"
+    class="h-full flex flex-col bg-white dark:bg-black"
     data-logged-in={if assigns[:current_user], do: "true", else: "false"}
   >
     <!-- Navigation -->
-    <header class="bg-white border-b border-gray-200 z-1">
+    <header class="bg-white dark:bg-dark-950 border-b border-light-200 dark:border-dark-800 z-1">
       <nav class="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8" aria-label="Top">
         <div class="flex w-full items-center justify-between border-b border-gray-200 py-3 lg:border-none">
           <div class="flex items-center">
             <a href={~p"/"} class="flex items-center">
               <img src="/images/logos/ingrey.svg" alt="CreatorSync Logo" loading="lazy" />
-              <span class="text-xl font-bold text-blak">ingrey</span>
+              <span class="text-xl font-bold text-gray-900 dark:text-white">ingrey</span>
             </a>
           </div>
           <div class="flex items-center">
             <div class="hidden space-x-8 lg:block">
             <a
                 href={~p"/dashboard"}
-                class={"text-base font-medium #{if @conn.request_path == "/dashboard", do: "text-blue-600", else: "text-black"} hover:text-gray-400 transition"}
+                class={"text-base font-medium #{if @conn.request_path == "/dashboard", do: "text-primary-600 dark:text-primary-500", else: "text-gray-900 dark:text-white"} hover:text-gray-500 dark:hover:text-gray-300 transition duration-200"}
               >
                 Dashboard
-              </a>
-              <a
-                href={~p"/docs"}
-                class={"text-base font-medium #{if @conn.request_path == "/docs", do: "text-blue-600", else: "text-black"} hover:text-gray-400 transition"}
-              >
-                Documentation
               </a>
               
               <a
                 href={~p"/marketing/pricing"}
-                class={"text-base font-medium #{if @conn.request_path == "/marketing/pricing", do: "text-blue-600", else: "text-blakc"} hover:text-gray-400 transition"}
+                class={"text-base font-medium #{if @conn.request_path == "/marketing/pricing", do: "text-primary-600 dark:text-primary-500", else: "text-gray-900 dark:text-white"} hover:text-gray-500 dark:hover:text-gray-300 transition duration-200"}
               >
                 Pricing
               </a>
               <a
-                href={~p"/marketing/features"}
-                class={"text-base font-medium #{if @conn.request_path == "/marketing/features", do: "text-blue-600", else: "text-black"} hover:text-gray-400 transition"}
-              >
-                Features
-              </a>
-              <a
                 href={~p"/marketing/company"}
-                class={"text-base font-medium #{if @conn.request_path == "/marketing/company", do: "text-blue-600", else: "text-black"} hover:text-gray-400 transition"}
+                class={"text-base font-medium #{if @conn.request_path == "/marketing/company", do: "text-primary-600 dark:text-primary-500", else: "text-gray-900 dark:text-white"} hover:text-gray-500 dark:hover:text-gray-300 transition duration-200"}
               >
                 Company
               </a>
             </div>
-            <div class="hidden lg:block h-5 w-px bg-gray-400 mx-4"></div>
+            <div class="hidden lg:block h-5 w-px bg-gray-300 dark:bg-gray-700 mx-4"></div>
             <div class="space-x-4">
               <%= if assigns[:current_user] do %>
                 <div
@@ -79,7 +67,7 @@
 <!-- User Avatar Button -->
                   <button
                     type="button"
-                    class="relative flex items-center gap-2 rounded-full bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+                    class="relative flex items-center gap-2 rounded-full bg-primary-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2"
                     id="user-menu-button"
                     aria-expanded="false"
                     aria-haspopup="true"
@@ -430,7 +418,7 @@
     <!-- </div> -->
     
 <!-- Main -->
-    <main class="flex-1 dark:bg-black flex flex-col">
+    <main class="flex-1 bg-white dark:bg-black flex flex-col">
       <div class="flex-1 flex flex-col justify-between">
         {@inner_content}
       </div>

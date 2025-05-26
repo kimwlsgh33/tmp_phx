@@ -194,12 +194,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
     ~H"""
     <div class="min-h-[600px]">
       <h2 class="text-xl font-semibold mb-4">Platform Selection</h2>
-      <p class="text-gray-600 mb-6">Choose where to publish your content and set scheduling options.</p>
+      <p class="text-gray-600 dark:text-gray-300 mb-6">Choose where to publish your content and set scheduling options.</p>
 
       <form phx-submit="save" phx-change="validate-form" phx-target={@myself}>
         <!-- Platform Selection: Select the SNS platform(s) to upload to. -->
         <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Where to upload</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Where to upload</label>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <%= for {platform, accounts} <- @social_accounts do %>
               <div class="relative">
@@ -214,12 +214,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                   class={
                     "flex items-center justify-center py-2 px-3 border rounded-md text-sm font-medium transition-colors w-full " <>
                     if(Enum.empty?(accounts)) do
-                      "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                     else
                       if(platform in @selected_platforms) do
-                        "bg-indigo-100 text-indigo-700 border-indigo-300 hover:bg-indigo-200"
+                        "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700 hover:bg-indigo-200 dark:hover:bg-indigo-800"
                       else
-                        "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                        "bg-white dark:bg-black text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900"
                       end
                     end
                   }
@@ -227,34 +227,15 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                   <%= case platform do %>
                     <% :twitter -> %>
                       <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-                        />
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                       </svg>
                     <% :instagram -> %>
-                      <!-- Official Instagram Glyph from brand.instagram.com, monochrome adaptation -->
-                      <svg
-                        class="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
-                        <circle cx="12" cy="12" r="5" />
-                        <circle cx="18" cy="6" r="1.3" />
+                      <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153.509.5.902 1.105 1.153 1.772.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 01-1.153 1.772c-.5.508-1.105.902-1.772 1.153-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 01-1.772-1.153 4.904 4.904 0 01-1.153-1.772c-.247-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.218-1.79.465-2.428.254-.66.598-1.216 1.153-1.772a4.88 4.88 0 011.772-1.153c.637-.247 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 1.802c-2.67 0-2.986.01-4.04.059-.976.045-1.505.207-1.858.344-.466.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.048 1.055-.058 1.37-.058 4.04 0 2.668.01 2.985.058 4.04.045.975.207 1.504.344 1.856.182.466.398.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.04.058 2.669 0 2.985-.01 4.04-.058.975-.045 1.504-.207 1.856-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.352.3-.88.344-1.856.048-1.055.058-1.372.058-4.04 0-2.67-.01-2.986-.058-4.04-.045-.975-.207-1.504-.344-1.856a3.09 3.09 0 00-.748-1.15 3.09 3.09 0 00-1.15-.748c-.352-.137-.88-.3-1.856-.344-1.054-.048-1.371-.058-4.04-.058zm0 3.063a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 8.468a3.333 3.333 0 100-6.666 3.333 3.333 0 000 6.666zm6.538-8.671a1.2 1.2 0 11-2.4 0 1.2 1.2 0 012.4 0z" />
                       </svg>
                     <% :facebook -> %>
                       <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path
-                          fill-rule="evenodd"
-                          d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                          clip-rule="evenodd"
-                        />
+                        <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
                       </svg>
                     <% :youtube -> %>
                       <!-- Official YouTube Brand Icon from youtube.com/about/brand-resources -->
@@ -295,7 +276,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                        phx-click="toggle-dropdown"
                        phx-target={@myself}
                        phx-value-platform={platform}
-                       class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium bg-white border rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
+                       class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium bg-white dark:bg-black border rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-all duration-200"
                        >
                        <div class="flex items-center">
                          <%= if selected_count > 0 do %>
@@ -314,15 +295,15 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                            <span class="truncate">Select accounts</span>
                          <% end %>
                        </div>
-                      <svg class="h-4 w-4 ml-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                      <svg class="h-4 w-4 ml-2 text-gray-500 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                       </svg>
                     </button>
 
                     <!-- Dropdown menu for account selection -->
                     <%= if Map.get(@platform_dropdowns, platform, false) do %>
-                      <div class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm max-h-60">
-                        <div class="sticky top-0 bg-gray-50 px-4 py-2 text-xs font-medium text-gray-500 border-b">
+                      <div class="absolute z-10 mt-1 w-full bg-white dark:bg-black shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-20 overflow-auto focus:outline-none sm:text-sm max-h-60">
+                        <div class="sticky top-0 bg-gray-50 dark:bg-gray-900 px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-300 border-b dark:border-gray-700">
                           Select multiple accounts
                         </div>
                         <%= for account <- accounts do %>
@@ -332,7 +313,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                             phx-target={@myself}
                             phx-value-platform={platform}
                             phx-value-account_id={account.id}
-                            class={"w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors duration-150 #{if account.selected, do: "bg-indigo-50", else: ""}"}
+                            class={"w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150 #{if account.selected, do: "bg-indigo-50", else: ""}"}
                           >
                             <div class="flex items-center">
                               <div class="relative flex-shrink-0">
@@ -348,8 +329,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                                 <% end %>
                               </div>
                               <div>
-                                <p class={"font-medium #{if account.selected, do: "text-indigo-700", else: "text-gray-900"}"}>@<%= account.username %></p>
-                                <p class="text-xs text-gray-500"><%= platform |> Atom.to_string() |> String.capitalize() %> Account</p>
+                                <p class={"font-medium #{if account.selected, do: "text-indigo-700", else: "text-gray-900 dark:text-gray-300"}"}>@<%= account.username %></p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400"><%= platform |> Atom.to_string() |> String.capitalize() %> Account</p>
                               </div>
                             </div>
                           </button>
@@ -393,7 +374,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
             <% end %>
           </div>
           <%= if !Enum.empty?(@selected_platforms) do %>
-            <p class="mt-2 text-sm text-gray-600">
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
               Selected: <%= @selected_platforms
               |> Enum.map(&(Atom.to_string(&1) |> String.capitalize()))
               |> Enum.join(", ") %>
@@ -442,23 +423,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
           <% end %>
         </div>
 
-        <!-- Navigation and Action Buttons -->
-        <div class="flex justify-between mt-8">
-          <div>
-          </div>
-          <button
-            type="button"
-            phx-click="goto-file-selection"
-            phx-target={@myself}
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            disabled={Enum.empty?(@selected_platforms)}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
-            <span>Select Files</span>
-          </button>
-        </div>
+        <!-- Hidden validation state -->
+        <div id="sns-validation-state" phx-hook="SnsValidation" data-valid={!Enum.empty?(@selected_platforms) && "true" || "false"} class="hidden"></div>
       </form>
     </div>
     """

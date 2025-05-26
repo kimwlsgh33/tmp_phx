@@ -25,14 +25,14 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TwitterCompone
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="overflow-hidden bg-black text-white shadow-lg rounded-xl" style="width: 370px;">
+    <div class="overflow-hidden bg-black text-white shadow-lg rounded-xl" style="width: 300px;">
       <!-- X Post Header -->
       <div class="p-4">
         <div class="flex items-start mb-3">
           <!-- Profile Image -->
           <div class="mr-3">
-            <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-              <svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+              <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none">
                 <path d="M22 5.09992L17.5996 10.9999H13.5996L9.59961 14.9999H5.59961" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 18.9999L5.59922 15.0009" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -63,7 +63,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TwitterCompone
             </div>
 
             <!-- Post Content -->
-            <div class="text-[15px] leading-tight mb-3">
+            <div class="text-[14px] leading-tight mb-2">
               <%= raw highlight_hashtags(@upload_form["description"] || "Explore APAC blockchain trends at Apex 2025. Learn from local experts and uncover new opportunities for global growth. Sign up today!") %>
             </div>
           </div>
@@ -75,7 +75,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TwitterCompone
             <video src={@preview_url} class="w-full h-auto rounded-xl" controls />
           <% else %>
             <div class="relative rounded-xl overflow-hidden">
-              <div class="w-full aspect-video bg-gradient-to-br from-gray-800 to-black relative">
+              <div class="w-full" style="aspect-ratio: 16/9; max-height: 140px; background: linear-gradient(to bottom right, #1a1a1a, #000);">
                 <div class="absolute inset-0 flex items-center justify-center">
                   <div class="text-gray-400">Media preview</div>
                 </div>

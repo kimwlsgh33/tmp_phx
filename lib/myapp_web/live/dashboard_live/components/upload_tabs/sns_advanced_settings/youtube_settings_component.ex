@@ -30,7 +30,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Youtu
   def handle_event("update_setting", params, socket) do
     # 로그를 추가하여 디버깅에 도움이 되도록 합니다
     IO.inspect(params, label: "YouTube form params")
-    
+
     updated_settings = update_settings(socket.assigns.platform_settings, params)
 
     # 메시지를 대시보드 LiveView로 직접 전송
@@ -44,28 +44,28 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Youtu
     # _target, _csrf 등의 내부 필드는 무시
     params
     |> Enum.reduce(settings, fn
-      {"_" <> _, _}, acc -> 
+      {"_" <> _, _}, acc ->
         # 언더스코어로 시작하는 필드는 Phoenix 내부 필드이므로 무시
         acc
-      
+
       {"key=" <> rest, value}, acc ->
         # key= 접두사를 가진 폼 필드 처리
         case String.split(rest, "&") do
-          [key, "value"] -> 
+          [key, "value"] ->
             # 값을 가진 필드 (예: select, input text)
             Map.put(acc, key, value)
-          
-          [key, "checked"] -> 
+
+          [key, "checked"] ->
             # 체크박스
             Map.put(acc, key, value == "on")
-            
+
           _ -> acc
         end
-        
+
       _, acc -> acc  # 기타 필드 무시
     end)
   end
-  
+
   # 폼에서 예상하지 못한 형식의 데이터가 오는 경우에 대한 폴백 처리
   defp update_settings(settings, params) when map_size(params) == 0 do
     settings
@@ -75,12 +75,6 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Youtu
   def render(assigns) do
     ~H"""
     <div class="youtube-advanced-settings">
-      <h4 class="text-md font-medium text-red-600 mb-3 flex items-center">
-        <svg class="w-5 h-5 mr-1" viewBox="0 0 24 24" fill="#FF0000">
-          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-        </svg>
-      </h4>
-
       <div class="space-y-3">
         <form phx-change="update_setting" phx-target={@myself}>
           <div>

@@ -1,6 +1,6 @@
 defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeComponent do
   use MyappWeb, :live_component
-  
+
   @impl true
   def update(assigns, socket) do
     socket =
@@ -19,11 +19,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
 
     {:ok, socket}
   end
-  
+
   # Helper for setting initial view based on content_type
   defp assign_initial_view_state(socket) do
     content_type = socket.assigns.advanced_settings["content_type"] || "video"
-    
+
     socket
     |> assign(:show_shorts_view, content_type == "shorts")
     |> assign(:show_standard_view, content_type == "video")
@@ -247,7 +247,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
                   Public
                 </span>
             <% end %>
-            
+
             <%= if @advanced_settings["made_for_kids"] == true do %>
               <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -258,7 +258,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
             <% end %>
           </div>
         </div>
-          
+
           <!-- Channel info -->
         <div class="flex items-center mb-4">
           <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white mr-2">
@@ -308,7 +308,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
           <%= raw highlight_hashtags(@upload_form["description"]) %>
         </div>
         <button class="text-sm text-gray-500 font-medium">SHOW MORE</button>
-        
+
         <!-- Comments section (conditionally rendered based on settings) -->
         <%= if @advanced_settings["allow_comments"] do %>
           <div class="mt-4 border-t border-gray-200 pt-3">
@@ -323,7 +323,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
                 <input type="text" placeholder="Add a comment..." class="w-full border-b border-gray-300 pb-1 text-sm focus:outline-none" />
               </div>
             </div>
-            
+
             <!-- Example comment -->
             <div class="flex mt-4">
               <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white mr-3">

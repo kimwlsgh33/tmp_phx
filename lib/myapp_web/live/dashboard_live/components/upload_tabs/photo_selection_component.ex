@@ -205,24 +205,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PhotoSelectionComponent d
         </div>
       <% end %>
 
-      <!-- Actions -->
-      <div class="flex justify-between">
-        <div>
-          <!-- Left side - can be empty or have help text -->
-        </div>
-        <button
-          type="button"
-          phx-click="goto-description"
-          phx-target={@myself}
-          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-          disabled={@files_selected == false}
-        >
-          Continue to Description
-          <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-        </button>
-      </div>
+      <!-- Hidden validation state -->
+      <div id="photo-validation-state" phx-hook="PhotoValidation" data-valid={@files_selected && "true" || "false"} class="hidden"></div>
     </div>
     """
   end

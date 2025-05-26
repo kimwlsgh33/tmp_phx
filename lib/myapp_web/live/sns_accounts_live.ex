@@ -122,8 +122,8 @@ defmodule MyappWeb.SnsAccountsLive do
       <div class="mb-6">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-black">SNS Account Management</h1>
-            <p class="text-gray-500">Connect and manage your social media accounts</p>
+            <h1 class="text-2xl font-bold text-black dark:text-white">SNS Account Management</h1>
+            <p class="text-gray-500 dark:text-gray-300">Connect and manage your social media accounts</p>
           </div>
           <div>
             <.link
@@ -139,17 +139,17 @@ defmodule MyappWeb.SnsAccountsLive do
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold mb-4">Connected Accounts</h2>
+      <div class="bg-white dark:bg-black rounded-lg shadow-md p-6 dark:border dark:border-gray-700">
+        <h2 class="text-xl font-semibold mb-4 dark:text-white">Connected Accounts</h2>
 
         <%= if @loading_accounts do %>
           <div class="py-10 text-center">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-            <p class="mt-2 text-gray-600">Loading your accounts...</p>
+            <p class="mt-2 text-gray-600 dark:text-gray-300">Loading your accounts...</p>
           </div>
         <% else %>
           <!-- SNS Platform Tabs -->
-          <div class="border-b border-gray-200 mb-6">
+          <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
             <ul class="flex flex-wrap -mb-px" role="tablist">
               <%= for platform <- @social_platforms do %>
                 <li class="mr-2" role="presentation">
@@ -204,10 +204,10 @@ defmodule MyappWeb.SnsAccountsLive do
           <div class="tab-content">
             <% platform = @active_tab %>
             <% accounts = @social_accounts[platform] || [] %>
-              <div class="border rounded-lg p-4">
+              <div class="border rounded-lg p-4 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
                   <div class="ml-3">
-                    <h3 class="font-semibold text-gray-900">
+                    <h3 class="font-semibold text-gray-900 dark:text-white">
                       <%= platform |> Atom.to_string() |> String.capitalize() %> Accounts
                     </h3>
                   </div>
@@ -221,9 +221,9 @@ defmodule MyappWeb.SnsAccountsLive do
                 </div>
                 
                 <!-- Connected accounts list -->
-                <div class="divide-y divide-gray-200">
+                <div class="divide-y divide-gray-200 dark:divide-gray-700">
                   <%= if Enum.empty?(accounts) do %>
-                    <div class="py-4 text-center text-gray-500 italic">
+                    <div class="py-4 text-center text-gray-500 dark:text-gray-400 italic">
                       No connected accounts. Click "Add Account" to connect.
                     </div>
                   <% else %>
@@ -231,13 +231,13 @@ defmodule MyappWeb.SnsAccountsLive do
                       <div class="py-4 flex items-center justify-between">
                         <div class="flex items-center">
                           <div class="flex-shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                               <img src={account.avatar} alt="" class="h-full w-full object-cover" />
                             </div>
                           </div>
                           <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-900"><%= account.username %></p>
-                            <p class="text-xs text-gray-500">ID: <%= account.id %></p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white"><%= account.username %></p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">ID: <%= account.id %></p>
                           </div>
                         </div>
                         <button
@@ -261,9 +261,9 @@ defmodule MyappWeb.SnsAccountsLive do
     <!-- Add account modal -->
     <%= if @show_add_account_modal do %>
       <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-auto">
+        <div class="bg-white dark:bg-black rounded-lg p-6 w-full max-w-md mx-auto dark:border dark:border-gray-700">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">
+            <h3 class="text-lg font-semibold dark:text-white">
               Connect <%= @selected_platform |> Atom.to_string() |> String.capitalize() %> Account
             </h3>
             <button phx-click="close-modal" class="text-gray-500 hover:text-gray-700">
@@ -273,14 +273,14 @@ defmodule MyappWeb.SnsAccountsLive do
             </button>
           </div>
 
-          <p class="text-sm text-gray-600 mb-6">
+          <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
             You will be redirected to <%= @selected_platform |> Atom.to_string() |> String.capitalize() %> to authorize access to your account.
           </p>
 
           <div class="flex justify-end space-x-3">
             <button 
               phx-click="close-modal" 
-              class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-900"
             >
               Cancel
             </button>

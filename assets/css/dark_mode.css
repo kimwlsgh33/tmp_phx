@@ -1,0 +1,96 @@
+/* Dark mode 추가 스타일 */
+
+/* SVG 아이콘 다크모드 스타일 */
+.dark svg:not([class*="text-"]) {
+  color: white;
+  fill: currentColor;
+}
+
+/* 다크모드 트랜지션 효과 */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 다크모드 배경 */
+.dark {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* 다크모드에서 버튼 강조 효과 */
+.dark .btn-primary {
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.4);
+}
+
+/* 다크모드에서 입력 필드 포커스 */
+.dark input:focus, 
+.dark textarea:focus, 
+.dark select:focus {
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+  border-color: #4f46e5 !important;
+}
+
+/* 다크모드에서 입력 필드 배경색 */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #4a5568 !important;
+}
+
+/* Advanced Platform Settings의 입력 필드와 레이블 */
+.dark .twitter-advanced-settings label,
+.dark .facebook-advanced-settings label,
+.dark .instagram-advanced-settings label,
+.dark .tiktok-advanced-settings label,
+.dark .youtube-advanced-settings label {
+  color: #e5e7eb !important;
+}
+
+.dark .twitter-advanced-settings input[type="text"],
+.dark .facebook-advanced-settings input[type="text"],
+.dark .instagram-advanced-settings input[type="text"],
+.dark .tiktok-advanced-settings input[type="text"],
+.dark .youtube-advanced-settings input[type="text"],
+.dark .twitter-advanced-settings select,
+.dark .facebook-advanced-settings select,
+.dark .instagram-advanced-settings select,
+.dark .tiktok-advanced-settings select,
+.dark .youtube-advanced-settings select {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .twitter-advanced-settings p,
+.dark .facebook-advanced-settings p,
+.dark .instagram-advanced-settings p,
+.dark .tiktok-advanced-settings p,
+.dark .youtube-advanced-settings p {
+  color: #9ca3af !important;
+}
+
+/* 다크모드에서 테이블 스타일 */
+.dark table {
+  border-color: #374151;
+}
+
+.dark table th {
+  background-color: #1f2937;
+}
+
+.dark table tr:nth-child(even) {
+  background-color: #111827;
+}
+
+/* 다크모드에서 카드 스타일 */
+.dark .card {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+/* 다크모드에서 기본 SVG 아이콘 색상 */
+.dark .icon-default {
+  fill: #f9fafb;
+}

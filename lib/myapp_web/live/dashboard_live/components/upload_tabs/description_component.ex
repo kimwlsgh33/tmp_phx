@@ -58,8 +58,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
     end
   end
 
-  # Validation logic that takes selected platforms into account
-  defp valid_form?(form) do
+  # Validation function used in both the event handler and template
+  def valid_form?(form) do
     # Description is always required
     description = Map.get(form, "description", "")
     title = Map.get(form, "title", "")
@@ -85,8 +85,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
     <div class="min-h-[600px]">
       <div class="flex">
         <div class="w-1/2 pr-6">
-          <h2 class="text-xl font-semibold mb-4">Post Description</h2>
-          <p class="text-gray-600 mb-6">Add details about your content to improve discovery and engagement.</p>
+          <h2 class="text-xl font-semibold mb-4 dark:text-white">Post Description</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-6">Add details about your content to improve discovery and engagement.</p>
 
           <form phx-change="validate-form" phx-target={@myself}>
             <div class="space-y-4">
@@ -95,9 +95,9 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
           <!-- Title field - only shown when YouTube is selected -->
           <%= if youtube_selected do %>
           <div>
-            <label for="title" class="block text-sm font-medium text-gray-700">
+            <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Title <span class="text-red-500">*</span>
-              <span class="text-xs text-indigo-600 ml-1">(Required for YouTube)</span>
+              <span class="text-xs text-indigo-600 dark:text-indigo-400 ml-1">(Required for YouTube)</span>
             </label>
             <input
               type="text"
@@ -115,7 +115,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
           <% end %>
 
           <div>
-            <label for="description" class="block text-sm font-medium text-gray-700">
+            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Description <span class="text-red-500">*</span>
             </label>
             <textarea
@@ -132,7 +132,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
           </div>
 
           <div>
-            <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
+            <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tags</label>
             <input
               type="text"
               id="tags"
@@ -141,42 +141,19 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Enter tags separated by commas"
             />
-            <p class="mt-1 text-xs text-gray-500">
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Add relevant tags to help people discover your content
             </p>
           </div>
             </div>
 
-            <!-- Navigation buttons -->
-            <div class="flex justify-between mt-8">
-          <button
-            type="button"
-            phx-click="goto-photo-selection"
-            phx-target={@myself}
-            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-            </svg>
-            Back to Photos
-          </button>
-          <button
-            type="button"
-            phx-click="goto-preview"
-            phx-target={@myself}
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Continue to Preview
-            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
-          </button>
-            </div>
+            <!-- Hidden state for validation -->
+            <div id="form-validation-state" phx-hook="FormValidation" data-valid={valid_form?(@upload_form) && "true" || "false"} class="hidden"></div>
           </form>
         </div>
         
         <!-- Advanced Settings Column -->
-        <div class="w-1/2 pl-6 border-l border-gray-200">
+        <div class="w-1/2 pl-6 border-l border-gray-200 dark:border-gray-700">
           <.live_component
             module={SnsAdvancedSettingsComponent}
             id="sns-advanced-settings"

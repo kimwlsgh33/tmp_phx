@@ -44,6 +44,12 @@ defmodule MyappWeb.DashboardLive do
        "schedule_at" => nil
      })
      |> assign(:advanced_settings, %{})
+     |> assign(:validation_states, %{
+       "sns_selection" => false,
+       "photo_selection" => false,
+       "description" => false,
+       "preview" => true  # Preview is always valid
+     })
      |> allow_upload(:video,
        accept: ~w(.mp4 .mov .avi .wmv .flv .webm),
        max_entries: 5,
@@ -62,8 +68,8 @@ defmodule MyappWeb.DashboardLive do
       else
         socket.assigns.completed_tabs
       end
-        
-    {:noreply, 
+
+    {:noreply,
       socket
       |> assign(:completed_tabs, completed_tabs)
       |> push_patch(to: ~p"/dashboard?tab=photo_selection")}
@@ -78,11 +84,30 @@ defmodule MyappWeb.DashboardLive do
       else
         socket.assigns.completed_tabs
       end
-      
-    {:noreply, 
+
+    {:noreply,
       socket
       |> assign(:completed_tabs, completed_tabs)
       |> push_patch(to: ~p"/dashboard?tab=description")}
+  end
+  
+  @impl true
+  def handle_event("update_validation_state", %{"component" => component, "valid" => valid}, socket) do
+    # Update the validation state for the component
+    validation_states = Map.put(socket.assigns.validation_states, component, valid)
+    
+    # Mark the tab as completed if it's valid and not already completed
+    completed_tabs = 
+      if valid && component not in socket.assigns.completed_tabs do
+        [component | socket.assigns.completed_tabs]
+      else
+        socket.assigns.completed_tabs
+      end
+      
+    {:noreply, 
+      socket 
+      |> assign(:validation_states, validation_states)
+      |> assign(:completed_tabs, completed_tabs)}
   end
 
   @impl true
@@ -94,8 +119,8 @@ defmodule MyappWeb.DashboardLive do
       else
         socket.assigns.completed_tabs
       end
-        
-    {:noreply, 
+
+    {:noreply,
       socket
       |> assign(:completed_tabs, completed_tabs)
       |> push_patch(to: ~p"/dashboard?tab=photo_selection")}
@@ -110,8 +135,8 @@ defmodule MyappWeb.DashboardLive do
       else
         socket.assigns.completed_tabs
       end
-      
-    {:noreply, 
+
+    {:noreply,
       socket
       |> assign(:completed_tabs, completed_tabs)
       |> push_patch(to: ~p"/dashboard?tab=sns_selection")}
@@ -126,8 +151,8 @@ defmodule MyappWeb.DashboardLive do
       else
         socket.assigns.completed_tabs
       end
-      
-    {:noreply, 
+
+    {:noreply,
       socket
       |> assign(:completed_tabs, completed_tabs)
       |> push_patch(to: ~p"/dashboard?tab=preview")}
@@ -146,45 +171,45 @@ defmodule MyappWeb.DashboardLive do
   def handle_info({:update_advanced_settings, settings}, socket) do
     # Merge the new settings with existing settings
     updated_settings = Map.merge(socket.assigns.advanced_settings, settings)
-    
+
     # Save to local storage
     if socket.assigns.current_user do
       user_id = socket.assigns.current_user.id
       push_event(socket, "save_settings", %{
-        key: "user_#{user_id}_advanced_settings", 
+        key: "user_#{user_id}_advanced_settings",
         value: Jason.encode!(updated_settings)
       })
     end
-    
+
     {:noreply,
      socket
      |> assign(:advanced_settings, updated_settings)}
   end
-  
+
   @impl true
   def handle_info({:advanced_settings_updated, %{platform: platform, settings: settings}}, socket) do
     # This is our new handler for messages sent by the Facebook/Twitter components
     # Convert the new format to existing format and use the existing handler
-    
+
     # Create a map with the platform as key and settings as value
     # This matches the format expected by the original update_advanced_settings
     platform_settings = %{platform => settings}
-    
+
     # Log what we're updating to help with debugging
     IO.inspect(platform_settings, label: "SNS Advanced Settings Update")
-    
+
     # Merge the new settings with existing settings
     updated_settings = Map.merge(socket.assigns.advanced_settings, platform_settings)
-    
+
     # Save to local storage
     if socket.assigns.current_user do
       user_id = socket.assigns.current_user.id
       push_event(socket, "save_settings", %{
-        key: "user_#{user_id}_advanced_settings", 
+        key: "user_#{user_id}_advanced_settings",
         value: Jason.encode!(updated_settings)
       })
     end
-    
+
     {:noreply,
      socket
      |> assign(:advanced_settings, updated_settings)}
@@ -197,23 +222,23 @@ defmodule MyappWeb.DashboardLive do
      socket
      |> assign(:preview_url, preview_url)}
   end
-  
+
   @impl true
   def handle_info(:load_saved_settings, socket) do
     if socket.assigns.current_user do
       user_id = socket.assigns.current_user.id
       push_event(socket, "load_settings", %{key: "user_#{user_id}_advanced_settings"})
     end
-    
+
     {:noreply, socket}
   end
-  
+
   @impl true
   def handle_event("settings_loaded", %{"value" => settings_json}, socket) do
     case Jason.decode(settings_json) do
-      {:ok, settings} -> 
+      {:ok, settings} ->
         {:noreply, assign(socket, :advanced_settings, settings)}
-      {:error, _} -> 
+      {:error, _} ->
         {:noreply, socket}
     end
   end
@@ -420,18 +445,18 @@ defmodule MyappWeb.DashboardLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="dashboard" class="flex flex-col min-h-screen bg-white" phx-hook="SettingsStorage">
+    <div id="dashboard" class="flex flex-col min-h-screen bg-white dark:bg-black" phx-hook="SettingsStorage">
       <div class="flex-1">
         <div class="p-6">
           <div class="mb-6 flex justify-between items-center">
             <div>
-              <h1 class="text-2xl font-bold text-black">Social Media Dashboard</h1>
-              <p class="text-gray-400">Manage your content across multiple platforms</p>
+              <h1 class="text-2xl font-bold text-black dark:text-white">Social Media Dashboard</h1>
+              <p class="text-gray-400 dark:text-gray-300">Manage your content across multiple platforms</p>
             </div>
             <div>
               <.link
                 navigate={~p"/sns-accounts"}
-                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
@@ -444,14 +469,14 @@ defmodule MyappWeb.DashboardLive do
     <!-- Tabs Navigation -->
           <div class="mb-6">
             <nav class="flex items-center justify-center space-x-6 mb-6">
-              <%= for {step, idx, label} <- [
-                {"sns_selection", 1, "Choose Platforms"},
-                {"photo_selection", 2, "Select Files"},
-                {"description", 3, "Add Details"},
-                {"preview", 4, "Preview"}
+              <%= for {step, idx, label, icon_render} <- [
+                {"sns_selection", 1, "Choose Platforms", fn _ -> render_platform_icons(%{}) end},
+                {"photo_selection", 2, "Select Files", fn _ -> render_file_icon(%{}) end},
+                {"description", 3, "Add Details", fn _ -> render_description_icon(%{}) end},
+                {"preview", 4, "Preview", fn _ -> render_preview_icon(%{}) end}
               ] do %>
                 <button type="button" phx-click={JS.patch(~p"/dashboard?tab=#{step}")} class="flex items-center space-x-2">
-                  <div class={"w-8 h-8 rounded-full flex items-center justify-center " <> if @active_tab == step, do: "bg-black text-white", else: "bg-gray-200 text-gray-500"}>
+                  <div class={"w-8 h-8 rounded-full flex items-center justify-center " <> if @active_tab == step, do: "bg-primary-600 dark:bg-primary-700 text-white", else: "bg-gray-200 dark:bg-dark-800 text-gray-500 dark:text-gray-400"}>
                     <%= if step in @completed_tabs do %>
                       <!-- Check mark icon -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -461,60 +486,106 @@ defmodule MyappWeb.DashboardLive do
                       <%= idx %>
                     <% end %>
                   </div>
-                  <span class={"text-sm uppercase " <> if @active_tab == step, do: "text-black font-semibold", else: "text-gray-500"}>
-                    <%= label %>
-                  </span>
+                  <div class="flex flex-col items-start">
+                    <span class={"text-sm uppercase font-medium " <> if @active_tab == step, do: "text-black dark:text-white font-semibold", else: "text-gray-500 dark:text-gray-400"}>
+                      <%= label %>
+                    </span>
+                    <div class={"flex items-center mt-1 " <> if @active_tab == step, do: "text-primary-600 dark:text-primary-500", else: "text-gray-400 dark:text-gray-500"}>
+                      <%= icon_render.(%{}) %>
+                    </div>
+                  </div>
                 </button>
                 <%= if idx < 4 do %>
-                  <div class="flex-1 h-px bg-gray-200 mx-2"></div>
+                  <div class="flex-1 h-px bg-gray-200 dark:bg-dark-800 mx-2"></div>
                 <% end %>
               <% end %>
             </nav>
           </div>
 
     <!-- Tab Content -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <%= case @active_tab do %>
-              <% "photo_selection" -> %>
-                <.live_component
-                  module={PhotoSelectionComponent}
-                  id="photo-selection"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  upload_progress={0}
-                  preview_url={@preview_url}
-                  selected_platforms={@selected_platforms}
-                />
-              <% "description" -> %>
-                <.live_component
-                  module={DescriptionComponent}
-                  id="description"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  upload_form={@upload_form}
-                  selected_platforms={@selected_platforms}
-                  advanced_settings={@advanced_settings}
-                />
-              <% "sns_selection" -> %>
-                <.live_component
-                  module={SnsSelectionComponent}
-                  id="sns-selection"
-                  current_user={@current_user}
-                  parent_pid={self()}
-                  social_accounts={@social_accounts}
-                  selected_platforms={@selected_platforms}
-                  upload_form={@upload_form}
-                />
-              <% "preview" -> %>
-                <.live_component
-                  module={PreviewComponent}
-                  id="preview"
-                  selected_platforms={@selected_platforms}
-                  preview_url={@preview_url}
-                  upload_form={@upload_form}
-                  advanced_settings={@advanced_settings}
-                  parent_pid={self()}
-                />
+          <div class="flex items-center justify-between space-x-4">
+            <!-- Previous tab button (left) -->
+            <%= if get_prev_tab(@active_tab) do %>
+              <button
+                type="button"
+                phx-click={JS.patch(~p"/dashboard?tab=#{get_prev_tab(@active_tab)}")}
+                class="flex-shrink-0 flex items-center justify-center h-12 w-12 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-800 rounded-full transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            <% else %>
+              <div class="w-12 flex-shrink-0"></div> <!-- Placeholder to maintain layout -->
+            <% end %>
+
+            <!-- Component Content (center, width adjusted) -->
+            <div class="bg-white dark:bg-black rounded-lg shadow-md p-6 flex-1 border border-gray-100 dark:border-gray-800">
+              <%= case @active_tab do %>
+                <% "photo_selection" -> %>
+                  <.live_component
+                    module={PhotoSelectionComponent}
+                    id="photo-selection"
+                    current_user={@current_user}
+                    parent_pid={self()}
+                    upload_progress={0}
+                    preview_url={@preview_url}
+                    selected_platforms={@selected_platforms}
+                  />
+                <% "description" -> %>
+                  <.live_component
+                    module={DescriptionComponent}
+                    id="description"
+                    current_user={@current_user}
+                    parent_pid={self()}
+                    upload_form={@upload_form}
+                    selected_platforms={@selected_platforms}
+                    advanced_settings={@advanced_settings}
+                  />
+                <% "sns_selection" -> %>
+                  <.live_component
+                    module={SnsSelectionComponent}
+                    id="sns-selection"
+                    current_user={@current_user}
+                    parent_pid={self()}
+                    social_accounts={@social_accounts}
+                    selected_platforms={@selected_platforms}
+                    upload_form={@upload_form}
+                  />
+                <% "preview" -> %>
+                  <.live_component
+                    module={PreviewComponent}
+                    id="preview"
+                    selected_platforms={@selected_platforms}
+                    preview_url={@preview_url}
+                    upload_form={@upload_form}
+                    advanced_settings={@advanced_settings}
+                    parent_pid={self()}
+                  />
+              <% end %>
+            </div>
+
+            <!-- Next tab button (right) -->
+            <%= if get_next_tab(@active_tab) do %>
+              <button
+                type="button"
+                phx-click={JS.patch(~p"/dashboard?tab=#{get_next_tab(@active_tab)}")}
+                disabled={!Map.get(@validation_states, @active_tab, false)}
+                class={[
+                  "flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full transition-colors",
+                  if Map.get(@validation_states, @active_tab, false) do
+                    "text-primary-600 dark:text-primary-500 hover:text-primary-800 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50"
+                  else
+                    "text-gray-400 dark:text-gray-600 cursor-not-allowed"
+                  end
+                ]}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            <% else %>
+              <div class="w-12 flex-shrink-0"></div> <!-- Placeholder to maintain layout -->
             <% end %>
           </div>
         </div>
@@ -527,7 +598,7 @@ defmodule MyappWeb.DashboardLive do
     ~H"""
     <.link
       patch={@patch}
-      class={"px-4 py-2 font-medium #{if @active, do: "border-b-2 border-indigo-600 text-indigo-600", else: "text-gray-500 hover:text-indigo-600"}"}
+      class={"px-4 py-2 font-medium #{if @active, do: "border-b-2 border-primary-600 dark:border-primary-500 text-primary-600 dark:text-primary-500", else: "text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"}"}
     >
       {render_slot(@inner_block)}
     </.link>
@@ -543,6 +614,98 @@ defmodule MyappWeb.DashboardLive do
       :tiktok -> "bg-black"
       # Default color
       _ -> "bg-gray-600"
+    end
+  end
+
+  # 탭 제목에 표시할 SNS 플랫폼 로고들을 렌더링하는 함수
+  def render_platform_icons(assigns) do
+    ~H"""
+    <div class="flex space-x-1">
+      <!-- X (Twitter) 로고 -->
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" class="dark:text-white">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+
+      <!-- Instagram 로고 -->
+      <svg class="w-4 h-4" viewBox="0 0 24 24">
+        <linearGradient id="instagram-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#FFDC80" />
+          <stop offset="10%" stop-color="#FCAF45" />
+          <stop offset="50%" stop-color="#F77737" />
+          <stop offset="70%" stop-color="#F56040" />
+          <stop offset="80%" stop-color="#FD1D1D" />
+          <stop offset="90%" stop-color="#E1306C" />
+          <stop offset="100%" stop-color="#C13584" />
+        </linearGradient>
+        <path fill="url(#instagram-gradient)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+
+      <!-- TikTok 로고 -->
+      <svg class="w-4 h-4 text-black dark:text-white" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+      </svg>
+
+      <!-- Facebook 로고 -->
+      <svg class="w-4 h-4 text-[#1877F2] dark:text-white" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+      </svg>
+
+      <!-- YouTube 로고 -->
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FF0000">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+    </div>
+    """
+  end
+
+  # 파일 및 미디어를 위한 아이콘
+  def render_file_icon(assigns) do
+    ~H"""
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4 5h16v14H4V5zm11 10l2.5-1.5L20 15V5H4v14l5-3l3 2l3-3z"></path>
+      <circle cx="15.5" cy="8.5" r="1.5"></circle>
+    </svg>
+    """
+  end
+
+  # 설명 추가를 위한 아이콘
+  def render_description_icon(assigns) do
+    ~H"""
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path>
+    </svg>
+    """
+  end
+
+  # 미리보기를 위한 아이콘
+  def render_preview_icon(assigns) do
+    ~H"""
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path>
+    </svg>
+    """
+  end
+
+  # Helper functions to determine previous and next tabs
+  defp get_prev_tab(current_tab) do
+    tab_order = ["sns_selection", "photo_selection", "description", "preview"]
+    current_idx = Enum.find_index(tab_order, fn tab -> tab == current_tab end)
+
+    if current_idx && current_idx > 0 do
+      Enum.at(tab_order, current_idx - 1)
+    else
+      nil
+    end
+  end
+
+  defp get_next_tab(current_tab) do
+    tab_order = ["sns_selection", "photo_selection", "description", "preview"]
+    current_idx = Enum.find_index(tab_order, fn tab -> tab == current_tab end)
+
+    if current_idx && current_idx < length(tab_order) - 1 do
+      Enum.at(tab_order, current_idx + 1)
+    else
+      nil
     end
   end
 end
