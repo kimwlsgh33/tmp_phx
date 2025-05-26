@@ -96,7 +96,7 @@ defmodule MyappWeb.UserLoginLive do
           <:actions>
             <.button
               phx-disable-with="Logging in..."
-              class="w-full py-2 px-3 rounded-md font-medium border-[0.5px] border-[#FD4F00] bg-white dark:bg-black text-[#FD4F00] hover:text-[#FD4F00] hover:bg-white dark:hover:!bg-black hover:border-[#FD4F00] transform hover:scale-[1.02]"
+              class="w-full py-2 px-3 rounded-md font-medium border-[0.5px] border-orange-700 bg-white dark:bg-black text-orange-700 hover:text-orange-700 hover:bg-white dark:hover:!bg-black hover:border-orange-700 transform hover:scale-[1.02]"
             >
               <span class="flex items-center justify-center">
                 <span>{if @linking, do: "Link account", else: "Log in"}</span>
@@ -118,7 +118,7 @@ defmodule MyappWeb.UserLoginLive do
           <div class="mt-6 grid grid-cols-1 gap-3">
             <a
               href={MyappWeb.Router.Helpers.google_path(MyappWeb.Endpoint, :request, "google")}
-              class="w-full inline-flex justify-center py-2 px-3 border-[0.5px] border-[#FD4F00] rounded-md shadow-sm bg-white dark:bg-black text-sm font-medium text-[#FD4F00] hover:text-[#FD4F00] hover:bg-white dark:hover:bg-black hover:border-[#FD4F00] transition-all duration-200 transform hover:scale-[1.02]"
+              class="w-full inline-flex justify-center py-2 px-3 border-[0.5px] border-orange-700 rounded-md shadow-sm bg-white dark:bg-black text-sm font-medium text-orange-700 hover:text-orange-700 hover:bg-white dark:hover:bg-black hover:border-orange-700 transition-all duration-200 transform hover:scale-[1.02]"
             >
               <svg
                 class="h-5 w-5 mr-2"
