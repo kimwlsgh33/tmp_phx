@@ -12,7 +12,7 @@ defmodule MyappWeb.UserProfileLive do
         <:subtitle>View and manage your profile information</:subtitle>
       </.header>
       
-      <div class="mt-10 bg-white rounded-lg shadow overflow-hidden">
+      <div class="mt-10 bg-white dark:bg-black rounded-lg shadow overflow-hidden dark:border dark:border-gray-700">
         <div class="p-6 sm:p-8 flex flex-col items-center">
           <!-- User Avatar -->
           <div class="cursor-pointer" phx-click="toggle_modal">
@@ -31,9 +31,9 @@ defmodule MyappWeb.UserProfileLive do
           
     <!-- User Info -->
           <div class="mt-4 text-center">
-            <h2 class="text-xl font-semibold text-gray-900">{@current_user.email}</h2>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{@current_user.email}</h2>
             
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
               Member since {NaiveDateTime.to_date(@current_user.inserted_at)}
             </p>
           </div>
@@ -57,13 +57,13 @@ defmodule MyappWeb.UserProfileLive do
       </div>
       
     <!-- Recent Activity Section (Optional) -->
-      <div class="mt-8 bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-5 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">Recent Activity</h3>
+      <div class="mt-8 bg-white dark:bg-black rounded-lg shadow overflow-hidden dark:border dark:border-gray-700">
+        <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white">Recent Activity</h3>
         </div>
         
         <div class="p-6">
-          <p class="text-gray-500 text-center py-6">Your recent activity will appear here.</p>
+          <p class="text-gray-500 dark:text-gray-400 text-center py-6">Your recent activity will appear here.</p>
         </div>
       </div>
     </div>

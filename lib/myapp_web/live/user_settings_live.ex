@@ -5,13 +5,19 @@ defmodule MyappWeb.UserSettingsLive do
 
   def render(assigns) do
     ~H"""
-    <.header class="text-center">
-      Account Settings
-      <:subtitle>Manage your account email address and password settings</:subtitle>
-    </.header>
+    <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <.header class="text-center">
+        Account Settings
+        <:subtitle>Manage your account email address and password settings</:subtitle>
+      </.header>
 
-    <div class="space-y-12 divide-y">
-      <div>
+      <div class="mt-10 space-y-8">
+        <!-- Email Change Section -->
+        <div class="bg-white dark:bg-black rounded-lg shadow overflow-hidden dark:border dark:border-gray-700">
+          <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Change Email</h3>
+          </div>
+          <div class="p-6">
         <.simple_form
           for={@email_form}
           id="email_form"
@@ -32,8 +38,15 @@ defmodule MyappWeb.UserSettingsLive do
             <.button phx-disable-with="Changing...">Change Email</.button>
           </:actions>
         </.simple_form>
-      </div>
-      <div>
+          </div>
+        </div>
+        
+        <!-- Password Change Section -->
+        <div class="bg-white dark:bg-black rounded-lg shadow overflow-hidden dark:border dark:border-gray-700">
+          <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Change Password</h3>
+          </div>
+          <div class="p-6">
         <.simple_form
           for={@password_form}
           id="password_form"
@@ -68,6 +81,8 @@ defmodule MyappWeb.UserSettingsLive do
             <.button phx-disable-with="Changing...">Change Password</.button>
           </:actions>
         </.simple_form>
+          </div>
+        </div>
       </div>
     </div>
     """
