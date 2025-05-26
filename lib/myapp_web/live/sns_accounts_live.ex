@@ -128,7 +128,7 @@ defmodule MyappWeb.SnsAccountsLive do
           <div>
             <.link
               navigate={~p"/dashboard"}
-              class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              class="inline-flex items-center px-4 py-2 text-sm font-medium text-[#FD4F00] bg-white dark:bg-black border border-[#FD4F00] rounded-md hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-[#E04600] hover:border-[#E04600]"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -144,7 +144,7 @@ defmodule MyappWeb.SnsAccountsLive do
 
         <%= if @loading_accounts do %>
           <div class="py-10 text-center">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[#FD4F00] border-t-transparent"></div>
             <p class="mt-2 text-gray-600 dark:text-gray-300">Loading your accounts...</p>
           </div>
         <% else %>
@@ -159,7 +159,7 @@ defmodule MyappWeb.SnsAccountsLive do
                     class={[
                       "inline-block p-4 border-b-2 rounded-t-lg",
                       if @active_tab == platform do
-                        "border-blue-600 text-blue-600 active"
+                        "border-[#FD4F00] text-[#FD4F00] active"
                       else
                         "border-transparent hover:text-gray-600 hover:border-gray-300"
                       end

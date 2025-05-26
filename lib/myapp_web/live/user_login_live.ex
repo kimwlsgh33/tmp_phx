@@ -3,8 +3,8 @@ defmodule MyappWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-black">
-      <div class="max-w-md w-full space-y-8 bg-black p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white dark:bg-black text-gray-900 dark:text-gray-300">
+      <div class="max-w-md w-full space-y-8 bg-white dark:bg-black p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
         <div class="text-center">
           <!-- App Logo/Icon -->
           <div class="mx-auto h-32 w-32 flex items-center justify-center mb-8">
@@ -17,7 +17,7 @@ defmodule MyappWeb.UserLoginLive do
           </div>
 
           <.header class="text-center">
-            <span class="text-2xl font-bold text-gray-400">
+            <span class="text-2xl font-bold text-gray-900 dark:text-gray-400">
               <%= if @linking do %>
                 Add a linked account
               <% else %>
@@ -25,7 +25,7 @@ defmodule MyappWeb.UserLoginLive do
               <% end %>
             </span>
             <:subtitle>
-              <p class="mt-2 text-sm text-gray-400">
+              <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
                 <%= if @linking do %>
                   This account will be linked to your current session
                 <% else %>
@@ -61,7 +61,7 @@ defmodule MyappWeb.UserLoginLive do
               type="email"
               placeholder="username or email"
               autocomplete="email"
-              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 "
+              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black dark:text-white"
               required
             />
             <.input
@@ -69,7 +69,7 @@ defmodule MyappWeb.UserLoginLive do
               type="password"
               placeholder="at leaset 1upercase, 1lowcase, 1special, 12 characters"
               autocomplete="current-password"
-              class="appearance-none relative block w-full px-3 py-2 border border-gray-300  "
+              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black dark:text-white"
               required
             />
           </div>
@@ -80,7 +80,7 @@ defmodule MyappWeb.UserLoginLive do
                 field={@form[:remember_me]}
                 type="checkbox"
                 label="Keep me logged in"
-                class="h-4 w-4 text-[#FD4F00] focus:ring-[#FD4F00] border-gray-300 rounded"
+                class="h-4 w-4 text-[#FD4F00] focus:ring-[#FD4F00] border-gray-300 dark:border-gray-700 rounded"
               />
             </div>
             <div class="text-sm">
@@ -96,7 +96,7 @@ defmodule MyappWeb.UserLoginLive do
           <:actions>
             <.button
               phx-disable-with="Logging in..."
-              class="w-full py-2 px-3 rounded-md font-medium  border border-gray-300 hover:bg-zinc-800 transition-all duration-200 transform hover:scale-[1.02]  "
+              class="w-full py-2 px-3 rounded-md font-medium border-[0.5px] border-[#FD4F00] bg-white dark:bg-black text-[#FD4F00] hover:text-[#FD4F00] hover:bg-white dark:hover:!bg-black hover:border-[#FD4F00] transform hover:scale-[1.02]"
             >
               <span class="flex items-center justify-center">
                 <span>{if @linking, do: "Link account", else: "Log in"}</span>
@@ -111,14 +111,14 @@ defmodule MyappWeb.UserLoginLive do
               <div class="w-full border-t border-zinc-800"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-5 bg-black text-gray-400">Or </span>
+              <span class="px-5 bg-white text-gray-400 dark:bg-black dark:text-gray-400">Or </span>
             </div>
           </div>
 
           <div class="mt-6 grid grid-cols-1 gap-3">
             <a
               href={MyappWeb.Router.Helpers.google_path(MyappWeb.Endpoint, :request, "google")}
-              class="w-full inline-flex justify-center py-2 px-3 border border-gray-300 rounded-md shadow-sm bg-zinc-900 text-sm font-medium text-gray-400 hover:bg-zinc-800 transition-colors duration-200"
+              class="w-full inline-flex justify-center py-2 px-3 border-[0.5px] border-[#FD4F00] rounded-md shadow-sm bg-white dark:bg-black text-sm font-medium text-[#FD4F00] hover:text-[#FD4F00] hover:bg-white dark:hover:bg-black hover:border-[#FD4F00] transition-all duration-200 transform hover:scale-[1.02]"
             >
               <svg
                 class="h-5 w-5 mr-2"

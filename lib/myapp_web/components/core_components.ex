@@ -245,8 +245,8 @@ defmodule MyappWeb.CoreComponents do
       class={[
         "phx-submit-loading:opacity-75 rounded-lg py-2 px-4 transition-colors duration-200",
         "text-sm font-semibold leading-6",
-        "bg-primary-600 hover:bg-primary-700 text-white",
-        "dark:bg-primary-700 dark:hover:bg-primary-800 dark:text-white", 
+        "bg-white dark:bg-black border border-[#FD4F00] text-[#FD4F00]",
+        "hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-[#E04600] hover:border-[#E04600]", 
         @class
       ]}
       {@rest}

@@ -85,7 +85,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.DescriptionComponent do
     <div class="min-h-[600px]">
       <div class="flex">
         <div class="w-1/2 pr-6">
-          <h2 class="text-xl font-semibold mb-4 dark:text-white">Post Description</h2>
+          <h2 class="text-xl font-semibold mb-4 dark:text-gray-300">Post Description</h2>
           <p class="text-gray-600 dark:text-gray-300 mb-6">Add details about your content to improve discovery and engagement.</p>
 
           <form phx-change="validate-form" phx-target={@myself}>

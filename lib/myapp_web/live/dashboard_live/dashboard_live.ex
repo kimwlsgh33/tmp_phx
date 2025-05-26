@@ -90,22 +90,22 @@ defmodule MyappWeb.DashboardLive do
       |> assign(:completed_tabs, completed_tabs)
       |> push_patch(to: ~p"/dashboard?tab=description")}
   end
-  
+
   @impl true
   def handle_event("update_validation_state", %{"component" => component, "valid" => valid}, socket) do
     # Update the validation state for the component
     validation_states = Map.put(socket.assigns.validation_states, component, valid)
-    
+
     # Mark the tab as completed if it's valid and not already completed
-    completed_tabs = 
+    completed_tabs =
       if valid && component not in socket.assigns.completed_tabs do
         [component | socket.assigns.completed_tabs]
       else
         socket.assigns.completed_tabs
       end
-      
-    {:noreply, 
-      socket 
+
+    {:noreply,
+      socket
       |> assign(:validation_states, validation_states)
       |> assign(:completed_tabs, completed_tabs)}
   end
@@ -450,13 +450,13 @@ defmodule MyappWeb.DashboardLive do
         <div class="p-6">
           <div class="mb-6 flex justify-between items-center">
             <div>
-              <h1 class="text-2xl font-bold text-black dark:text-white">Social Media Dashboard</h1>
+              <h1 class="text-2xl font-bold text-black dark:text-gray-300">Social Media Dashboard</h1>
               <p class="text-gray-400 dark:text-gray-300">Manage your content across multiple platforms</p>
             </div>
             <div>
               <.link
                 navigate={~p"/sns-accounts"}
-                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                class="inline-flex items-center px-4 py-2 border border-[#FD4F00] border-[1px] text-sm font-medium rounded-md shadow-sm text-[#FD4F00] bg-white dark:bg-black hover:bg-white dark:hover:bg-black hover:text-[#FD4F00] focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-[#FD4F00] transition-colors duration-200"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
@@ -476,7 +476,7 @@ defmodule MyappWeb.DashboardLive do
                 {"preview", 4, "Preview", fn _ -> render_preview_icon(%{}) end}
               ] do %>
                 <button type="button" phx-click={JS.patch(~p"/dashboard?tab=#{step}")} class="flex items-center space-x-2">
-                  <div class={"w-8 h-8 rounded-full flex items-center justify-center " <> if @active_tab == step, do: "bg-primary-600 dark:bg-primary-700 text-white", else: "bg-gray-200 dark:bg-dark-800 text-gray-500 dark:text-gray-400"}>
+                  <div class={"w-8 h-8 rounded-full flex items-center justify-center " <> if @active_tab == step, do: "border border-orange-600 dark:border-orange-700 dark:text-white", else: "bg-gray-200 dark:bg-dark-800 text-gray-500 dark:text-gray-400"}>
                     <%= if step in @completed_tabs do %>
                       <!-- Check mark icon -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -487,7 +487,7 @@ defmodule MyappWeb.DashboardLive do
                     <% end %>
                   </div>
                   <div class="flex flex-col items-start">
-                    <span class={"text-sm uppercase font-medium " <> if @active_tab == step, do: "text-black dark:text-white font-semibold", else: "text-gray-500 dark:text-gray-400"}>
+                    <span class={"text-sm uppercase font-medium " <> if @active_tab == step, do: "text-black dark:text-gray-300 font-semibold", else: "text-gray-500 dark:text-gray-400"}>
                       <%= label %>
                     </span>
                     <div class={"flex items-center mt-1 " <> if @active_tab == step, do: "text-primary-600 dark:text-primary-500", else: "text-gray-400 dark:text-gray-500"}>

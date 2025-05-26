@@ -193,7 +193,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
   def render(assigns) do
     ~H"""
     <div class="min-h-[600px]">
-      <h2 class="text-xl font-semibold mb-4">Platform Selection</h2>
+      <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-300">Platform Selection</h2>
       <p class="text-gray-600 dark:text-gray-300 mb-6">Choose where to publish your content and set scheduling options.</p>
 
       <form phx-submit="save" phx-change="validate-form" phx-target={@myself}>
@@ -214,12 +214,12 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                   class={
                     "flex items-center justify-center py-2 px-3 border rounded-md text-sm font-medium transition-colors w-full " <>
                     if(Enum.empty?(accounts)) do
-                      "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                      "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-900 cursor-not-allowed"
                     else
                       if(platform in @selected_platforms) do
                         "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700 hover:bg-indigo-200 dark:hover:bg-indigo-800"
                       else
-                        "bg-white dark:bg-black text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900"
+                        "bg-white dark:bg-black text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900"
                       end
                     end
                   }
@@ -276,7 +276,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                        phx-click="toggle-dropdown"
                        phx-target={@myself}
                        phx-value-platform={platform}
-                       class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium bg-white dark:bg-black border rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-all duration-200"
+                       class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium bg-white dark:bg-black border rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-all duration-200"
                        >
                        <div class="flex items-center">
                          <%= if selected_count > 0 do %>
@@ -313,7 +313,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                             phx-target={@myself}
                             phx-value-platform={platform}
                             phx-value-account_id={account.id}
-                            class={"w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150 #{if account.selected, do: "bg-indigo-50", else: ""}"}
+                            class={"w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors duration-150"}
                           >
                             <div class="flex items-center">
                               <div class="relative flex-shrink-0">
