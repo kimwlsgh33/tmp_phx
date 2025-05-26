@@ -6,8 +6,8 @@ defmodule MyappWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-black">
-      <div class="mx-auto max-w-sm dark:bg-black dark:text-gray-400">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white dark:bg-black">
+      <div class="mx-auto max-w-sm bg-white dark:bg-black text-gray-700 dark:text-gray-300 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
         <%= if @step == :registration do %>
           <.header class="text-center">
             Register for an account
@@ -15,7 +15,7 @@ defmodule MyappWeb.UserRegistrationLive do
               Already registered?
               <.link
                 navigate={~p"/users/log_in"}
-                class="font-semibold text-brand hover:underline dark:text-blue-400"
+                class="font-semibold text-orange-700 hover:underline dark:text-orange-700"
               >
                 Sign in
               </.link>
@@ -54,7 +54,7 @@ defmodule MyappWeb.UserRegistrationLive do
             <.input field={@form[:password]} type="password" label="Password" required />
 
             <div>
-              <.button phx-disable-with="Creating account..." class="w-full" disabled={!@form_valid}>
+              <.button phx-disable-with="Creating account..." class="w-full py-2 px-3 rounded-md font-medium border-[0.5px] border-orange-700 bg-white dark:bg-black text-orange-700 hover:text-orange-700 hover:bg-white dark:hover:!bg-black hover:border-orange-700 transform hover:scale-[1.02]" disabled={!@form_valid}>
                 Create an account
               </.button>
             </div>
@@ -71,7 +71,7 @@ defmodule MyappWeb.UserRegistrationLive do
             <div>
               <a
                 href="/auth/google"
-                class="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 dark:ring-gray-700"
+                class="flex w-full items-center justify-center gap-3 rounded-md bg-white dark:bg-black px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-300 shadow-sm border border-orange-700 hover:bg-white dark:hover:bg-black transform hover:scale-[1.02] transition-all duration-200"
               >
                 <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
@@ -98,8 +98,8 @@ defmodule MyappWeb.UserRegistrationLive do
             </div>
             <p class="mt-8 text-center text-xs text-gray-500">
               By signing up, you agree to our
-              <a href="#" class="text-[#FD4F00] hover:underline">Terms of Service</a>
-              and <a href="#" class="text-[#FD4F00] hover:underline">Privacy Policy</a>.
+              <a href="#" class="text-orange-700 hover:underline">Terms of Service</a>
+              and <a href="#" class="text-orange-700 hover:underline">Privacy Policy</a>.
             </p>
           </.simple_form>
         <% else %>
@@ -130,7 +130,7 @@ defmodule MyappWeb.UserRegistrationLive do
               </div>
 
               <div>
-                <.button phx-disable-with="Verifying..." class="w-full">
+                <.button phx-disable-with="Verifying..." class="w-full py-2 px-3 rounded-md font-medium border-[0.5px] border-orange-700 bg-white dark:bg-black text-orange-700 hover:text-orange-700 hover:bg-white dark:hover:!bg-black hover:border-orange-700 transform hover:scale-[1.02]">
                   Verify Account
                 </.button>
               </div>
@@ -138,7 +138,7 @@ defmodule MyappWeb.UserRegistrationLive do
               <div class="text-center text-sm mt-4">
                 <.link
                   href="#"
-                  class="text-brand hover:underline dark:text-blue-400"
+                  class="text-orange-700 hover:underline dark:text-orange-700"
                   phx-click="resend_code"
                 >
                   Didn't receive a code? Resend
