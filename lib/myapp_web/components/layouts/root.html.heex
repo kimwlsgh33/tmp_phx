@@ -112,14 +112,14 @@
                     x-transition:leave="transition ease-in duration-200"
                     x-transition:leave-start="transform opacity-100 translate-x-0"
                     x-transition:leave-end="transform opacity-0 translate-x-full"
-                    class="fixed inset-y-0 right-0 w-80 bg-black border-l border-orange-800 rounded-l-2xl shadow-xl z-50 overflow-y-auto"
+                    class="fixed inset-y-0 right-0 w-80 bg-white dark:bg-black border-l border-orange-800 rounded-l-2xl shadow-xl z-50 overflow-y-auto"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="user-menu-button"
                     tabindex="-1"
                     style="display: none;"
                   >
-                    <div class="py-5 border-b border-zinc-700 relative">
+                    <div class="py-5 border-b border-gray-200 dark:border-zinc-700 relative">
                       <div class="flex justify-start items-center px-6">
                         <div class="w-6 flex justify-center items-center mr-3">
                           <%= if @current_user.avatar_url do %>
@@ -136,13 +136,13 @@
                           <% end %>
                         </div>
                         <div class="flex-1 flex items-center justify-between">
-                          <p class="text-sm font-medium text-gray-400">{@current_user.email}</p>
+                          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{@current_user.email}</p>
                           <div class="flex items-center space-x-2">
                             <button
                               type="button"
                               @click="switchDropdownOpen = !switchDropdownOpen"
                               @keydown.escape.window="switchDropdownOpen = false"
-                              class="p-1 rounded-full hover:bg-zinc-800 dark:hover:bg-black text-gray-400 hover:text-gray-300 transition-colors relative"
+                              class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 transition-colors relative"
                               aria-expanded="false"
                               aria-haspopup="true"
                               aria-label="Switch account"
@@ -180,7 +180,7 @@
                               x-transition:leave="transition ease-in duration-150"
                               x-transition:leave-start="transform opacity-100 scale-100"
                               x-transition:leave-end="transform opacity-0 scale-95"
-                              class="absolute right-0 mt-3 w-64 origin-top-right rounded-md bg-zinc-800 dark:bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-60 transform -translate-x-10"
+                              class="absolute right-0 mt-3 w-64 origin-top-right rounded-md bg-white dark:bg-zinc-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-60 transform -translate-x-10"
                               role="menu"
                               aria-orientation="vertical"
                               aria-labelledby="switch-menu-button"
@@ -188,12 +188,12 @@
                               style="display: none; top: 40px;"
                             >
                               <div class="py-1">
-                                <div class="px-4 py-2 text-xs text-gray-500 border-b border-zinc-700">
+                                <div class="px-4 py-2 text-xs text-gray-500 border-b border-gray-200 dark:border-zinc-700">
                                   Linked Accounts
                                 </div>
 
                                 <%= for linked_account <- Myapp.Accounts.list_linked_accounts(@current_user) do %>
-                                  <div class="flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-zinc-700 dark:hover:bg-zinc-900 hover:text-gray-300 transition-colors">
+                                  <div class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
                                     <div class="flex items-center">
                                       <div class="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center text-gray-300 font-bold mr-2">
                                         {String.first(linked_account.user.email)}
@@ -209,10 +209,10 @@
                                   </div>
                                 <% end %>
 
-                                <div class="border-t border-zinc-700 mt-1"></div>
+                                <div class="border-t border-gray-200 dark:border-zinc-700 mt-1"></div>
                                 <a
                                   href={~p"/users/link_account"}
-                                  class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-700 dark:hover:bg-zinc-900 hover:text-gray-300 transition-colors"
+                                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
                                   role="menuitem"
                                   tabindex="-1"
                                   id="switch-menu-item-0"
@@ -233,7 +233,7 @@
                             </div>
                             <button
                               @click="open = !open"
-                              class="p-1 rounded-full hover:bg-zinc-800 dark:hover:bg-black text-gray-400 hover:text-gray-300 transition-colors"
+                              class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
                               aria-label="Close menu"
                             >
                               <svg
@@ -257,7 +257,7 @@
                     <div class="p-2">
                       <a
                         href={~p"/users/profile"}
-                        class="block px-6 py-3 text-sm text-gray-300 hover:bg-zinc-800 dark:hover:bg-zinc-900 hover:text-gray-300 transition-colors"
+                        class="block px-6 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
                         role="menuitem"
                       >
                         <div class="flex justify-start items-center">
@@ -280,7 +280,7 @@
                       </a>
                       <a
                         href={~p"/sns-accounts"}
-                        class="block px-6 py-3 text-sm text-gray-300 hover:bg-zinc-800 dark:hover:bg-zinc-900 hover:text-gray-300 transition-colors"
+                        class="block px-6 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
                         role="menuitem"
                       >
                         <div class="flex justify-start items-center">
@@ -294,7 +294,7 @@
                       </a>
                       <.link
                         href={~p"/users/sign_out"}
-                        class="block px-6 py-3 text-sm text-gray-300 hover:bg-zinc-800 dark:hover:bg-zinc-900 hover:text-gray-300 transition-colors"
+                        class="block px-6 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
                         role="menuitem"
                       >
                         <div class="flex justify-start items-center">
