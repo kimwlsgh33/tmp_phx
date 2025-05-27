@@ -263,14 +263,24 @@ defmodule Myapp.Accounts do
       # Generate a 6-letter confirmation code
       confirmation_code = generate_confirmation_code()
       
-      # Update the user with the confirmation code
-      {:ok, updated_user} =
-        user
-        |> User.confirmation_code_changeset(%{confirmation_code: confirmation_code})
-        |> Repo.update()
+      # Log the confirmation code for debugging
+      IO.puts("\n==== GENERATING CONFIRMATION CODE: #{DateTime.utc_now()} ====")
+      IO.puts("Generated confirmation code: #{confirmation_code} for user: #{user.email}")
       
-      # Send the confirmation code via email
-      UserNotifier.deliver_confirmation_instructions(updated_user, confirmation_code)
+      # Update the user with the confirmation code in a transaction
+      # to ensure atomicity between DB update and email sending
+      # generate_code: false를 설정하여 이미 생성한 코드가 덮어씌워지지 않도록 함
+      {:ok, %{user: updated_user}} = 
+        Ecto.Multi.new()
+        |> Ecto.Multi.update(:user, User.confirmation_code_changeset(user, %{confirmation_code: confirmation_code}, generate_code: false))
+        |> Repo.transaction()
+      
+      # Send the confirmation code via email and log it
+      result = UserNotifier.deliver_confirmation_instructions(updated_user, confirmation_code)
+      IO.puts("Email sent with confirmation code: #{confirmation_code}")
+      IO.puts("======================================\n")
+      
+      result
     end
   end
   
@@ -296,11 +306,15 @@ defmodule Myapp.Accounts do
         {:error, :already_confirmed}
         
       user ->
-        # Now verify the confirmation code
-        if user.confirmation_code == confirmation_code do
+        # Now verify the confirmation code - normalize both codes by removing whitespace and converting to uppercase
+        user_code = user.confirmation_code |> String.trim() |> String.upcase()
+        input_code = confirmation_code |> String.trim() |> String.upcase()
+        
+        if user_code == input_code do
           {:ok, %{user: confirmed_user}} = Repo.transaction(confirm_user_multi(user))
           {:ok, confirmed_user}
         else
+          IO.puts("Invalid code: expected #{user_code}, got #{input_code}")
           {:error, :invalid_code}
         end
     end

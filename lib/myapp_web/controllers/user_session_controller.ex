@@ -209,6 +209,7 @@ defmodule MyappWeb.UserSessionController do
       {:ok, token, linked_user} ->
         conn
         |> put_flash(:info, "Switched to #{linked_user.email} account")
+        |> put_session(:user_return_to, ~p"/dashboard")
         |> UserAuth.log_in_user(linked_user, %{"remember_me" => "true"}, token)
 
       {:error, :not_linked} ->
@@ -217,12 +218,12 @@ defmodule MyappWeb.UserSessionController do
           :error,
           "The account you're trying to switch to is not linked to your account"
         )
-        |> redirect(to: ~p"/")
+        |> redirect(to: ~p"/dashboard")
 
       {:error, :user_not_found} ->
         conn
         |> put_flash(:error, "The linked account was not found")
-        |> redirect(to: ~p"/")
+        |> redirect(to: ~p"/dashboard")
     end
   end
 end
