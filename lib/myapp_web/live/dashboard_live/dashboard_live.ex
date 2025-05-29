@@ -447,7 +447,7 @@ defmodule MyappWeb.DashboardLive do
     ~H"""
     <div id="dashboard" class="flex flex-col min-h-screen bg-white dark:bg-black" phx-hook="SettingsStorage">
       <div class="flex-1">
-        <div class="p-6">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div class="mb-6 flex justify-between items-center">
             <div>
               <h1 class="text-2xl font-bold text-black dark:text-gray-300">Social Media Dashboard</h1>
@@ -503,24 +503,22 @@ defmodule MyappWeb.DashboardLive do
           </div>
 
     <!-- Tab Content -->
-          <div class="flex items-center justify-between space-x-4">
+          <div class="flex items-center justify-between">
             <!-- Previous tab button (left) -->
             <%= if get_prev_tab(@active_tab) do %>
               <button
                 type="button"
-                phx-click={JS.patch(~p"/dashboard?tab=#{get_prev_tab(@active_tab)}")}
-                class="flex-shrink-0 flex items-center justify-center h-12 w-12 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-800 rounded-full transition-colors"
+                phx-click={JS.patch(~p"/dashboard?tab=#{get_prev_tab(@active_tab)}")} 
+                class="absolute left-4 sm:left-6 lg:left-8 flex items-center justify-center h-12 w-12 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-800 rounded-full transition-colors z-10"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
               </button>
-            <% else %>
-              <div class="w-12 flex-shrink-0"></div> <!-- Placeholder to maintain layout -->
             <% end %>
 
-            <!-- Component Content (center, width adjusted) -->
-            <div class="bg-white dark:bg-black rounded-lg shadow-md p-6 flex-1 border border-gray-100 dark:border-gray-800">
+            <!-- Component Content (full width) -->
+            <div class="bg-white dark:bg-black rounded-lg shadow-md p-6 w-full border border-gray-100 dark:border-gray-800">
               <%= case @active_tab do %>
                 <% "photo_selection" -> %>
                   <.live_component
@@ -569,10 +567,10 @@ defmodule MyappWeb.DashboardLive do
             <%= if get_next_tab(@active_tab) do %>
               <button
                 type="button"
-                phx-click={JS.patch(~p"/dashboard?tab=#{get_next_tab(@active_tab)}")}
+                phx-click={JS.patch(~p"/dashboard?tab=#{get_next_tab(@active_tab)}")} 
                 disabled={!Map.get(@validation_states, @active_tab, false)}
                 class={[
-                  "flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full transition-colors",
+                  "absolute right-4 sm:right-6 lg:right-8 flex items-center justify-center h-12 w-12 rounded-full transition-colors z-10",
                   if Map.get(@validation_states, @active_tab, false) do
                     "text-primary-600 dark:text-primary-500 hover:text-primary-800 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50"
                   else

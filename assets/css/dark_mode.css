@@ -94,3 +94,28 @@ html {
 .dark .icon-default {
   fill: #f9fafb;
 }
+
+/* 다크모드에서 파일 선택 버튼 스타일 */
+.dark .custom-file-label .text-indigo-700 {
+  color: #a5b4fc !important;
+}
+
+.dark .bg-indigo-50 {
+  background-color: rgba(0, 0, 0, 0.926) !important;
+}
+
+.dark .border-indigo-300 {
+  border-color: rgba(255, 159, 201, 0.926) !important;
+}
+
+/* 다크모드에서 파일 선택 버튼 hover 효과 */
+.dark .custom-file-label:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.dark .hover\:bg-indigo-100:hover {
+  background-color: rgba(24, 24, 27, 0.9) !important;
+  border-color: rgba(255, 188, 217, 0.95) !important;
+  box-shadow: 0 0 15px rgba(255, 159, 201, 0.3);
+}
