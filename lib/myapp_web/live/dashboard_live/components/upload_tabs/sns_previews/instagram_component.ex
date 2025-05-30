@@ -42,7 +42,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.InstagramCompo
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="border border-gray-300 rounded-lg overflow-hidden bg-white shadow-lg" style="width: 300px;">
+    <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-lg w-full max-w-[300px] mx-auto">
       <!-- Instagram format selector tabs -->
       <div class="flex border-b border-gray-200">
         <button type="button"

@@ -31,7 +31,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.PreviewComponent do
   def render(assigns) do
     ~H"""
     <div class="min-h-[600px]">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="flex flex-wrap gap-4 justify-center items-start">
         <%= for platform <- @selected_platforms do %>
           <%= case platform do %>
             <% :tiktok -> %>

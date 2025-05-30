@@ -32,7 +32,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TiktokComponen
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="border border-gray-300 rounded-2xl overflow-hidden bg-black shadow-lg relative" style="max-width: 302px;">
+    <div class="border border-gray-300 dark:border-gray-700 rounded-2xl overflow-hidden bg-black shadow-lg dark:shadow-gray-900 relative w-full max-w-[302px] mx-auto flex flex-col">
       <!-- Privacy indicator at top -->
       <div class="absolute top-2 left-2 z-10">
         <%= case @advanced_settings["privacy"] do %>
@@ -69,7 +69,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TiktokComponen
       <!-- TikTok-style mobile frame -->
       <div class="relative">
         <!-- Video preview content -->
-        <div class="relative" style="height: 580px;">
+        <div class="relative flex-1 overflow-auto" style="height: 520px;">
           <%= if @preview_url do %>
             <video src={@preview_url} autoplay loop muted class="absolute inset-0 w-full h-full object-cover" />
           <% else %>

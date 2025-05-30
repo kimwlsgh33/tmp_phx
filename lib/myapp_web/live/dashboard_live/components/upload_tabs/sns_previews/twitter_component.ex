@@ -25,7 +25,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.TwitterCompone
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="overflow-hidden bg-black text-white shadow-lg rounded-xl" style="width: 300px;">
+    <div class="overflow-hidden bg-black text-white shadow-lg dark:shadow-gray-900 rounded-xl w-full max-w-[300px] mx-auto border border-transparent dark:border-gray-800">
       <!-- X Post Header -->
       <div class="p-4">
         <div class="flex items-start mb-3">

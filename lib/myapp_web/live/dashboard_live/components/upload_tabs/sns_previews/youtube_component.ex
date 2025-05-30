@@ -42,7 +42,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="border border-gray-300 rounded-lg overflow-hidden bg-white shadow-lg" style="max-width: 302px;">
+    <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-lg w-full max-w-[302px] mx-auto flex flex-col">
       <!-- YouTube format selector tabs -->
       <div class="flex border-b border-gray-200 relative">
         <button type="button"
@@ -199,7 +199,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.YoutubeCompone
       </div>
 
       <!-- Video info section (only shown on standard view) -->
-      <div id="youtube-info-section" class="p-4">
+      <div id="youtube-info-section" class="p-4 flex-1 overflow-y-auto">
         <!-- Title -->
         <h3 class="text-lg font-bold leading-tight mb-1">
           <%= if @upload_form["title"] && @upload_form["title"] != "" do %>

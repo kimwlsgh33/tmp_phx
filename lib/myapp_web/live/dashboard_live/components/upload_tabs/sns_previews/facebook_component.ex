@@ -58,7 +58,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsPreview.FacebookCompon
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-lg" style="width: 320px;">
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-900 dark:text-gray-100 shadow-lg w-full max-w-[320px] mx-auto">
       <!-- Facebook header -->
       <div class="p-4 flex">
         <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white mr-2">
