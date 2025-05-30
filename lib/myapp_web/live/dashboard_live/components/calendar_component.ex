@@ -94,38 +94,73 @@ defmodule MyappWeb.DashboardLive.Components.CalendarComponent do
 
   @impl true
   def handle_event("select-country", params, socket) do
-    country = params["country"] || (params["_target"] && List.first(params["_target"]) || "Korea")
-
-    # Get current time with timezone offset based on country
-    now = Time.utc_now()
-    {hours, minutes, _} = {now.hour, now.minute, now.second}
-
-    # Apply timezone offset based on country
-    hours = case country do
-      "Korea" -> rem(hours + 9, 24)  # UTC+9
-      "Japan" -> rem(hours + 9, 24)  # UTC+9
-      "China" -> rem(hours + 8, 24)  # UTC+8
-      "USA" ->
-        # Handle negative hours properly
-        us_hours = hours - 5
-        if us_hours < 0, do: us_hours + 24, else: us_hours
-      _ -> rem(hours + 9, 24)        # Default to Korea time
+    previous_country = socket.assigns.selected_country
+    new_country = params["country"] || (params["_target"] && List.first(params["_target"]) || "Korea")
+    
+    # Get the current selected time
+    selected_time = Map.get(socket.assigns, :selected_time, "12:00")
+    time_period = socket.assigns.selected_time_period
+    
+    # Parse the selected time
+    hours_minutes = case String.split(selected_time, ":", parts: 2) do
+      [hours_str, minutes_str] -> 
+        hours = parse_int_safely(hours_str, 12)
+        minutes = parse_int_safely(minutes_str, 0)
+        {hours, minutes}
+      [hours_str] -> 
+        {parse_int_safely(hours_str, 12), 0}
+      _ -> 
+        {12, 0}  # Default if time format is completely invalid
     end
-
-    # Format time for display (HH:MM)
-    formatted_hour = rem(hours, 12)
-    formatted_hour = if formatted_hour == 0, do: 12, else: formatted_hour
-    formatted_time = String.pad_leading(Integer.to_string(formatted_hour), 2, "0") <> ":" <>
-                     String.pad_leading(Integer.to_string(minutes), 2, "0")
-
-    # Determine AM/PM
-    period = if hours >= 12, do: "PM", else: "AM"
-
-    # Update socket with country, time and period
+    
+    {hours, minutes} = hours_minutes
+    
+    # Convert to 24-hour format based on AM/PM
+    hours = if time_period == "PM" and hours < 12 do
+      hours + 12
+    else
+      if time_period == "AM" and hours == 12 do
+        0  # 12 AM is 00:00 in 24-hour format
+      else
+        hours
+      end
+    end
+    
+    # First convert to UTC based on the previous country
+    utc_hours = case previous_country do
+      "Korea" -> rem(hours - 9 + 24, 24)  # UTC+9
+      "Japan" -> rem(hours - 9 + 24, 24)  # UTC+9
+      "China" -> rem(hours - 8 + 24, 24)  # UTC+8
+      "USA" -> rem(hours + 5, 24)  # UTC-5 (EST)
+      _ -> hours
+    end
+    
+    # Then convert from UTC to the new country's timezone
+    new_hours = case new_country do
+      "Korea" -> rem(utc_hours + 9, 24)  # UTC+9
+      "Japan" -> rem(utc_hours + 9, 24)  # UTC+9
+      "China" -> rem(utc_hours + 8, 24)  # UTC+8
+      "USA" -> rem(utc_hours - 5 + 24, 24)  # UTC-5 (EST)
+      _ -> utc_hours
+    end
+    
+    # Convert back to 12-hour format with AM/PM
+    {new_12h_hours, new_time_period} = cond do
+      new_hours == 0 -> {12, "AM"}
+      new_hours < 12 -> {new_hours, "AM"}
+      new_hours == 12 -> {12, "PM"}
+      true -> {new_hours - 12, "PM"}
+    end
+    
+    # Format the new time
+    new_formatted_time = String.pad_leading(Integer.to_string(new_12h_hours), 2, "0") <> ":" <>
+                         String.pad_leading(Integer.to_string(minutes), 2, "0")
+    
+    # Update the socket with the selected country and converted time
     socket = socket
-      |> assign(:selected_country, country)
-      |> assign(:selected_time, formatted_time)
-      |> assign(:selected_time_period, period)
+      |> assign(:selected_country, new_country)
+      |> assign(:selected_time, new_formatted_time)
+      |> assign(:selected_time_period, new_time_period)
 
     send_datetime_to_parent(socket)
     {:noreply, socket}
@@ -161,8 +196,21 @@ defmodule MyappWeb.DashboardLive.Components.CalendarComponent do
     # Get the time from the form or use default
     time = Map.get(socket.assigns, :selected_time, "12:00")
 
+    # Safely parse hours and minutes, handling empty or invalid inputs
+    hours_minutes = case String.split(time, ":", parts: 2) do
+      [hours_str, minutes_str] -> 
+        hours = parse_int_safely(hours_str, 12)
+        minutes = parse_int_safely(minutes_str, 0)
+        {hours, minutes}
+      [hours_str] -> 
+        {parse_int_safely(hours_str, 12), 0}
+      _ -> 
+        {12, 0}  # Default if time format is completely invalid
+    end
+    
+    {hours, minutes} = hours_minutes
+    
     # Adjust for AM/PM if needed
-    [hours, minutes] = String.split(time, ":") |> Enum.map(&String.to_integer/1)
     hours = if socket.assigns.selected_time_period == "PM" and hours < 12 do
       hours + 12
     else
@@ -401,4 +449,13 @@ defmodule MyappWeb.DashboardLive.Components.CalendarComponent do
     </div>
     """
   end
+  
+  # Safely parse an integer from a string, returning a default value if parsing fails
+  defp parse_int_safely(string, default) when is_binary(string) do
+    case Integer.parse(string) do
+      {int, _} -> int
+      :error -> default
+    end
+  end
+  defp parse_int_safely(_, default), do: default
 end
