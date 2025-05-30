@@ -3,10 +3,33 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
 
   @impl true
   def mount(socket) do
+    # Get current time with Korea timezone (UTC+9)
+    now = Time.utc_now()
+    {hours, minutes, _} = {now.hour, now.minute, now.second}
+    
+    # Apply Korea timezone (UTC+9)
+    hours = rem(hours + 9, 24)
+    
+    # Format time for display (HH:MM)
+    formatted_hour = rem(hours, 12)
+    formatted_hour = if formatted_hour == 0, do: 12, else: formatted_hour
+    formatted_time = String.pad_leading(Integer.to_string(formatted_hour), 2, "0") <> ":" <> 
+                    String.pad_leading(Integer.to_string(minutes), 2, "0")
+    
+    # Determine AM/PM for display
+    period = if hours >= 12, do: "PM", else: "AM"
+    
     {:ok,
      socket
      |> assign(:scheduled_upload, false)
-     |> assign(:platform_dropdowns, %{})}
+     |> assign(:platform_dropdowns, %{})
+     |> assign(:selected_country, "Korea")
+     |> assign(:selected_time_period, period)
+     |> assign(:upload_form, %{
+       "schedule_date" => "", 
+       "schedule_time" => formatted_time,
+       "schedule_country" => "Korea"
+     })}
   end
 
   @impl true
@@ -16,6 +39,21 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
       |> assign_new(:scheduled_upload, fn -> false end)
       |> assign(assigns)
       |> assign_new(:platform_dropdowns, fn -> %{} end)
+      |> assign_new(:selected_country, fn -> "Korea" end)
+      |> assign_new(:upload_form, fn -> %{
+        "schedule_date" => "", 
+        "schedule_time" => "12:00",
+        "schedule_country" => "Korea"
+      } end)
+
+    # If we have a selected_country from assigns, update the form
+    socket = if Map.has_key?(assigns, :selected_country) do
+      update_in(socket.assigns.upload_form, fn form ->
+        Map.put(form, "schedule_country", assigns.selected_country)
+      end)
+    else
+      socket
+    end
 
     {:ok, socket}
   end
@@ -122,11 +160,28 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
     # 상태 업데이트 및 알림
     socket = assign(socket, :scheduled_upload, scheduled_upload)
 
+    # Update parent with scheduled upload status
+    send(socket.assigns.parent_pid, {:update_scheduled_upload, scheduled_upload})
+
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("validate-form", %{"upload_form" => form_params}, socket) do
+    # Combine date and time for schedule_at if both are present
+    form_params = if socket.assigns.scheduled_upload do
+      date = Map.get(form_params, "schedule_date", "")
+      time = Map.get(form_params, "schedule_time", "12:00")
+      
+      if date != "" do
+        Map.put(form_params, "schedule_at", "#{date}T#{time}")
+      else
+        form_params
+      end
+    else
+      form_params
+    end
+
     # Update local state
     socket = assign(socket, :upload_form, form_params)
 
@@ -135,7 +190,6 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
 
     {:noreply, socket}
   end
-
 
   @impl true
   def handle_event("goto-description", _params, socket) do
@@ -158,6 +212,72 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
   end
 
   @impl true
+  def handle_info({:calendar_date_selected, datetime, country}, socket) do
+    # Parse the datetime to extract date and time
+    [date, time] = String.split(datetime, "T")
+    
+    # Update the form with the selected date and country
+    form_params = Map.merge(socket.assigns.upload_form || %{}, %{
+      "schedule_date" => date,
+      "schedule_time" => time,
+      "schedule_at" => datetime,
+      "schedule_country" => country
+    })
+    
+    # Update local state
+    socket = assign(socket, :upload_form, form_params)
+    socket = assign(socket, :selected_country, country)
+    
+    # Notify parent of the form change
+    send(socket.assigns.parent_pid, {:update_form, form_params})
+    
+    {:noreply, socket}
+  end
+
+  # For backward compatibility
+  @impl true
+  # Handle time and country updates without date selection
+  def handle_info({:calendar_time_updated, time, period, country}, socket) do
+    # Update form with new time and country
+    form_params = Map.merge(socket.assigns.upload_form || %{}, %{
+      "schedule_time" => time,
+      "schedule_country" => country
+    })
+    
+    # Update local state
+    socket = socket
+      |> assign(:upload_form, form_params)
+      |> assign(:selected_country, country)
+      |> assign(:selected_time_period, period)
+    
+    # Notify parent of the form change
+    send(socket.assigns.parent_pid, {:update_form, form_params})
+    
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:calendar_date_selected, datetime}, socket) do
+    # Parse the datetime to extract date and time
+    [date, time] = String.split(datetime, "T")
+    
+    # Update the form with the selected date
+    form_params = Map.merge(socket.assigns.upload_form || %{}, %{
+      "schedule_date" => date,
+      "schedule_time" => time,
+      "schedule_at" => datetime
+    })
+    
+    # Update local state
+    socket = assign(socket, :upload_form, form_params)
+    
+    # Notify parent of the form change
+    send(socket.assigns.parent_pid, {:update_form, form_params})
+    
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("save", _params, socket) do
     if socket.assigns.selected_platforms == [] do
       {:noreply,
@@ -167,12 +287,13 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
       if socket.assigns.scheduled_upload do
         # Handle scheduled upload
         scheduled_time = socket.assigns.upload_form["schedule_at"]
+        scheduled_country = socket.assigns.upload_form["schedule_country"] || "Korea"
 
         if scheduled_time == "" do
-          {:noreply, socket |> put_flash(:error, "Please select a scheduled time")}
+          {:noreply, socket |> put_flash(:error, "Please select a date and time for scheduled upload")}
         else
           # Save the schedule to the database here (in a real implementation)
-          send(socket.assigns.parent_pid, {:schedule_complete, socket.assigns.selected_platforms, scheduled_time})
+          send(socket.assigns.parent_pid, {:schedule_complete, socket.assigns.selected_platforms, scheduled_time, scheduled_country})
 
           {:noreply, socket}
         end
@@ -196,7 +317,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
       <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-300">Platform Selection</h2>
       <p class="text-gray-600 dark:text-gray-300 mb-6">Choose where to publish your content and set scheduling options.</p>
 
-      <form phx-submit="save" phx-change="validate-form" phx-target={@myself}>
+      <form phx-submit="save" phx-change="validate-form" phx-target={@myself} id="sns-selection-form">
         <!-- Platform Selection: Select the SNS platform(s) to upload to. -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Where to upload</label>
@@ -217,7 +338,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                       "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-900 cursor-not-allowed"
                     else
                       if(platform in @selected_platforms) do
-                        "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700 hover:bg-indigo-200 dark:hover:bg-indigo-800"
+                        "bg-indigo-100 dark:bg-gray-700 text-indigo-700 dark:text-gray-300 border-indigo-300 dark:border-orange-600 hover:bg-indigo-200 dark:hover:bg-gray-600"
                       else
                         "bg-white dark:bg-black text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900"
                       end
@@ -386,11 +507,11 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
           <% end %>
         </div>
 
-        <!-- Scheduled Upload Option -->
+                <!-- Scheduled Upload Option -->
         <div class="mb-6">
           <div class="flex items-center">
             <input
-              id="scheduled-upload"
+              id="scheduled_upload"
               name="scheduled_upload"
               type="checkbox"
               phx-change="toggle-scheduled-upload"
@@ -398,31 +519,32 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
               checked={@scheduled_upload}
               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
             />
-            <label for="scheduled-upload" class="ml-2 block text-sm text-gray-700">
+            <label for="scheduled_upload" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
               Schedule upload for later
             </label>
           </div>
 
           <%= if @scheduled_upload do %>
-            <div class="mt-3">
-              <label for="schedule_at" class="block text-sm font-medium text-gray-700">
-                Select date and time
-              </label>
+            <div class="mt-4">
+              <!-- Hidden input to store the combined date and time -->
               <input
-                type="datetime-local"
+                type="hidden"
                 id="schedule_at"
                 name="upload_form[schedule_at]"
-                value={@upload_form["schedule_at"]}
-                class="mt-1 block w-full sm:w-96 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                min={DateTime.utc_now() |> DateTime.add(60, :second) |> DateTime.to_iso8601()}
+                value={Map.get(@upload_form || %{}, "schedule_at", "")}
               />
-              <p class="mt-1 text-xs text-gray-500">
-                Select when you want this content to be uploaded
-              </p>
+              
+              <!-- Calendar Component -->
+              <.live_component
+                module={MyappWeb.DashboardLive.Components.CalendarComponent}
+                id="calendar-component"
+                upload_form={@upload_form}
+                current_date={Date.utc_today()}
+                parent_pid={self()}
+              />
             </div>
           <% end %>
         </div>
-
         <!-- Hidden validation state -->
         <div id="sns-validation-state" phx-hook="SnsValidation" data-valid={!Enum.empty?(@selected_platforms) && "true" || "false"} class="hidden"></div>
       </form>

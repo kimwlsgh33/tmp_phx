@@ -36,13 +36,17 @@ defmodule MyappWeb.DashboardLive do
      |> assign(:recent_uploads, [])
      |> assign(:selected_platforms, [])
      |> assign(:preview_url, nil)
+     |> assign(:scheduled_upload, false)  # Track if schedule for later is enabled
      |> assign(:completed_tabs, [])  # Track completed tabs for checkmarks
      |> assign(:upload_form, %{
        "title" => "",
        "description" => "",
        "tags" => "",
-       "schedule_at" => nil
+       "schedule_at" => nil,
+       "schedule_date" => "",
+       "schedule_time" => elem(get_current_formatted_time(), 0)
      })
+     |> assign(:selected_time_period, elem(get_current_formatted_time(), 1))
      |> assign(:advanced_settings, %{})
      |> assign(:validation_states, %{
        "sns_selection" => false,
@@ -73,6 +77,18 @@ defmodule MyappWeb.DashboardLive do
       socket
       |> assign(:completed_tabs, completed_tabs)
       |> push_patch(to: ~p"/dashboard?tab=photo_selection")}
+  end
+
+  @impl true
+  def handle_info({:calendar_time_updated, time, period, country}, socket) do
+    # Update the form with the new time and period
+    upload_form = socket.assigns.upload_form
+    upload_form = Map.put(upload_form, "schedule_time", time)
+    
+    {:noreply,
+     socket
+     |> assign(:upload_form, upload_form)
+     |> assign(:selected_time_period, period)}
   end
 
   @impl true
@@ -412,6 +428,22 @@ defmodule MyappWeb.DashboardLive do
   end
 
   @impl true
+  def handle_info({:schedule_complete, platforms, scheduled_time, country}, socket) do
+    # In a real implementation, we would save the schedule to the database
+
+    platform_names =
+      Enum.map_join(platforms, ", ", fn p ->
+        p |> Atom.to_string() |> String.capitalize()
+      end)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Content scheduled for #{platform_names} at #{scheduled_time} (#{country})")
+     |> push_patch(to: ~p"/dashboard?tab=results")}
+  end
+  
+  # For backward compatibility
+  @impl true
   def handle_info({:schedule_complete, platforms, scheduled_time}, socket) do
     # In a real implementation, we would save the schedule to the database
 
@@ -439,6 +471,48 @@ defmodule MyappWeb.DashboardLive do
   @impl true
   def handle_info({:social_accounts_loaded, _accounts}, socket) do
     # This message is meant for ScheduleComponent, just ignore it if received by the LiveView
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:update_scheduled_upload, scheduled_upload}, socket) do
+    # Update the scheduled upload status in the socket
+    {:noreply, assign(socket, :scheduled_upload, scheduled_upload)}
+  end
+
+  @impl true
+  def handle_info({:calendar_time_updated, time, period, country}, socket) do
+    # Update form with time and country from calendar without date
+    upload_form = Map.merge(socket.assigns.upload_form, %{
+      "schedule_time" => time,
+    })
+    
+    # Update the socket with the new values
+    socket = socket
+      |> assign(:upload_form, upload_form)
+      |> assign(:selected_time_period, period)
+    
+    {:noreply, socket}
+  end
+
+  def handle_info({:calendar_date_selected, datetime, country}, socket) do
+    # Forward the message to the SNS selection component with country
+    send_update(MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent,
+      id: "sns-selection", 
+      selected_date: datetime,
+      selected_country: country
+    )
+    {:noreply, socket}
+  end
+  
+  # Backward compatibility for older calendar component messages
+  @impl true
+  def handle_info({:calendar_date_selected, datetime}, socket) do
+    # Forward the message to the SNS selection component without country
+    send_update(MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent,
+      id: "sns-selection", 
+      selected_date: datetime
+    )
     {:noreply, socket}
   end
 
@@ -705,5 +779,36 @@ defmodule MyappWeb.DashboardLive do
     else
       nil
     end
+  end
+
+  # Helper function to get current time formatted as HH:MM based on Korea time (UTC+9)
+  defp get_current_formatted_time(country \\ "Korea") do
+    # Get UTC time
+    now = Time.utc_now()
+    {hours, minutes, _} = {now.hour, now.minute, now.second}
+    
+    # Apply timezone offset based on country
+    hours = case country do
+      "Korea" -> rem(hours + 9, 24)  # UTC+9
+      "Japan" -> rem(hours + 9, 24)  # UTC+9
+      "China" -> rem(hours + 8, 24)  # UTC+8
+      "USA" -> 
+        # Handle negative hours properly
+        us_hours = hours - 5
+        if us_hours < 0, do: us_hours + 24, else: us_hours
+      _ -> rem(hours + 9, 24)        # Default to Korea time
+    end
+    
+    # Convert to 12-hour format
+    period = if hours >= 12, do: "PM", else: "AM"
+    formatted_hour = rem(hours, 12)
+    formatted_hour = if formatted_hour == 0, do: 12, else: formatted_hour
+    
+    # Format time as HH:MM
+    {
+      String.pad_leading(Integer.to_string(formatted_hour), 2, "0") <> ":" <> 
+      String.pad_leading(Integer.to_string(minutes), 2, "0"),
+      period
+    }
   end
 end
