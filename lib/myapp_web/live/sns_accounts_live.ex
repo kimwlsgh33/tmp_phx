@@ -57,7 +57,7 @@ defmodule MyappWeb.SnsAccountsLive do
   @impl true
   def handle_event("change-tab", %{"platform" => platform}, socket) do
     platform = String.to_existing_atom(platform)
-    
+
     {:noreply, assign(socket, :active_tab, platform)}
   end
 
@@ -153,9 +153,9 @@ defmodule MyappWeb.SnsAccountsLive do
             <ul class="flex flex-wrap -mb-px" role="tablist">
               <%= for platform <- @social_platforms do %>
                 <li class="mr-2" role="presentation">
-                  <button 
-                    phx-click="change-tab" 
-                    phx-value-platform={platform} 
+                  <button
+                    phx-click="change-tab"
+                    phx-value-platform={platform}
                     class={[
                       "inline-block p-4 border-b-2 rounded-t-lg",
                       if @active_tab == platform do
@@ -199,7 +199,7 @@ defmodule MyappWeb.SnsAccountsLive do
               <% end %>
             </ul>
           </div>
-          
+
           <!-- Tab Content -->
           <div class="tab-content">
             <% platform = @active_tab %>
@@ -214,12 +214,12 @@ defmodule MyappWeb.SnsAccountsLive do
                   <button
                     phx-click="connect-platform"
                     phx-value-platform={platform}
-                    class="bg-blue-600 text-white rounded-md py-2 px-4 hover:bg-blue-700 transition-colors text-sm"
+                    class="border border-[#FD4F00] hover:bg-neutral-100 text-[#FD4F00] rounded-md py-2 px-4 transition-colors text-sm dark:hover:bg-neutral-900 dark:text-[#FD4F00]"
                   >
                     Add Account
                   </button>
                 </div>
-                
+
                 <!-- Connected accounts list -->
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                   <%= if Enum.empty?(accounts) do %>
@@ -278,16 +278,16 @@ defmodule MyappWeb.SnsAccountsLive do
           </p>
 
           <div class="flex justify-end space-x-3">
-            <button 
-              phx-click="close-modal" 
+            <button
+              phx-click="close-modal"
               class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-900"
             >
               Cancel
             </button>
-            <button 
-              phx-click="add-account" 
-              phx-value-platform={@selected_platform} 
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            <button
+              phx-click="add-account"
+              phx-value-platform={@selected_platform}
+              class="px-4 py-2 bg-[#FD4F00] text-white rounded-md hover:bg-[#E04600] dark:bg-[#FD4F00] dark:hover:bg-[#E04600] dark:text-white"
             >
               Continue
             </button>

@@ -80,18 +80,6 @@ defmodule MyappWeb.DashboardLive do
   end
 
   @impl true
-  def handle_info({:calendar_time_updated, time, period, country}, socket) do
-    # Update the form with the new time and period
-    upload_form = socket.assigns.upload_form
-    upload_form = Map.put(upload_form, "schedule_time", time)
-    
-    {:noreply,
-     socket
-     |> assign(:upload_form, upload_form)
-     |> assign(:selected_time_period, period)}
-  end
-
-  @impl true
   def handle_info(:switch_to_description_tab, socket) do
     # Mark photo_selection as completed when moving to description
     completed_tabs =
@@ -441,7 +429,7 @@ defmodule MyappWeb.DashboardLive do
      |> put_flash(:info, "Content scheduled for #{platform_names} at #{scheduled_time} (#{country})")
      |> push_patch(to: ~p"/dashboard?tab=results")}
   end
-  
+
   # For backward compatibility
   @impl true
   def handle_info({:schedule_complete, platforms, scheduled_time}, socket) do
@@ -486,31 +474,31 @@ defmodule MyappWeb.DashboardLive do
     upload_form = Map.merge(socket.assigns.upload_form, %{
       "schedule_time" => time,
     })
-    
+
     # Update the socket with the new values
     socket = socket
       |> assign(:upload_form, upload_form)
       |> assign(:selected_time_period, period)
-    
+
     {:noreply, socket}
   end
 
   def handle_info({:calendar_date_selected, datetime, country}, socket) do
     # Forward the message to the SNS selection component with country
     send_update(MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent,
-      id: "sns-selection", 
+      id: "sns-selection",
       selected_date: datetime,
       selected_country: country
     )
     {:noreply, socket}
   end
-  
+
   # Backward compatibility for older calendar component messages
   @impl true
   def handle_info({:calendar_date_selected, datetime}, socket) do
     # Forward the message to the SNS selection component without country
     send_update(MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent,
-      id: "sns-selection", 
+      id: "sns-selection",
       selected_date: datetime
     )
     {:noreply, socket}
@@ -582,7 +570,7 @@ defmodule MyappWeb.DashboardLive do
             <%= if get_prev_tab(@active_tab) do %>
               <button
                 type="button"
-                phx-click={JS.patch(~p"/dashboard?tab=#{get_prev_tab(@active_tab)}")} 
+                phx-click={JS.patch(~p"/dashboard?tab=#{get_prev_tab(@active_tab)}")}
                 class="absolute left-4 sm:left-6 lg:left-8 flex items-center justify-center h-12 w-12 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-800 rounded-full transition-colors z-10"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
@@ -641,7 +629,7 @@ defmodule MyappWeb.DashboardLive do
             <%= if get_next_tab(@active_tab) do %>
               <button
                 type="button"
-                phx-click={JS.patch(~p"/dashboard?tab=#{get_next_tab(@active_tab)}")} 
+                phx-click={JS.patch(~p"/dashboard?tab=#{get_next_tab(@active_tab)}")}
                 disabled={!Map.get(@validation_states, @active_tab, false)}
                 class={[
                   "absolute right-4 sm:right-6 lg:right-8 flex items-center justify-center h-12 w-12 rounded-full transition-colors z-10",
@@ -786,27 +774,27 @@ defmodule MyappWeb.DashboardLive do
     # Get UTC time
     now = Time.utc_now()
     {hours, minutes, _} = {now.hour, now.minute, now.second}
-    
+
     # Apply timezone offset based on country
     hours = case country do
       "Korea" -> rem(hours + 9, 24)  # UTC+9
       "Japan" -> rem(hours + 9, 24)  # UTC+9
       "China" -> rem(hours + 8, 24)  # UTC+8
-      "USA" -> 
+      "USA" ->
         # Handle negative hours properly
         us_hours = hours - 5
         if us_hours < 0, do: us_hours + 24, else: us_hours
       _ -> rem(hours + 9, 24)        # Default to Korea time
     end
-    
+
     # Convert to 12-hour format
     period = if hours >= 12, do: "PM", else: "AM"
     formatted_hour = rem(hours, 12)
     formatted_hour = if formatted_hour == 0, do: 12, else: formatted_hour
-    
+
     # Format time as HH:MM
     {
-      String.pad_leading(Integer.to_string(formatted_hour), 2, "0") <> ":" <> 
+      String.pad_leading(Integer.to_string(formatted_hour), 2, "0") <> ":" <>
       String.pad_leading(Integer.to_string(minutes), 2, "0"),
       period
     }
