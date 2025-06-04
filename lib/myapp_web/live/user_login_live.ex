@@ -9,7 +9,7 @@ defmodule MyappWeb.UserLoginLive do
           <!-- App Logo/Icon -->
           <div class="mx-auto h-32 w-32 flex items-center justify-center mb-8">
             <img
-              src="/images/logos/ingrey.svg"
+              src="/images/logos/real_final.svg"
               alt="CreatorSync Logo"
               class="w-24 h-30"
               loading="lazy"
