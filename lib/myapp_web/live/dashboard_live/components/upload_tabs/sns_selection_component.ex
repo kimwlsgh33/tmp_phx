@@ -388,9 +388,16 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                 </button>
 
                 <!-- Account selection dropdown when platform is selected -->
-                <%= if platform in @selected_platforms and !Enum.empty?(accounts) do %>
+                <%= if platform in @selected_platforms do %>
                   <div class="mt-2 relative">
-                     <% selected_accounts = Enum.filter(accounts, &(&1.selected)) %>
+                     <% # Handle different account structures %>
+                     <% selected_accounts = if is_list(accounts) do 
+                          Enum.filter(accounts, &(Map.get(&1, :selected, false))) 
+                        else
+                          account_map = Map.get(accounts, :connected) && accounts || %{}
+                          if Map.get(account_map, :connected, false), do: [account_map], else: []
+                        end
+                     %>
                      <% selected_count = length(selected_accounts) %>
                      <button
                        type="button"
@@ -399,22 +406,22 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                        phx-value-platform={platform}
                        class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium bg-white dark:bg-black border rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-all duration-200"
                        >
-                       <div class="flex items-center">
-                         <%= if selected_count > 0 do %>
-                           <div class="flex -space-x-2 mr-2">
-                             <%= for account <- Enum.take(selected_accounts, 2) do %>
-                               <div class="h-6 w-6 rounded-full bg-indigo-100 ring-2 ring-white overflow-hidden">
-                                 <img src={account.avatar} alt={account.username} class="h-full w-full object-cover" />
-                               </div>
-                             <% end %>
-                             <%= if selected_count > 2 do %>
-                               <div class="h-6 w-6 rounded-full bg-indigo-100 ring-2 ring-white flex items-center justify-center text-xs font-medium text-indigo-800">+<%= selected_count - 2 %></div>
-                             <% end %>
-                           </div>
-                           <span class="truncate"><%= selected_count %> Account<%= if selected_count > 1, do: "s" %></span>
-                         <% else %>
-                           <span class="truncate">Select accounts</span>
-                         <% end %>
+                        <div class="flex items-center">
+                           <%= if selected_count > 0 do %>
+                             <div class="flex -space-x-2 mr-2">
+                               <%= for account <- Enum.take(selected_accounts, 2) do %>
+                                 <div class="h-6 w-6 rounded-full bg-indigo-100 ring-2 ring-white overflow-hidden">
+                                   <img src={Map.get(account, :avatar, "https://via.placeholder.com/150")} alt={Map.get(account, :username, "account")} class="h-full w-full object-cover" />
+                                 </div>
+                               <% end %>
+                               <%= if selected_count > 2 do %>
+                                 <div class="h-6 w-6 rounded-full bg-indigo-100 ring-2 ring-white flex items-center justify-center text-xs font-medium text-indigo-800">+<%= selected_count - 2 %></div>
+                               <% end %>
+                             </div>
+                             <span class="truncate"><%= selected_count %> Account<%= if selected_count > 1, do: "s" %></span>
+                           <% else %>
+                             <span class="truncate">Select accounts</span>
+                           <% end %>
                        </div>
                       <svg class="h-4 w-4 ml-2 text-gray-500 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -427,21 +434,29 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                         <div class="sticky top-0 bg-gray-50 dark:bg-gray-900 px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-300 border-b dark:border-gray-700">
                           Select multiple accounts
                         </div>
-                        <%= for account <- accounts do %>
+                        <% # Normalize accounts to a list of maps for iteration %>
+                        <% account_list = cond do
+                            is_list(accounts) -> accounts
+                            is_map(accounts) -> [accounts]
+                            is_tuple(accounts) -> [%{id: "default", username: Atom.to_string(platform), avatar: "https://via.placeholder.com/150"}]
+                            true -> []
+                           end
+                        %>
+                        <%= for account <- account_list do %>
                           <button
                             type="button"
                             phx-click="select-account"
                             phx-target={@myself}
                             phx-value-platform={platform}
-                            phx-value-account_id={account.id}
+                            phx-value-account_id={Map.get(account, :id) || "default"}
                             class={"w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors duration-150"}
                           >
                             <div class="flex items-center">
                               <div class="relative flex-shrink-0">
-                                <div class={"w-10 h-10 rounded-full overflow-hidden bg-gray-200 mr-3 ring-2 #{if account.selected, do: "ring-indigo-500", else: "ring-gray-200"}"}>
-                                  <img src={account.avatar} alt="" class="h-full w-full object-cover" />
+                                <div class={"w-10 h-10 rounded-full overflow-hidden bg-gray-200 mr-3 ring-2 #{if Map.get(account, :selected, false), do: "ring-indigo-500", else: "ring-gray-200"}"}>
+                                  <img src={Map.get(account, :avatar, "https://via.placeholder.com/150")} alt="" class="h-full w-full object-cover" />
                                 </div>
-                                <%= if account.selected do %>
+                                <%= if Map.get(account, :selected, false) do %>
                                   <div class="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-0.5">
                                     <svg class="h-3.5 w-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
                                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -450,7 +465,9 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
                                 <% end %>
                               </div>
                               <div>
-                                <p class={"font-medium #{if account.selected, do: "text-indigo-700", else: "text-gray-900 dark:text-gray-300"}"}>@<%= account.username %></p>
+                                <p class={"font-medium #{if Map.get(account, :selected, false), do: "text-indigo-700", else: "text-gray-900 dark:text-gray-300"}"}>
+                                  @<%= Map.get(account, :username, "account") %>
+                                </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400"><%= platform |> Atom.to_string() |> String.capitalize() %> Account</p>
                               </div>
                             </div>
@@ -508,6 +525,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
         </div>
 
                 <!-- Scheduled Upload Option -->
+        <%= if Map.get(assigns, :show_scheduled_upload, true) do %>
         <div class="mb-6">
           <div class="flex items-center">
             <input
@@ -523,7 +541,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
               Schedule upload for later
             </label>
           </div>
-
+          
           <%= if @scheduled_upload do %>
             <div class="mt-4">
               <!-- Hidden input to store the combined date and time -->
@@ -545,6 +563,7 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsSelectionComponent do
             </div>
           <% end %>
         </div>
+        <% end %>
         <!-- Hidden validation state -->
         <div id="sns-validation-state" phx-hook="SnsValidation" data-valid={!Enum.empty?(@selected_platforms) && "true" || "false"} class="hidden"></div>
       </form>

@@ -18,8 +18,8 @@ const SettingsStorage = {
       const savedSettings = localStorage.getItem(key);
       
       if (savedSettings) {
-        // Send saved settings back to LiveView
-        this.pushEvent("settings_loaded", { value: savedSettings });
+        // Send saved settings back to LiveView (include key so handler knows which settings these are)
+        this.pushEvent("settings_loaded", { key: key, value: savedSettings });
       }
     });
   }

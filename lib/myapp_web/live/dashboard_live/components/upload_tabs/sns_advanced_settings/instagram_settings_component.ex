@@ -32,8 +32,8 @@ defmodule MyappWeb.DashboardLive.Components.UploadTabs.SnsAdvancedSettings.Insta
 
     updated_settings = update_settings(socket.assigns.platform_settings, params)
 
-    # 메시지를 대시보드 LiveView로 직접 전송
-    send(self(), {:advanced_settings_updated, %{platform: socket.assigns.platform_key, settings: updated_settings}})
+    # 메시지를 대시보드 LiveView로 직접 전송 (parent_pid를 통해)
+    send(socket.assigns.parent_pid, {:advanced_settings_updated, %{platform: socket.assigns.platform_key, settings: updated_settings}})
 
     {:noreply, assign(socket, :platform_settings, updated_settings)}
   end

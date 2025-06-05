@@ -41,9 +41,11 @@ defmodule MyappWeb.Router do
 
   # Landing page route
   scope "/", MyappWeb do
-    pipe_through :browser_without_layout
+    pipe_through :browser
 
-    get "/", Landing.LandingController, :index
+    live "/", HomeLive, :index
+    # 이전 landing 페이지는 /old-landing 경로로 이동
+    get "/old-landing", Landing.LandingController, :index
   end
 
   # Main browser routes
@@ -170,6 +172,9 @@ defmodule MyappWeb.Router do
 
       # Dashboard route
       live "/dashboard", DashboardLive, :index
+      
+      # New simplified dashboard (YouTube & Instagram only)
+      live "/new_dashboard", NewDashboardLive, :index
       
       # SNS Accounts management
       live "/sns-accounts", SnsAccountsLive, :index

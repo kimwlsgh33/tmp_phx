@@ -6,6 +6,7 @@
 @import "./docs.css";
 @import "./error.css";
 @import "./dark_mode.css";
+@import "./home.css";
 /* Styles from TikTok feature */
 .spinner {
   position: fixed;

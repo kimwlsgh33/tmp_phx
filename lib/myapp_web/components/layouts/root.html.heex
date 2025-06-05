@@ -42,6 +42,12 @@
               >
                 Dashboard
               </a>
+              <a
+                href={~p"/new_dashboard"}
+                class={"text-base font-medium #{if @conn.request_path == "/new_dashboard", do: "text-[#FD4F00] dark:text-[#FD4F00]", else: "text-gray-900 dark:text-gray-300"} hover:text-gray-500 dark:hover:text-gray-400 transition duration-200"}
+              >
+                Simple Dashboard
+              </a>
               
               <a
                 href={~p"/marketing/pricing"}
@@ -375,6 +381,12 @@
             class={"text-base font-medium #{if @conn.request_path == "/dashboard", do: "text-gray-300", else: "text-gray-700"} hover:text-blue-600 transition"}
           >
             Dashboard
+          </a>
+          <a
+            href={~p"/new_dashboard"}
+            class={"text-base font-medium #{if @conn.request_path == "/new_dashboard", do: "text-gray-300", else: "text-gray-700"} hover:text-blue-600 transition"}
+          >
+            Simple Dashboard
           </a>
           <a
             href={~p"/marketing/pricing"}
